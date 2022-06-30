@@ -103,7 +103,7 @@
 
      ]
 
-![image-20211211205920149](X:\Markdown笔记\Java生态\02-JavaWeb\02Http网络协议与Tomcat.assets\image-20211211205920149.png)
+![image-20211211205920149](\02Http网络协议与Tomcat.assets\image-20211211205920149.png)
 
 ### 七、Http服务器分类
 
@@ -130,9 +130,9 @@ Tomcat服务器安装只需去官网下载安装，下载完成后直接解压�
 
 ​		JAVA_HOME:
 
-![image-20211211212357300](X:\Markdown笔记\Java生态\02-JavaWeb\02Http网络协议与Tomcat.assets\image-20211211212357300.png)
+![image-20211211212357300](\02Http网络协议与Tomcat.assets\image-20211211212357300.png)
 
-![image-20211211212404222](X:\Markdown笔记\Java生态\02-JavaWeb\02Http网络协议与Tomcat.assets\image-20211211212404222.png)
+![image-20211211212404222](\02Http网络协议与Tomcat.assets\image-20211211212404222.png)
 
 ### 二、Tomcat启动关闭
 
@@ -142,7 +142,7 @@ Tomcat服务器安装只需去官网下载安装，下载完成后直接解压�
 
 3. 关闭命令：shutdown.bat
 
-   ![image-20211211212831439](X:\Markdown笔记\Java生态\02-JavaWeb\02Http网络协议与Tomcat.assets\image-20211211212831439.png)
+   ![image-20211211212831439](\02Http网络协议与Tomcat.assets\image-20211211212831439.png)
 
 4. 进入cmd，进入对应的文件路径目录下，输入startup启动Tomcat服务器，输入shutdown关闭Tomcat服务器
 
@@ -150,17 +150,17 @@ Tomcat服务器安装只需去官网下载安装，下载完成后直接解压�
 
 1. 在Tomcat 安装地址/webapps 文件夹下创建一个网站【myWeb】
 
-   ![image-20211212161015729](X:\Markdown笔记\Java生态\02-JavaWeb\02Http网络协议与Tomcat.assets\image-20211212161015729.png)
+   ![image-20211212161015729](\02Http网络协议与Tomcat.assets\image-20211212161015729.png)
 
 2. 将一个静态资源文件添加到网站【beaytify.jpg】  
 
-   ![image-20211212161344049](X:\Markdown笔记\Java生态\02-JavaWeb\02Http网络协议与Tomcat.assets\image-20211212161344049.png)
+   ![image-20211212161344049](\02Http网络协议与Tomcat.assets\image-20211212161344049.png)
 
 3. 启动Tomcat，必须先shutdown关闭Tomcat，然后startup启动Tomcat  
 
-   ![image-20211212162238912](X:\Markdown笔记\Java生态\02-JavaWeb\02Http网络协议与Tomcat.assets\image-20211212162238912.png)
+   ![image-20211212162238912](\02Http网络协议与Tomcat.assets\image-20211212162238912.png)
 
-   ![image-20211212162246421](X:\Markdown笔记\Java生态\02-JavaWeb\02Http网络协议与Tomcat.assets\image-20211212162246421.png)
+   ![image-20211212162246421](\02Http网络协议与Tomcat.assets\image-20211212162246421.png)
 
 4. 启动浏览器【谷歌】，命令浏览器向 Tomcat 索要 beaytify.jpg
 
@@ -168,11 +168,11 @@ Tomcat服务器安装只需去官网下载安装，下载完成后直接解压�
 
    http://localhost:8080/myWeb/beaytify.jpg
 
-   ![image-20211212162553403](X:\Markdown笔记\Java生态\02-JavaWeb\02Http网络协议与Tomcat.assets\image-20211212162553403.png)
+   ![image-20211212162553403](\02Http网络协议与Tomcat.assets\image-20211212162553403.png)
 
-![image-20211212162559103](X:\Markdown笔记\Java生态\02-JavaWeb\02Http网络协议与Tomcat.assets\image-20211212162559103.png)
+![image-20211212162559103](\02Http网络协议与Tomcat.assets\image-20211212162559103.png)
 
-![image-20211212162602416](X:\Markdown笔记\Java生态\02-JavaWeb\02Http网络协议与Tomcat.assets\image-20211212162602416.png)
+![image-20211212162602416](\02Http网络协议与Tomcat.assets\image-20211212162602416.png)
 
 ## 四、IDEA配置管理Tomcat
 
@@ -180,39 +180,39 @@ Tomcat服务器安装只需去官网下载安装，下载完成后直接解压�
 
    a. File -> Setting
 
-   ![image-20211212163431292](X:\Markdown笔记\Java生态\02-JavaWeb\02Http网络协议与Tomcat.assets\image-20211212163431292.png)
+   ![image-20211212163431292](\02Http网络协议与Tomcat.assets\image-20211212163431292.png)
 
    b. Build,Execution,Deployment -> Application Servers 
 
-   ![image-20211212163441403](X:\Markdown笔记\Java生态\02-JavaWeb\02Http网络协议与Tomcat.assets\image-20211212163441403.png)
+   ![image-20211212163441403](\02Http网络协议与Tomcat.assets\image-20211212163441403.png)
 
    c. OK
 
-   ![image-20211212163453605](X:\Markdown笔记\Java生态\02-JavaWeb\02Http网络协议与Tomcat.assets\image-20211212163453605.png)
+   ![image-20211212163453605](\02Http网络协议与Tomcat.assets\image-20211212163453605.png)
 
    d. OK
 
-   ![image-20211212163644322](X:\Markdown笔记\Java生态\02-JavaWeb\02Http网络协议与Tomcat.assets\image-20211212163644322.png)
+   ![image-20211212163644322](\02Http网络协议与Tomcat.assets\image-20211212163644322.png)
 
 2.  设置 Tomcat 启动与关闭按钮
 
    a. Run -> Edit Configurations
 
-   ![image-20211212163854268](X:\Markdown笔记\Java生态\02-JavaWeb\02Http网络协议与Tomcat.assets\image-20211212163854268.png)
+   ![image-20211212163854268](\02Http网络协议与Tomcat.assets\image-20211212163854268.png)
 
    b.  + -> Tomcat Server -> Local
 
-   ![image-20211212164108505](X:\Markdown笔记\Java生态\02-JavaWeb\02Http网络协议与Tomcat.assets\image-20211212164108505.png)
+   ![image-20211212164108505](\02Http网络协议与Tomcat.assets\image-20211212164108505.png)
 
    c. OK
 
-   ![image-20211212164329794](X:\Markdown笔记\Java生态\02-JavaWeb\02Http网络协议与Tomcat.assets\image-20211212164329794.png)
+   ![image-20211212164329794](\02Http网络协议与Tomcat.assets\image-20211212164329794.png)
 
    d. 
 
-   ![image-20211212164710194](X:\Markdown笔记\Java生态\02-JavaWeb\02Http网络协议与Tomcat.assets\image-20211212164710194.png)
+   ![image-20211212164710194](\02Http网络协议与Tomcat.assets\image-20211212164710194.png)
 
    e.  点击启动或调试按钮后
 
-   ![image-20211212165340420](X:\Markdown笔记\Java生态\02-JavaWeb\02Http网络协议与Tomcat.assets\image-20211212165340420.png)
+   ![image-20211212165340420](\02Http网络协议与Tomcat.assets\image-20211212165340420.png)
 

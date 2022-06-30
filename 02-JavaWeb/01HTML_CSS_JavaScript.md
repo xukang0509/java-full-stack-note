@@ -102,7 +102,7 @@ W3C制定了很多规范：
 </html>
 ```
 
-![image-20211128175200835](X:\Markdown笔记\Java生态\02-JavaWeb\01HTML_CSS_JavaScript.assets\image-20211128175200835.png)
+![image-20211128175200835](\01HTML_CSS_JavaScript.assets\image-20211128175200835.png)
 
 #### 3.2 HTML的基本标签
 
@@ -168,7 +168,7 @@ W3C制定了很多规范：
 </html>
 ```
 
-![image-20211128180538937](X:\Markdown笔记\Java生态\02-JavaWeb\01HTML_CSS_JavaScript.assets\image-20211128180538937.png)
+![image-20211128180538937](\01HTML_CSS_JavaScript.assets\image-20211128180538937.png)
 
 #### 3.3 HTML的实体符号
 
@@ -192,7 +192,7 @@ W3C制定了很多规范：
 </html>
 ```
 
-![image-20211128181104971](X:\Markdown笔记\Java生态\02-JavaWeb\01HTML_CSS_JavaScript.assets\image-20211128181104971.png)
+![image-20211128181104971](\01HTML_CSS_JavaScript.assets\image-20211128181104971.png)
 
 #### 3.4 HTML的表格*
 
@@ -238,7 +238,7 @@ W3C制定了很多规范：
 </html>
 ```
 
-![image-20211128181833570](X:\Markdown笔记\Java生态\02-JavaWeb\01HTML_CSS_JavaScript.assets\image-20211128181833570.png)
+![image-20211128181833570](\01HTML_CSS_JavaScript.assets\image-20211128181833570.png)
 
 #### 3.5 HTML的单元格合并
 
@@ -288,7 +288,7 @@ W3C制定了很多规范：
 </html>
 ```
 
-![image-20211128182507931](X:\Markdown笔记\Java生态\02-JavaWeb\01HTML_CSS_JavaScript.assets\image-20211128182507931.png)
+![image-20211128182507931](\01HTML_CSS_JavaScript.assets\image-20211128182507931.png)
 
 #### 3.6 thead、tbody、tfoot
 
@@ -343,7 +343,7 @@ W3C制定了很多规范：
 </html>
 ```
 
-![image-20211128183114418](X:\Markdown笔记\Java生态\02-JavaWeb\01HTML_CSS_JavaScript.assets\image-20211128183114418.png)
+![image-20211128183114418](\01HTML_CSS_JavaScript.assets\image-20211128183114418.png)
 
 #### 3.7 背景颜色和背景图片
 
@@ -365,7 +365,7 @@ W3C制定了很多规范：
 </html>
 ```
 
-![image-20211128183926210](X:\Markdown笔记\Java生态\02-JavaWeb\01HTML_CSS_JavaScript.assets\image-20211128183926210.png)
+![image-20211128183926210](\01HTML_CSS_JavaScript.assets\image-20211128183926210.png)
 
 #### 3.8 HTML图片img标签
 
@@ -396,7 +396,7 @@ W3C制定了很多规范：
 </html>
 ```
 
-![image-20211128184425765](X:\Markdown笔记\Java生态\02-JavaWeb\01HTML_CSS_JavaScript.assets\image-20211128184425765.png)
+![image-20211128184425765](\01HTML_CSS_JavaScript.assets\image-20211128184425765.png)
 
 #### 3.9 HTML超链接、热链接*
 
@@ -463,7 +463,7 @@ W3C制定了很多规范：
 -->
 ```
 
-![image-20211128185345888](X:\Markdown笔记\Java生态\02-JavaWeb\01HTML_CSS_JavaScript.assets\image-20211128185345888.png)
+![image-20211128185345888](\01HTML_CSS_JavaScript.assets\image-20211128185345888.png)
 
 #### 3.10 HTML列表
 
@@ -518,7 +518,7 @@ W3C制定了很多规范：
 </html>
 ```
 
-![image-20211128190918494](X:\Markdown笔记\Java生态\02-JavaWeb\01HTML_CSS_JavaScript.assets\image-20211128190918494.png)
+![image-20211128190918494](\01HTML_CSS_JavaScript.assets\image-20211128190918494.png)
 
 #### 3.11 HTML表单*
 
@@ -615,7 +615,7 @@ W3C制定了很多规范：
 </html>
 ```
 
-![image-20211128194258978](X:\Markdown笔记\Java生态\02-JavaWeb\01HTML_CSS_JavaScript.assets\image-20211128194258978.png)
+![image-20211128194258978](\01HTML_CSS_JavaScript.assets\image-20211128194258978.png)
 
 #### 3.12 用户注册的表单
 
@@ -702,7 +702,7 @@ W3C制定了很多规范：
 </html>
 ```
 
-![image-20211128201054520](X:\Markdown笔记\Java生态\02-JavaWeb\01HTML_CSS_JavaScript.assets\image-20211128201054520.png)
+![image-20211128201054520](\01HTML_CSS_JavaScript.assets\image-20211128201054520.png)
 
 #### 3.13 下拉列表支持多选
 
@@ -725,7 +725,7 @@ W3C制定了很多规范：
 </html>
 ```
 
-![image-20211128201415695](X:\Markdown笔记\Java生态\02-JavaWeb\01HTML_CSS_JavaScript.assets\image-20211128201415695.png)
+![image-20211128201415695](\01HTML_CSS_JavaScript.assets\image-20211128201415695.png)
 
 #### 3.14 file控件
 
@@ -752,7 +752,7 @@ W3C制定了很多规范：
 </html>
 ```
 
-![image-20211128202015506](X:\Markdown笔记\Java生态\02-JavaWeb\01HTML_CSS_JavaScript.assets\image-20211128202015506.png)
+![image-20211128202015506](\01HTML_CSS_JavaScript.assets\image-20211128202015506.png)
 
 #### 3.15 readonly和disabled
 
@@ -780,7 +780,7 @@ W3C制定了很多规范：
 </html>
 ```
 
-![image-20211128202950487](X:\Markdown笔记\Java生态\02-JavaWeb\01HTML_CSS_JavaScript.assets\image-20211128202950487.png)
+![image-20211128202950487](\01HTML_CSS_JavaScript.assets\image-20211128202950487.png)
 
 #### 3.16 input控件的maxlength属性
 
@@ -800,7 +800,7 @@ W3C制定了很多规范：
 </html>
 ```
 
-![image-20211128203407899](X:\Markdown笔记\Java生态\02-JavaWeb\01HTML_CSS_JavaScript.assets\image-20211128203407899.png)
+![image-20211128203407899](\01HTML_CSS_JavaScript.assets\image-20211128203407899.png)
 
 #### 3.17 HTML中元素的id属性
 
@@ -834,7 +834,7 @@ W3C制定了很多规范：
 </html>
 ```
 
-![image-20211128205134153](X:\Markdown笔记\Java生态\02-JavaWeb\01HTML_CSS_JavaScript.assets\image-20211128205134153.png)
+![image-20211128205134153](\01HTML_CSS_JavaScript.assets\image-20211128205134153.png)
 
 #### 3.18 HTML中的div和span
 
@@ -875,7 +875,7 @@ W3C制定了很多规范：
 </html>
 ```
 
-![image-20211128205341871](X:\Markdown笔记\Java生态\02-JavaWeb\01HTML_CSS_JavaScript.assets\image-20211128205341871.png)
+![image-20211128205341871](\01HTML_CSS_JavaScript.assets\image-20211128205341871.png)
 
 ------
 
@@ -1093,7 +1093,7 @@ W3C制定了很多规范：
 </html>
 ```
 
-<img src="X:\Markdown笔记\Java生态\02-JavaWeb\01HTML_CSS_JavaScript.assets\image-20211204144951032.png" alt="image-20211204144951032" style="zoom: 67%;" />
+<img src="\01HTML_CSS_JavaScript.assets\image-20211204144951032.png" alt="image-20211204144951032" style="zoom: 67%;" />
 
 #### 2.2 样式块
 
@@ -1178,7 +1178,7 @@ W3C制定了很多规范：
 </html>
 ```
 
-![image-20211204150453349](X:\Markdown笔记\Java生态\02-JavaWeb\01HTML_CSS_JavaScript.assets\image-20211204150453349.png)
+![image-20211204150453349](\01HTML_CSS_JavaScript.assets\image-20211204150453349.png)
 
 #### 2.3 引入外部独立的css文件
 
@@ -1212,7 +1212,7 @@ a{
 </html>
 ```
 
-![image-20211204151856109](X:\Markdown笔记\Java生态\02-JavaWeb\01HTML_CSS_JavaScript.assets\image-20211204151856109.png)
+![image-20211204151856109](\01HTML_CSS_JavaScript.assets\image-20211204151856109.png)
 
 #### 2.4 列表样式
 
@@ -1246,7 +1246,7 @@ a{
 </html>
 ```
 
-![image-20211204152255461](X:\Markdown笔记\Java生态\02-JavaWeb\01HTML_CSS_JavaScript.assets\image-20211204152255461.png)
+![image-20211204152255461](\01HTML_CSS_JavaScript.assets\image-20211204152255461.png)
 
 #### 2.5 CSS样式的绝对定位
 
@@ -1274,7 +1274,7 @@ a{
 </html>
 ```
 
-![image-20211204152712149](X:\Markdown笔记\Java生态\02-JavaWeb\01HTML_CSS_JavaScript.assets\image-20211204152712149.png)
+![image-20211204152712149](\01HTML_CSS_JavaScript.assets\image-20211204152712149.png)
 
 ------
 
@@ -1373,7 +1373,7 @@ a{
 </html>
 ```
 
-![image-20211204160942872](X:\Markdown笔记\Java生态\02-JavaWeb\01HTML_CSS_JavaScript.assets\image-20211204160942872.png)
+![image-20211204160942872](\01HTML_CSS_JavaScript.assets\image-20211204160942872.png)
 
 ##### 2.1.2 HTML中嵌入JS代码的第二种方式：脚本块
 

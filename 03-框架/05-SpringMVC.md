@@ -78,7 +78,7 @@ ch01-hello-springmvc: 第一个springmvc项目。
 
 ###### 3.1 新建 maven web 项目
 
-![image-20220302214201016](X:\Markdown笔记\Java生态\03-框架\05-SpringMVC.assets\image-20220302214201016.png)
+![image-20220302214201016](\05-SpringMVC.assets\image-20220302214201016.png)
 
 
 
@@ -223,17 +223,17 @@ ch01-hello-springmvc: 第一个springmvc项目。
 
    注册完毕后，可直接在服务器上发布运行。此时，访问浏览器页面，控制台均会抛出 FileNotFoundException 异常。即默认要从项目根下的 WEB-INF 目录下找名称为 【Servlet名称-servlet.xml】的配置文件。这里的“Servlet 名称”指的是注册中央调度器标签中指定的 Servlet 的 name 值。本例配置文件名为 springmvc-servlet.xml。
 
-   ![image-20220302221800071](X:\Markdown笔记\Java生态\03-框架\05-SpringMVC.assets\image-20220302221800071.png)
+   ![image-20220302221800071](\05-SpringMVC.assets\image-20220302221800071.png)
 
    而一般情况下，配置文件是放在类路径下，即 resources 目录下。所以，在注册中央调度器时，还需要为中央调度器设置查找 SpringMVC 配置文件路径，及文件名。
 
-   ![image-20220302221913339](X:\Markdown笔记\Java生态\03-框架\05-SpringMVC.assets\image-20220302221913339.png)
+   ![image-20220302221913339](\05-SpringMVC.assets\image-20220302221913339.png)
 
    打开 DispatcherServlet 的源码，其继承自 FrameworkServlet，而FrameworkServlet类中有一个属性 contextConfigLocation，用于设置 SpringMVC 配置文件的路径及文件名。该初始化参数的属性就来自于这里。
 
-   ![image-20220302222232122](X:\Markdown笔记\Java生态\03-框架\05-SpringMVC.assets\image-20220302222232122.png)
+   ![image-20220302222232122](\05-SpringMVC.assets\image-20220302222232122.png)
 
-   ![image-20220302222236350](X:\Markdown笔记\Java生态\03-框架\05-SpringMVC.assets\image-20220302222236350.png)
+   ![image-20220302222236350](\05-SpringMVC.assets\image-20220302222236350.png)
 
 
 
@@ -241,7 +241,7 @@ ch01-hello-springmvc: 第一个springmvc项目。
 
 在工程的类路径即 src 目录下创建 SpringMVC 的配置文件 springmvc.xml。该文件名可以任意命名。
 
-![image-20220302222659407](X:\Markdown笔记\Java生态\03-框架\05-SpringMVC.assets\image-20220302222659407.png)
+![image-20220302222659407](\05-SpringMVC.assets\image-20220302222659407.png)
 
 
 
@@ -383,13 +383,13 @@ springmvc请求的处理流程
   some.do---DispatcherServlet---MyController
 ```
 
-![image-20220303192620870](X:\Markdown笔记\Java生态\03-框架\05-SpringMVC.assets\image-20220303192620870.png)
+![image-20220303192620870](\05-SpringMVC.assets\image-20220303192620870.png)
 
-![image-20220303192625147](X:\Markdown笔记\Java生态\03-框架\05-SpringMVC.assets\image-20220303192625147.png)
+![image-20220303192625147](\05-SpringMVC.assets\image-20220303192625147.png)
 
 springMVC请求处理过程
 
-![springmvc](X:\Markdown笔记\Java生态\03-框架\05-SpringMVC.assets\springmvc.png)
+![springmvc](\05-SpringMVC.assets\springmvc.png)
 
 
 
@@ -438,13 +438,13 @@ SpringMVC 框架为了避免对于请求资源路径与扩展名上的冗余，�
 
 ###### 3.10 使用 SpringMVC 框架 web 请求处理顺序
 
-![image-20220303200208062](X:\Markdown笔记\Java生态\03-框架\05-SpringMVC.assets\image-20220303200208062.png)
+![image-20220303200208062](\05-SpringMVC.assets\image-20220303200208062.png)
 
 
 
 ##### 4 SpringMVC 的 MVC 组件
 
-![image-20220303200244538](X:\Markdown笔记\Java生态\03-框架\05-SpringMVC.assets\image-20220303200244538.png)
+![image-20220303200244538](\05-SpringMVC.assets\image-20220303200244538.png)
 
 
 
@@ -452,7 +452,7 @@ SpringMVC 框架为了避免对于请求资源路径与扩展名上的冗余，�
 
 ###### 5.1 流程图
 
-![image-20220303201039414](X:\Markdown笔记\Java生态\03-框架\05-SpringMVC.assets\image-20220303201039414.png)
+![image-20220303201039414](\05-SpringMVC.assets\image-20220303201039414.png)
 
 ###### 5.2 执行流程简单分析
 
@@ -620,7 +620,7 @@ public class MyController {
 - HttpSession 
 - 请求中所携带的请求参数（逐个接收、对象接收）
 
-![image-20220303205241346](X:\Markdown笔记\Java生态\03-框架\05-SpringMVC.assets\image-20220303205241346.png)
+![image-20220303205241346](\05-SpringMVC.assets\image-20220303205241346.png)
 
 
 
@@ -754,7 +754,7 @@ org.springframework.web.filter 包下的 CharacterEncodingFilter 类。
 
    字符集设置核心方法：
 
-   ![image-20220305140159864](X:\Markdown笔记\Java生态\03-框架\05-SpringMVC.assets\image-20220305140159864.png)
+   ![image-20220305140159864](\05-SpringMVC.assets\image-20220305140159864.png)
 
 
 
@@ -902,7 +902,7 @@ Step4：修改 show 页面
 资源视图解析器。此时处理器方法返回的字符串就是要跳转页面的文件名去掉文件扩展名后
 的部分。这个字符串与视图解析器中的 prefix、suffix 相结合，即可形成要访问的 URI。
 
-![image-20220305163657330](X:\Markdown笔记\Java生态\03-框架\05-SpringMVC.assets\image-20220305163657330.png)
+![image-20220305163657330](\05-SpringMVC.assets\image-20220305163657330.png)
 
 index 页面
 
@@ -1001,7 +1001,7 @@ Step2：引入 jQuery 库
 库。在 webapp下新建一个 Folder（文件夹），命名为 js，并将 jquery-3.6.0.js 文件放入其
 中。
 
-![image-20220306142227841](X:\Markdown笔记\Java生态\03-框架\05-SpringMVC.assets\image-20220306142227841.png)
+![image-20220306142227841](\05-SpringMVC.assets\image-20220306142227841.png)
 
 Step3：定义 index 页面
 
@@ -1152,7 +1152,7 @@ Map，List 等。但返回的对象不是作为逻辑视图出现的，而是作
    创建了七个 HttpMessageConverter 对象。也就是说，我们注册 <mvc:annotation-driven/ > ，就
    是为了让容器为我们创建 HttpMessageConverter 对象。
 
-   ![image-20220306145918905](X:\Markdown笔记\Java生态\03-框架\05-SpringMVC.assets\image-20220306145918905.png)
+   ![image-20220306145918905](\05-SpringMVC.assets\image-20220306145918905.png)
 
    HttpMessageConverter 接口 : HttpMessageConverter<T>是 Spring3.0 新添加的一个接口，
    负责将请求信息转换为一个对象（类型为 T），将对象（类型为 T）输出为响应信息
@@ -1574,20 +1574,20 @@ default这个servlet作用：
    <servlet-name/ >为 default。可以处理各种静态资源访问请求。该 Servlet 注册在 Tomcat 服务
    器的 web.xml 中。在 Tomcat 安装目录/conf/web.xml。
 
-   ![image-20220306165340345](X:\Markdown笔记\Java生态\03-框架\05-SpringMVC.assets\image-20220306165340345.png)
+   ![image-20220306165340345](\05-SpringMVC.assets\image-20220306165340345.png)
 
    
 
    只需要在 springmvc.xml 中添加<mvc:default-servlet-handler/ >标签即可。
 
-   ![image-20220306165704702](X:\Markdown笔记\Java生态\03-框架\05-SpringMVC.assets\image-20220306165704702.png)
+   ![image-20220306165704702](\05-SpringMVC.assets\image-20220306165704702.png)
 
    <mvc:default-servlet-handler/ >表示使用 DefaultServletHttpRequestHandler 处理器对象。
    而该处理器调用了 Tomcat 的 DefaultServlet 来处理静态资源的访问请求。
 
    当然了，要想使用<mvc: …/>标签，需要引入 mvc 约束
 
-   ![image-20220306165818200](X:\Markdown笔记\Java生态\03-框架\05-SpringMVC.assets\image-20220306165818200.png)
+   ![image-20220306165818200](\05-SpringMVC.assets\image-20220306165818200.png)
 
    该约束可从 Spring 帮助文档中搜索关键字 spring-mvc.xsd 即可获取：
 
@@ -1597,7 +1597,7 @@ default这个servlet作用：
 
    解决动态资源和静态资源冲突的问题，在 springmvc 配置文件中声明注解驱动
 
-   ![image-20220306170334023](X:\Markdown笔记\Java生态\03-框架\05-SpringMVC.assets\image-20220306170334023.png)
+   ![image-20220306170334023](\05-SpringMVC.assets\image-20220306170334023.png)
 
    
 
@@ -1607,15 +1607,15 @@ default这个servlet作用：
    ResourceHttpRequestHandler。并且添加了<mvc:resources/ >标签，专门用于解决静态资源无
    法访问的问题。需要在 springmvc 配置文件中添加如下形式的配置：
 
-   ![image-20220306172631758](X:\Markdown笔记\Java生态\03-框架\05-SpringMVC.assets\image-20220306172631758.png)
+   ![image-20220306172631758](\05-SpringMVC.assets\image-20220306172631758.png)
 
    
 
    解决动态资源和静态资源冲突的问题，在 springmvc 配置文件中声明注解驱动
 
-   ![image-20220306172715088](X:\Markdown笔记\Java生态\03-框架\05-SpringMVC.assets\image-20220306172715088.png)
+   ![image-20220306172715088](\05-SpringMVC.assets\image-20220306172715088.png)
 
-    ![image-20220306172937951](X:\Markdown笔记\Java生态\03-框架\05-SpringMVC.assets\image-20220306172937951.png)
+    ![image-20220306172937951](\05-SpringMVC.assets\image-20220306172937951.png)
 
     
 
@@ -1665,7 +1665,7 @@ default这个servlet作用：
 index.jsp--addStudent.jsp---student/addStudent.do( service的方法，调用dao的方法)--result.jsp
 ```
 
-![image-20220306175324876](X:\Markdown笔记\Java生态\03-框架\05-SpringMVC.assets\image-20220306175324876.png)
+![image-20220306175324876](\05-SpringMVC.assets\image-20220306175324876.png)
 
 
 
@@ -1726,7 +1726,7 @@ springmvc容器是spring容器的子容器，类似java中的继承。子可以�
 
 student 表
 
-![image-20220308190135375](X:\Markdown笔记\Java生态\03-框架\05-SpringMVC.assets\image-20220308190135375.png)
+![image-20220308190135375](\05-SpringMVC.assets\image-20220308190135375.png)
 
 
 
@@ -1863,7 +1863,7 @@ pom.xml
 
 ##### 4 定义包，组织程序的结构
 
-![image-20220310192026690](X:\Markdown笔记\Java生态\03-框架\05-SpringMVC.assets\image-20220310192026690.png)
+![image-20220310192026690](\05-SpringMVC.assets\image-20220310192026690.png)
 
 
 
@@ -2219,7 +2219,7 @@ public class StudentController {
 </html>
 ```
 
-![image-20220310193953091](X:\Markdown笔记\Java生态\03-框架\05-SpringMVC.assets\image-20220310193953091.png)
+![image-20220310193953091](\05-SpringMVC.assets\image-20220310193953091.png)
 
 
 
@@ -2260,7 +2260,7 @@ public class StudentController {
 </html>
 ```
 
-![image-20220310194015907](X:\Markdown笔记\Java生态\03-框架\05-SpringMVC.assets\image-20220310194015907.png)
+![image-20220310194015907](\05-SpringMVC.assets\image-20220310194015907.png)
 
 
 
@@ -2344,7 +2344,7 @@ result.jsp 结果页面，注册结果：${tips}
 </html>
 ```
 
-![image-20220310194104655](X:\Markdown笔记\Java生态\03-框架\05-SpringMVC.assets\image-20220310194104655.png)
+![image-20220310194104655](\05-SpringMVC.assets\image-20220310194104655.png)
 
 
 
@@ -2358,7 +2358,7 @@ result.jsp 结果页面，注册结果：${tips}
 注意，对于请求转发的页面，可以是WEB-INF中页面；而重定向的页面，是不能为 WEB-INF中页面的。因为重定向相当于用户再次发出一次请求，而用户是不能直接访问 WEB-INF 中资
 源的。
 
-![image-20220312200218987](X:\markdown笔记\java生态\03-框架\05-SpringMVC.assets\image-20220312200218987.png)
+![image-20220312200218987](\05-SpringMVC.assets\image-20220312200218987.png)
 
 ​		
 
@@ -2472,9 +2472,9 @@ hello.jsp
 </html>
 ```
 
-![image-20220312205020762](X:\markdown笔记\java生态\03-框架\05-SpringMVC.assets\image-20220312205020762.png)
+![image-20220312205020762](\05-SpringMVC.assets\image-20220312205020762.png)
 
-![image-20220312205043268](X:\markdown笔记\java生态\03-框架\05-SpringMVC.assets\image-20220312205043268.png)
+![image-20220312205043268](\05-SpringMVC.assets\image-20220312205043268.png)
 
 
 
@@ -2904,13 +2904,13 @@ public class MyInterceptor implements HandlerInterceptor {
 
 **afterCompletion 最后执行的方法，清除资源，例如在 Controller 方法中加入数据**
 
-![image-20220313195423029](X:\markdown笔记\java生态\03-框架\05-SpringMVC.assets\image-20220313195423029.png)
+![image-20220313195423029](\05-SpringMVC.assets\image-20220313195423029.png)
 
 
 
 拦截器中方法与处理器方法的执行顺序如下图：
 
-![image-20220313195454006](X:\markdown笔记\java生态\03-框架\05-SpringMVC.assets\image-20220313195454006.png)
+![image-20220313195454006](\05-SpringMVC.assets\image-20220313195454006.png)
 
 
 
@@ -3171,7 +3171,7 @@ public class MyInterceptor implements HandlerInterceptor {
 
    多个拦截器中方法与处理器方法的执行顺序如下图：
 
-   ![image-20220313202745230](X:\markdown笔记\java生态\03-框架\05-SpringMVC.assets\image-20220313202745230.png)
+   ![image-20220313202745230](\05-SpringMVC.assets\image-20220313202745230.png)
 
    从图中可以看出，只要有一个 preHandle()方法返回 false，则上部的执行链将被断开，
    其后续的处理器方法与 postHandle()方法将无法执行。但，无论执行链执行情况怎样，只要

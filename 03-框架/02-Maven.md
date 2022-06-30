@@ -542,7 +542,7 @@ idea中内置了maven，一般不使用内置的， 因为用内置修改maven�
 
    Local Repository :    本机仓库的目录位置
 
-   ![image-20220122204927025](X:\Markdown笔记\Java生态\03-框架\02-Maven.assets\image-20220122204927025.png)
+   ![image-20220122204927025](\02-Maven.assets\image-20220122204927025.png)
 
    --->Build Tools--->Maven--->Runner
 
@@ -556,7 +556,7 @@ idea中内置了maven，一般不使用内置的， 因为用内置修改maven�
 
    比较大， 使用 archetypeCatalog=internal，不用下载， 创建maven项目速度快。
 
-   ![image-20220122205122876](X:\Markdown笔记\Java生态\03-框架\02-Maven.assets\image-20220122205122876.png)
+   ![image-20220122205122876](\02-Maven.assets\image-20220122205122876.png)
 
 2. 配置以后新建工程的设置
 
@@ -577,15 +577,15 @@ idea中内置了maven，一般不使用内置的， 因为用内置修改maven�
 
    File-->New-->Module…：
 
-![image-20220123182153398](X:\Markdown笔记\Java生态\03-框架\02-Maven.assets\image-20220123182153398.png)
+![image-20220123182153398](\02-Maven.assets\image-20220123182153398.png)
 
 2. 填写工程名和存储路径以及 maven 工程的坐标
 
-![image-20220123182246000](X:\Markdown笔记\Java生态\03-框架\02-Maven.assets\image-20220123182246000.png)
+![image-20220123182246000](\02-Maven.assets\image-20220123182246000.png)
 
 3. 确定maven路径，点击finish
 
-![image-20220123182326605](X:\Markdown笔记\Java生态\03-框架\02-Maven.assets\image-20220123182326605.png)
+![image-20220123182326605](\02-Maven.assets\image-20220123182326605.png)
 
 4. pom.xml
 
@@ -674,13 +674,13 @@ idea中内置了maven，一般不使用内置的， 因为用内置修改maven�
 
 ##### 3.3 IDEA创建Maven版Web工程
 
-![image-20220123190006170](X:\Markdown笔记\Java生态\03-框架\02-Maven.assets\image-20220123190006170.png)
+![image-20220123190006170](\02-Maven.assets\image-20220123190006170.png)
 
-![image-20220123190009982](X:\Markdown笔记\Java生态\03-框架\02-Maven.assets\image-20220123190014870.png)
+![image-20220123190009982](\02-Maven.assets\image-20220123190014870.png)
 
-![image-20220123190022508](X:\Markdown笔记\Java生态\03-框架\02-Maven.assets\image-20220123190022508.png)
+![image-20220123190022508](\02-Maven.assets\image-20220123190022508.png)
 
-![image-20220123190229821](X:\Markdown笔记\Java生态\03-框架\02-Maven.assets\image-20220123190229821.png)
+![image-20220123190229821](\02-Maven.assets\image-20220123190229821.png)
 
 
 
@@ -717,25 +717,25 @@ idea中内置了maven，一般不使用内置的， 因为用内置修改maven�
 
 项目结构---> modules ---> + ---> import module
 
-![image-20220123193845364](X:\Markdown笔记\Java生态\03-框架\02-Maven.assets\image-20220123193845364.png)
+![image-20220123193845364](\02-Maven.assets\image-20220123193845364.png)
 
 
 
 选择要导入的 Module
 
-![image-20220123193933678](X:\Markdown笔记\Java生态\03-框架\02-Maven.assets\image-20220123193933678.png)
+![image-20220123193933678](\02-Maven.assets\image-20220123193933678.png)
 
 
 
 选择导入方式
 
-![image-20220123194028805](X:\Markdown笔记\Java生态\03-框架\02-Maven.assets\image-20220123194028805.png)
+![image-20220123194028805](\02-Maven.assets\image-20220123194028805.png)
 
 
 
 设置依赖管理
 
-![image-20220123194326407](X:\Markdown笔记\Java生态\03-框架\02-Maven.assets\image-20220123194326407.png)
+![image-20220123194326407](\02-Maven.assets\image-20220123194326407.png)
 
 
 

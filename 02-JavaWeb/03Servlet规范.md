@@ -299,7 +299,7 @@ public class TwoServlet extends HttpServlet {
 
 启动Tomcat后
 
-![image-20211212192519808](X:\Markdown笔记\Java生态\02-JavaWeb\03Servlet规范.assets\image-20211212192519808.png)
+![image-20211212192519808](\03Servlet规范.assets\image-20211212192519808.png)
 
 ### 五、HttpServletResponse接口
 
@@ -778,7 +778,7 @@ public class JdbcUtil {
 
 ##### 2、用户信息注册流程图
 
-![image-20211218201009978](X:\Markdown笔记\Java生态\02-JavaWeb\03Servlet规范.assets\image-20211218201009978.png)
+![image-20211218201009978](\03Servlet规范.assets\image-20211218201009978.png)
 
 ##### 3、User_Add开发
 
@@ -904,15 +904,15 @@ public class UserDao {
 }
 ```
 
-![image-20211218210452287](X:\Markdown笔记\Java生态\02-JavaWeb\03Servlet规范.assets\image-20211218210452287.png)
+![image-20211218210452287](\03Servlet规范.assets\image-20211218210452287.png)
 
-![image-20211218210456428](X:\Markdown笔记\Java生态\02-JavaWeb\03Servlet规范.assets\image-20211218210456428.png)
+![image-20211218210456428](\03Servlet规范.assets\image-20211218210456428.png)
 
-![image-20211218210535141](X:\Markdown笔记\Java生态\02-JavaWeb\03Servlet规范.assets\image-20211218210535141.png)
+![image-20211218210535141](\03Servlet规范.assets\image-20211218210535141.png)
 
 ##### 4、user_Find开发
 
-![image-20211218212802780](X:\Markdown笔记\Java生态\02-JavaWeb\03Servlet规范.assets\image-20211218212802780.png)
+![image-20211218212802780](\03Servlet规范.assets\image-20211218212802780.png)
 
 ```java
 package com.example.controller;
@@ -991,7 +991,7 @@ public class UserFindServlet extends HttpServlet {//别名：/user/find
     }
 ```
 
-![image-20211218215352438](X:\Markdown笔记\Java生态\02-JavaWeb\03Servlet规范.assets\image-20211218215352438.png)
+![image-20211218215352438](\03Servlet规范.assets\image-20211218215352438.png)
 
 ##### 5、导航页面
 
@@ -1052,9 +1052,9 @@ public class UserFindServlet extends HttpServlet {//别名：/user/find
 </html>
 ```
 
-![image-20211218222533272](X:\Markdown笔记\Java生态\02-JavaWeb\03Servlet规范.assets\image-20211218222533272.png)
+![image-20211218222533272](\03Servlet规范.assets\image-20211218222533272.png)
 
-![image-20211218222537333](X:\Markdown笔记\Java生态\02-JavaWeb\03Servlet规范.assets\image-20211218222537333.png)
+![image-20211218222537333](\03Servlet规范.assets\image-20211218222537333.png)
 
 ##### 6、user_Delete开发
 
@@ -1158,13 +1158,13 @@ public class UserDeleteServlet extends HttpServlet {//别名：/user/delete
     }
 ```
 
-![image-20211218225518745](X:\Markdown笔记\Java生态\02-JavaWeb\03Servlet规范.assets\image-20211218225518745.png)
+![image-20211218225518745](\03Servlet规范.assets\image-20211218225518745.png)
 
-![image-20211218225526841](X:\Markdown笔记\Java生态\02-JavaWeb\03Servlet规范.assets\image-20211218225526841.png)
+![image-20211218225526841](\03Servlet规范.assets\image-20211218225526841.png)
 
 ##### 7、登录验证
 
-![image-20211219153610753](X:\Markdown笔记\Java生态\02-JavaWeb\03Servlet规范.assets\image-20211219153610753.png)
+![image-20211219153610753](\03Servlet规范.assets\image-20211219153610753.png)
 
 ```java
 package com.example.controller;
@@ -1292,9 +1292,9 @@ public class LoginServlet extends HttpServlet {//别名:/myWeb/login
 </html>
 ```
 
-![image-20211219160754847](X:\Markdown笔记\Java生态\02-JavaWeb\03Servlet规范.assets\image-20211219160754847.png)
+![image-20211219160754847](\03Servlet规范.assets\image-20211219160754847.png)
 
-![image-20211219160807770](X:\Markdown笔记\Java生态\02-JavaWeb\03Servlet规范.assets\image-20211219160807770.png)
+![image-20211219160807770](\03Servlet规范.assets\image-20211219160807770.png)
 
 ### 九、欢迎资源文件
 
@@ -1404,7 +1404,7 @@ public class LoginServlet extends HttpServlet {//别名:/myWeb/login
      }
      ```
 
-     ![image-20211219170353080](X:\Markdown笔记\Java生态\02-JavaWeb\03Servlet规范.assets\image-20211219170353080.png)
+     ![image-20211219170353080](\03Servlet规范.assets\image-20211219170353080.png)
 
 ### 十一、多个Servlet之间调用规则
 
@@ -1430,7 +1430,7 @@ public class LoginServlet extends HttpServlet {//别名:/myWeb/login
 
    ​	在浏览器接收到响应包之后，会读取到302状态。此时浏览器自动根据响应头中location属性地址发起第二次请求，访问TwoServlet去完成请求中剩余任务
 
-   ![image-20211219172245489](X:\Markdown笔记\Java生态\02-JavaWeb\03Servlet规范.assets\image-20211219172245489.png)
+   ![image-20211219172245489](\03Servlet规范.assets\image-20211219172245489.png)
 
 2. 实现命令：
 
@@ -1481,7 +1481,7 @@ public class LoginServlet extends HttpServlet {//别名:/myWeb/login
 
    ​	用户第一次通过手动方式要求浏览器访问OneServlet；OneServlet工作完毕后，通过当前的请求对象代替浏览器向Tomcat发送请求，申请调用TwoServlet。Tomcat在接收到这个请求之后，自动调用TwoServlet来完成剩余任务。
 
-   ![image-20211219174803969](X:\Markdown笔记\Java生态\02-JavaWeb\03Servlet规范.assets\image-20211219174803969.png)
+   ![image-20211219174803969](\03Servlet规范.assets\image-20211219174803969.png)
 
 2. 实现命令：请求对象代替浏览器向Tomcat发送请求
 
@@ -1552,7 +1552,7 @@ public class LoginServlet extends HttpServlet {//别名:/myWeb/login
 
    ​	每一个网站都存在一个全局作用域对象。这个全局作用域对象【相当于】一个Map，在这个网站中OneServlet可以将一个数据存入到全局作用域对象，当前网站中其他Servlet此时都可以从全局作用域对象得到这个数据进行使用
 
-   ![image-20211219193510826](X:\Markdown笔记\Java生态\02-JavaWeb\03Servlet规范.assets\image-20211219193510826.png)
+   ![image-20211219193510826](\03Servlet规范.assets\image-20211219193510826.png)
 
 3.  全局作用域对象生命周期
 
@@ -1598,7 +1598,7 @@ public class LoginServlet extends HttpServlet {//别名:/myWeb/login
     	- 用户通过浏览器第一次向myWeb网站发送请求申请OneServlet。OneServlet在运行期间创建一个Cookie存储与当前用户相关数据，OneServlet工作完毕后，【将Cookie写入到响应头】交还给当前浏览器。
    - 浏览器收到响应响应包之后，将cookie存储在浏览器的缓存，一段时间之后，用户通过【**同一个浏览器**】再次向【**myWeb网站**】发送请求申请TwoServlet时。【浏览器需要无条件的将myWeb网站之前推送过来的Cookie，写入到请求头】发送过去，此时TwoServlet在运行时，就可以通过读取请求头中cookie中信息，得到OneServlet提供的共享数据。
    
-   ![image-20211225153020922](X:\Markdown笔记\Java生态\02-JavaWeb\03Servlet规范.assets\image-20211225153020922.png)
+   ![image-20211225153020922](\03Servlet规范.assets\image-20211225153020922.png)
    
 3. 实现命令 
 
@@ -1651,7 +1651,7 @@ public class LoginServlet extends HttpServlet {//别名:/myWeb/login
 
 4. 应用实例_订餐会员卡
 
-   ![image-20211225161218775](X:\Markdown笔记\Java生态\02-JavaWeb\03Servlet规范.assets\image-20211225161218775.png)
+   ![image-20211225161218775](\03Servlet规范.assets\image-20211225161218775.png)
 
    ```java
    public class OneServlet extends HttpServlet {//别名：myWeb/one
@@ -1786,11 +1786,11 @@ public class LoginServlet extends HttpServlet {//别名:/myWeb/login
    </html>
    ```
 
-   ![image-20211225170343232](X:\Markdown笔记\Java生态\02-JavaWeb\03Servlet规范.assets\image-20211225170343232.png)
+   ![image-20211225170343232](\03Servlet规范.assets\image-20211225170343232.png)
 
-   ![image-20211225170400083](X:\Markdown笔记\Java生态\02-JavaWeb\03Servlet规范.assets\image-20211225170400083.png)
+   ![image-20211225170400083](\03Servlet规范.assets\image-20211225170400083.png)
 
-   ![image-20211225170406166](X:\Markdown笔记\Java生态\02-JavaWeb\03Servlet规范.assets\image-20211225170406166.png)
+   ![image-20211225170406166](\03Servlet规范.assets\image-20211225170406166.png)
 
 5. Cookie生命周期
 
@@ -1854,7 +1854,7 @@ public class LoginServlet extends HttpServlet {//别名:/myWeb/login
 
 4.  应用实例_模拟购物车功能
 
-   ![image-20211225174756573](X:\Markdown笔记\Java生态\02-JavaWeb\03Servlet规范.assets\image-20211225174756573.png)
+   ![image-20211225174756573](\03Servlet规范.assets\image-20211225174756573.png)
 
    ```java
    public class OneServlet extends HttpServlet {//别名：/one
@@ -1937,11 +1937,11 @@ public class LoginServlet extends HttpServlet {//别名:/myWeb/login
    </html>
    ```
 
-   ![image-20211225182035170](X:\Markdown笔记\Java生态\02-JavaWeb\03Servlet规范.assets\image-20211225182035170.png)
+   ![image-20211225182035170](\03Servlet规范.assets\image-20211225182035170.png)
 
 5.  Http服务器如何将用户与HttpSession关联起来
 
-   ![image-20211225183347098](X:\Markdown笔记\Java生态\02-JavaWeb\03Servlet规范.assets\image-20211225183347098.png)
+   ![image-20211225183347098](\03Servlet规范.assets\image-20211225183347098.png)
 
 6. getSession()与getSession(false) 
 
@@ -2525,7 +2525,7 @@ public class LoginServlet extends HttpServlet {//别名:/myWeb/login
 
 5. 在线考试管理系统_过滤器防止用户恶意登录行为
 
-   ![image-20211226171837812](X:\Markdown笔记\Java生态\02-JavaWeb\03Servlet规范.assets\image-20211226171837812.png)
+   ![image-20211226171837812](\03Servlet规范.assets\image-20211226171837812.png)
 
 ```java
 public class LoginServlet extends HttpServlet {
@@ -2593,7 +2593,7 @@ public class UserFindServlet extends HttpServlet {
 }
 ```
 
-![image-20211226173218042](X:\Markdown笔记\Java生态\02-JavaWeb\03Servlet规范.assets\image-20211226173218042.png)
+![image-20211226173218042](\03Servlet规范.assets\image-20211226173218042.png)
 
 ```java
 public class LoginServlet extends HttpServlet {
