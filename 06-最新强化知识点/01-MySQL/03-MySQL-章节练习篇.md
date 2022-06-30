@@ -1,10 +1,10 @@
 # MySQL_章节练习篇
 
-讲师：尚硅谷-宋红康（江湖人称：康师傅）
-
-尚硅谷官网：http://www.atguigu.com
-
-视频链接：https://www.bilibili.com/video/BV1iq4y1u7vj?spm_id_from=333.337.search-card.all.click
+> 讲师：尚硅谷-宋红康（江湖人称：康师傅）
+>
+> 尚硅谷官网：[http://www.atguigu.com](http://www.atguigu.com/)
+>
+> 视频链接：https://www.bilibili.com/video/BV1iq4y1u7vj?spm_id_from=333.337.search-card.all.click
 
 ------
 
@@ -55,7 +55,7 @@
 
   修改完以后，需要重启服务。
 
-  ```mysql
+  ```shell
   net stop mysql服务名;
   net start mysql服务名;
   ```
