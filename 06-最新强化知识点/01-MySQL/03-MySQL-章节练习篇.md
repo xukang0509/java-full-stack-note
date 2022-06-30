@@ -1,0 +1,1664 @@
+# MySQL_章节练习篇
+
+讲师：尚硅谷-宋红康（江湖人称：康师傅）
+
+尚硅谷官网：http://www.atguigu.com
+
+视频链接：https://www.bilibili.com/video/BV1iq4y1u7vj?spm_id_from=333.337.search-card.all.click
+
+------
+
+## 第00章、MySQL环境搭建
+
+**1.安装好MySQL之后在windows系统中哪些位置能看到MySQL?**
+
+- MySQL DBMS软件的安装位置。 D:\develop_tools\MySQL\MySQL Server 8.0
+- MySQL 数据库文件的存放位置。 C:\ProgramData\MySQL\MySQL Server 8.0\Data
+- MySQL DBMS 的配置文件。 C:\ProgramData\MySQL\MySQL Server 8.0\my.ini
+- MySQL的服务（要想通过客户端能够访问MySQL的服务器，必须保证服务是开启状态的）
+- MySQL的path环境变量
+
+
+
+**2.卸载MySQL主要卸载哪几个位置的内容？**
+
+- 使用控制面板的软件卸载，去卸载MySQL DBMS软件的安装位置。
+
+  D:\develop_tools\MySQL\MySQL Server 8.0
+
+- 手动删除数据库文件。 C:\ProgramData\MySQL\MySQL Server 8.0\Data
+- MySQL的环境变量
+- MySQL的服务进入注册表删除。（ **regedit** ）
+- 务必重启电脑
+
+
+
+**3.能够独立完成MySQL8.0、MySQL5.7版本的下载、安装、配置 （掌握）**
+
+
+
+**4.MySQL5.7在配置完以后，如何修改配置文件？**
+
+- 为什么要修改my.ini文件？ 默认的数据库使用的字符集是latin1。我们需要修改为：utf8
+
+- 修改哪些信息？
+
+  ```ini
+  [mysql] #大概在63行左右，在其下添加
+  ...
+  default-character-set=utf8 #默认字符集
+  [mysqld] # 大概在76行左右，在其下添加
+  ...
+  character-set-server=utf8
+  collation-server=utf8_general_ci
+  ```
+
+  修改完以后，需要重启服务。
+
+  ```mysql
+  net stop mysql服务名;
+  net start mysql服务名;
+  ```
+
+  
+
+**5.熟悉常用的数据库管理和操作的工具**
+
+- 方式1：windows自带的cmd
+- 方式2：mysql数据库自带的命令行窗口
+- 方式3：图形化管理工具：Navicat、SQLyog、dbeaver等。
+
+------
+
+## 第01章、数据库概述
+
+**1.说说你了解的常见的数据库**
+
+Oracle、MySQl、SQL Server、DB2、PGSQL；Redis、MongoDB、ES.....
+
+
+
+**2.谈谈你对MySQL历史、特点的理解**
+
+- 历史：
+  - 由瑞典的MySQL AB 公司创立，1995开发出的MySQL
+  - 2008年，MySQL被SUN公司收购
+  - 2009年，Oracle收购SUN公司，进而Oracle就获取了MySQL
+  - 2016年，MySQL8.0.0版本推出
+
+- 特点：
+  - 开源的、关系型的数据库
+  - 支持千万级别数据量的存储，大型的数据库
+
+
+
+**3.说说你对DB、DBMS、SQL的理解**
+
+DB：database，看做是数据库文件。 （类似于：.doc、.txt、.mp3、.avi、。。。）
+
+DBMS：数据库管理系统。（类似于word工具、wps工具、记事本工具、qq影音播放器等）
+
+MySQL数据库服务器中安装了MySQL DBMS,使用MySQL DBMS 来管理和操作DB，使用的是SQL语言。
+
+
+
+**4.你知道哪些非关系型数据库的类型呢？（了解）**
+
+- 键值型数据库：Redis
+- 文档型数据库：MongoDB
+- 搜索引擎数据库：ES、Solr
+- 列式数据库：HBase
+- 图形数据库：InfoGrid
+
+
+
+**5.表与表的记录之间存在哪些关联关**
+
+- ORM思想。（了解）
+- 表与表的记录之间的关系：一对一关系、一对多关系、多对多关系、自关联 （了解）
+
+------
+
+## 第02章、基本的SELECT语句
+
+```sql
+# 1.查询员工12个月的工资（基本加奖金）总和，并起别名为ANNUAL SALARY
+SELECT 
+	employee_id, 
+	last_name,
+	salary * (1 + IFNULL(commission_pct, 0)) * 12 AS "ANNUAL SALARY"
+FROM 
+	employees;
+
+# 2.查询employees表中去除重复的job_id以后的数据
+SELECT 
+	DISTINCT job_id 
+FROM 
+	employees;
+
+# 3.查询工资大于12000的员工姓名和工资
+SELECT 
+	last_name, 
+	salary
+FROM 
+	employees
+WHERE 
+	salary > 12000;
+
+# 4.查询员工号为176的员工的姓名和部门号
+SELECT 
+	last_name, 
+	department_id
+FROM 
+	employees
+WHERE 
+	employee_id = 176;
+
+# 5.显示表 departments 的结构，并查询其中的全部数据
+DESCRIBE departments;
+
+SELECT * FROM departments;
+```
+
+------
+
+## 第03章、运算符
+
+```mysql
+# 1.选择工资不在5000到12000的员工的姓名和工资
+SELECT 
+	last_name,
+	salary 
+FROM 
+	employees
+WHERE 
+	salary NOT BETWEEN 5000 AND 12000;
+	# salary < 5000 OR salary > 12000;
+
+# 2.选择在20或50号部门工作的员工姓名和部门号
+SELECT 
+	last_name,
+	department_id 
+FROM 
+	employees
+WHERE 
+	department_id IN(20,50);
+	# department_id = 20 OR department_id = 50;
+
+# 3.选择公司中没有管理者的员工姓名及job_id
+SELECT 
+	last_name,
+	job_id 
+FROM 
+	employees
+WHERE 
+	manager_id is NULL;
+	# manager_id <=> NULL;
+
+# 4.选择公司中有奖金的员工姓名，工资和奖金级别
+SELECT 
+	last_name,
+	salary,
+	commission_pct 
+FROM 
+	employees
+WHERE 
+	commission_pct IS NOT NULL;
+
+# 5.选择员工姓名的第三个字母是a的员工姓名
+SELECT 
+	last_name
+FROM 
+	employees
+WHERE 
+	last_name LIKE '__a%';
+
+# 6.选择姓名中有字母a和k的员工姓名
+SELECT 
+	last_name
+FROM 
+	employees
+WHERE 
+	last_name LIKE '%a%' AND last_name LIKE '%k%';
+	# last_name LIKE '%a%k%' OR last_name LIKE '%k%a%';
+
+# 7.显示出表 employees 表中 first_name 以 'e'结尾的员工信息
+SELECT 
+	employee_id,
+	first_name,
+	last_name
+FROM 
+	employees
+WHERE 
+	first_name LIKE '%e';
+	# first_name REGEXP 'e$';
+
+# 8.显示出表 employees 部门编号在 80-100 之间的姓名、工种
+SELECT 
+	last_name,
+	job_id 
+FROM 
+	employees 
+WHERE 
+	department_id BETWEEN 80 AND 100;
+
+# 9.显示出表 employees 的 manager_id 是 100,101,110 的员工姓名、工资、管理者id
+SELECT 
+	last_name,
+	salary,
+	manager_id
+FROM 
+	employees
+WHERE 
+	manager_id IN(100,101,110);
+```
+
+------
+
+## 第04章、排序与分页
+
+```mysql
+# 1. 查询员工的姓名和部门号和年薪，按年薪降序，按姓名升序显示
+SELECT 
+	last_name,
+	department_id,
+	salary * 12 annualSalary 
+FROM 
+	employees
+ORDER BY 
+	annualSalary DESC,
+	last_name ASC;
+
+# 2. 选择工资不在 8000 到 17000 的员工的姓名和工资，按工资降序，显示第21到40位置的数据
+SELECT 
+	last_name,
+	salary
+FROM 
+	employees
+WHERE 
+	salary NOT BETWEEN 8000 AND 17000
+ORDER BY 
+	salary DESC
+LIMIT 
+	20,20;
+
+# 3. 查询邮箱中包含 e 的员工信息，并先按邮箱的字节数降序，再按部门号升序
+SELECT
+	last_name,
+	email,
+	department_id
+FROM 
+	employees
+WHERE 
+	email LIKE '%e%'
+	# email REGEXP '[e]'
+ORDER BY 
+	LENGTH(email) DESC, 
+	department_id ASC;
+```
+
+------
+
+## 第05章、多表查询
+
+多表查询-1
+
+```mysql
+# 1.显示所有员工的姓名，部门号和部门名称。
+SELECT 
+	e.last_name, d.department_id, d.department_name
+FROM 
+	employees e
+LEFT JOIN 
+	departments d
+ON 
+	e.department_id = d.department_id;
+
+# 2.查询90号部门员工的job_id和90号部门的location_id
+SELECT 
+	e.job_id, d.location_id
+FROM 
+	employees e
+JOIN 
+	departments d
+ON 
+	e.department_id = d.department_id
+WHERE 
+	e.department_id = 90;
+
+# 3.选择所有有奖金的员工的 last_name , department_name , location_id , city
+SELECT e.last_name, d.department_name, l.location_id, l.city
+FROM employees e
+LEFT JOIN departments d ON e.department_id = d.department_id
+LEFT JOIN locations l ON d.location_id = l.location_id
+WHERE commission_pct IS NOT NULL;
+
+# 4.选择city在Toronto工作的员工的 last_name , job_id , department_id , department_name
+SELECT e.last_name, e.job_id, d.department_id, d.department_name
+FROM employees e
+JOIN departments d on e.department_id = d.department_id
+JOIN locations l ON d.location_id = l.location_id
+WHERE l.city = "Toronto";
+
+# 5.查询员工所在的部门名称、部门地址、姓名、工作、工资，其中员工所在部门的部门名称为’Executive’
+SELECT d.department_name, l.street_address, e.last_name, e.job_id, e.salary
+FROM employees e
+JOIN departments d on e.department_id = d.department_id
+JOIN locations l ON d.location_id = l.location_id
+WHERE d.department_name = "Executive";
+
+# 6.选择指定员工的姓名，员工号，以及他的管理者的姓名和员工号，结果类似于下面的格式
+/*
+employees Emp# manager Mgr#
+kochhar   101  king    100
+*/
+SELECT 
+	worker.last_name "employees",
+	worker.employee_id "Emp#",
+	manager.last_name "manager",
+	manager.employee_id "Mgr#"
+FROM 
+	employees worker
+LEFT JOIN 
+	employees manager 
+ON 
+	worker.manager_id = manager.employee_id;
+
+# 7.查询哪些部门没有员工
+# 方式1
+SELECT 
+	d.department_id, d.department_name
+FROM 
+	employees e
+RIGHT JOIN 
+	departments d
+on 
+	e.department_id = d.department_id
+WHERE 
+	e.department_id IS NULL;
+# 方式2
+SELECT 
+	d.department_id, d.department_name
+FROM 
+	departments d
+WHERE NOT EXISTS(
+	SELECT * FROM employees e
+	WHERE d.department_id = e.department_id
+);
+
+# 8. 查询哪个城市没有部门
+SELECT 
+	l.location_id, l.city
+FROM 
+	departments d
+RIGHT JOIN 
+	locations l
+ON 
+	d.location_id = l.location_id
+WHERE 
+	d.location_id IS NULL;
+
+# 9. 查询部门名为 Sales 或 IT 的员工信息
+SELECT 
+	e.employee_id, e.last_name, e.salary, d.department_name
+FROM 
+	employees e
+JOIN 
+	departments d
+ON 
+	e.department_id = d.department_id
+WHERE 
+	d.department_name IN("Sales", "IT");
+```
+
+多表查询-2
+
+```mysql
+储备：建表操作：
+CREATE TABLE `t_dept` (
+`id` INT(11) NOT NULL AUTO_INCREMENT,
+`deptName` VARCHAR(30) DEFAULT NULL,
+`address` VARCHAR(40) DEFAULT NULL,
+PRIMARY KEY (`id`)
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `t_emp` (
+`id` INT(11) NOT NULL AUTO_INCREMENT,
+`name` VARCHAR(20) DEFAULT NULL,
+`age` INT(3) DEFAULT NULL,
+`deptId` INT(11) DEFAULT NULL,
+empno int not null,
+PRIMARY KEY (`id`),
+KEY `idx_dept_id` (`deptId`)
+#CONSTRAINT `fk_dept_id` FOREIGN KEY (`deptId`) REFERENCES `t_dept` (`id`)
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+INSERT INTO t_dept(deptName,address) VALUES('华山','华山');
+INSERT INTO t_dept(deptName,address) VALUES('丐帮','洛阳');
+INSERT INTO t_dept(deptName,address) VALUES('峨眉','峨眉山');
+INSERT INTO t_dept(deptName,address) VALUES('武当','武当山');
+INSERT INTO t_dept(deptName,address) VALUES('明教','光明顶');
+INSERT INTO t_dept(deptName,address) VALUES('少林','少林寺');
+INSERT INTO t_emp(NAME,age,deptId,empno) VALUES('风清扬',90,1,100001);
+INSERT INTO t_emp(NAME,age,deptId,empno) VALUES('岳不群',50,1,100002);
+INSERT INTO t_emp(NAME,age,deptId,empno) VALUES('令狐冲',24,1,100003);
+INSERT INTO t_emp(NAME,age,deptId,empno) VALUES('洪七公',70,2,100004);
+INSERT INTO t_emp(NAME,age,deptId,empno) VALUES('乔峰',35,2,100005);
+INSERT INTO t_emp(NAME,age,deptId,empno) VALUES('灭绝师太',70,3,100006);
+INSERT INTO t_emp(NAME,age,deptId,empno) VALUES('周芷若',20,3,100007);
+INSERT INTO t_emp(NAME,age,deptId,empno) VALUES('张三丰',100,4,100008);
+INSERT INTO t_emp(NAME,age,deptId,empno) VALUES('张无忌',25,5,100009);
+INSERT INTO t_emp(NAME,age,deptId,empno) VALUES('韦小宝',18,null,100010);
+```
+
+```mysql
+#1.所有有门派的人员信息 （ A、B两表共有）
+SELECT 
+	*  
+FROM 
+	t_emp e 
+INNER JOIN 
+	t_dept d 
+ON 
+	e.deptId = d.id;
+
+#2.列出所有用户，并显示其机构信息（A的全集）
+SELECT e.`name`, d.deptName 
+FROM t_emp e
+LEFT JOIN t_dept d
+ON e.deptId = d.id;
+
+#3.列出所有门派（B的全集）
+SELECT * from 
+
+#4.所有不入门派的人员（A的独有）
+SELECT *
+FROM t_emp e
+LEFT JOIN t_dept d
+ON e.deptId = d.id
+WHERE d.id IS NULL;
+
+#5.所有没人入的门派（B的独有）
+SELECT *
+FROM t_emp e
+RIGHT JOIN t_dept d
+ON e.deptId = d.id
+WHERE e.deptId IS NULL;
+
+#6.列出所有人员和机构的对照关系 (AB全有)
+#MySQL Full Join的实现 因为MySQL不支持FULL JOIN,下面是替代方法
+# left join + union(可去除重复数据)+ right join
+SELECT *
+FROM t_emp e LEFT JOIN t_dept d
+ON e.deptId = d.id
+
+UNION
+
+SELECT *
+FROM t_emp e RIGHT JOIN t_dept d
+ON e.deptId = d.id；
+
+#7.列出所有没入派的人员和没人入的门派（A的独有+B的独有）
+SELECT *
+FROM t_emp e
+LEFT JOIN t_dept d
+ON e.deptId = d.id
+WHERE d.id IS NULL;
+
+UNION ALL
+
+SELECT *
+FROM t_emp e
+RIGHT JOIN t_dept d
+ON e.deptId = d.id
+WHERE e.deptId IS NULL;
+```
+
+------
+
+## 第06章、单行函数
+
+```mysql
+# 1.显示系统时间(注：日期+时间)
+SELECT NOW() FROM DUAL;
+SELECT SYSDATE() FROM DUAL;
+
+# 2.查询员工号，姓名，工资，以及工资提高百分之20%后的结果（new salary）
+SELECT 
+	employee_id,
+	last_name,
+	salary,
+	salary*(1+0.2) "new salary"
+FROM 
+	employees;
+
+# 3.将员工的姓名按首字母排序，并写出姓名的长度（length）
+SELECT 
+	last_name, 
+	LENGTH(last_name)
+FROM 
+	employees 
+ORDER BY 
+	last_name ASC;
+
+# 4.查询员工id,last_name,salary，并作为一个列输出，别名为OUT_PUT
+SELECT 
+	CONCAT(employee_id,",",last_name,",",salary) "OUT_PUT"
+FROM 
+	employees;
+
+# 5.查询公司各员工工作的年数、工作的天数，并按工作年数的降序排序
+SELECT 
+	YEAR(NOW()) - YEAR(hire_date)  "工作年数",
+	DATEDIFF(NOW(), hire_date) "工作天数"
+FROM 
+	employees
+ORDER BY
+	"工作年数" DESC;
+
+# 6.查询员工姓名，hire_date , department_id，满足以下条件：雇用时间在1997年之后，department_id为80 或 90 或110, commission_pct不为空
+SELECT 
+	last_name, hire_date, department_id
+FROM 
+	employees
+WHERE 
+	YEAR(hire_date) >= 1997 
+AND
+	department_id IN(80, 90, 110)
+AND
+	commission_pct IS NOT NULL;
+
+# 7.查询公司中入职超过10000天的员工姓名、入职时间
+SELECT 
+	last_name, hire_date
+FROM 
+	employees
+WHERE
+	DATEDIFF(NOW(), hire_date) > 10000;
+```
+
+```mysql
+# 8.做一个查询，产生下面的结果
+# <last_name> earns <salary> monthly but wants <salary*3>
+SELECT 
+	CONCAT(last_name," earns ",TRUNCATE(salary, 0)," monthly but wants ",TRUNCATE(salary*3, 0)) "Dream Salary"
+FROM 
+	employees;
+```
+
+![image-20220614210115813](03-MySQL-章节练习篇.assets/image-20220614210115813.png)
+
+```mysql
+# 9.使用case-when，按照下面的条件：
+/*
+job         grade
+AD_PRES     A
+ST_MAN      B
+IT_PROG     C
+SA_REP      D
+ST_CLERK    E
+其余的均为F
+*/
+SELECT 
+	last_name "Last_name",
+	job_id "Job_id",
+	CASE job_id
+		WHEN 'AD_PRES' THEN 'A'
+		WHEN 'ST_MAN' THEN 'B'
+		WHEN 'IT_PROG' THEN 'C'
+		WHEN 'SA_REP' THEN 'D'
+		WHEN 'ST_CLERK' THEN 'E'
+		ELSE 'F' END "Grade"
+FROM
+	employees;
+```
+
+![image-20220614210207940](03-MySQL-章节练习篇.assets/image-20220614210207940.png)
+
+------
+
+## 第07章、聚合函数
+
+```mysql
+# 1.where子句可否使用组函数进行过滤?
+NO
+
+# 2.查询公司员工工资的最大值，最小值，平均值，总和
+SELECT 
+	MAX(salary), MIN(salary), AVG(salary), SUM(salary)
+FROM 
+	employees;
+
+# 3.查询各job_id的员工工资的最大值，最小值，平均值，总和
+SELECT 
+	job_id, MAX(salary), MIN(salary), AVG(salary), SUM(salary)
+FROM 
+	employees
+GROUP BY
+	job_id;
+
+# 4.选择具有各个job_id的员工人数
+SELECT 
+	job_id, COUNT(*)
+FROM 
+	employees
+GROUP BY
+	job_id;
+
+# 5.查询员工最高工资和最低工资的差距（DIFFERENCE）
+SELECT 
+	MAX(salary), MIN(salary), MAX(salary) - MIN(salary) "DIFFERENCE"
+FROM 
+	employees;
+
+# 6.查询各个管理者手下员工的最低工资，其中最低工资不能低于6000，没有管理者的员工不计算在内
+SELECT 
+	manager_id, MIN(salary)
+FROM 
+	employees
+WHERE
+	manager_id IS NOT NULL
+GROUP BY 
+	manager_id
+HAVING
+	MIN(salary) >= 6000;
+
+# 7.查询所有部门的名字，location_id，员工数量和平均工资，并按平均工资降序
+SELECT 
+	d.department_name "部门名字",
+	d.location_id "loc_id",
+	COUNT(e.employee_id) "员工数量",
+	AVG(e.salary) "平均工资"
+FROM 
+	employees e 
+RIGHT JOIN 
+	departments d 
+ON 
+	e.department_id = d.department_id
+GROUP BY 
+	d.department_name,
+	d.location_id
+ORDER BY
+	AVG(e.salary) DESC;
+
+# 8.查询每个工种、每个部门的部门名、工种名和最低工资
+SELECT 
+	department_name,
+	job_id,
+	MIN(salary)
+FROM 
+	departments d 
+LEFT JOIN 
+	employees e
+ON 
+	e.department_id = d.department_id
+GROUP BY 
+	department_name,
+	job_id;
+```
+
+------
+
+## 第08章、子查询
+
+```mysql
+#1.查询和Zlotkey相同部门的员工姓名和工资
+SELECT 
+	last_name, salary
+from 
+	employees
+WHERE 
+	department_id IN 
+		(SELECT department_id FROM employees WHERE last_name = "Zlotkey");
+
+#2.查询工资比公司平均工资高的员工的员工号，姓名和工资。
+SELECT 
+	employee_id, last_name, salary
+FROM 
+	employees
+WHERE 
+	salary > 
+		(SELECT AVG(salary) FROM employees);
+
+#3.选择工资大于所有JOB_ID = 'SA_MAN'的员工的工资的员工的last_name, job_id, salary
+SELECT 
+	last_name, job_id, salary
+FROM 
+	employees
+WHERE 
+	salary > ALL 
+		(SELECT salary FROM employees WHERE job_id = 'SA_MAN');
+
+#4.查询和姓名中包含字母u的员工在相同部门的员工的员工号和姓名
+SELECT 
+	employee_id, last_name
+FROM 
+	employees
+WHERE 
+	department_id IN
+		(SELECT DISTINCT department_id FROM employees WHERE last_name LIKE '%u%');
+
+#5.查询在部门的location_id为1700的部门工作的员工的员工号
+SELECT 
+	employee_id
+FROM 
+	employees
+WHERE 
+	department_id IN
+		(SELECT department_id FROM departments WHERE location_id = 1700);
+
+#6.查询管理者是King的员工姓名和工资
+SELECT 
+	last_name, salary
+FROM 
+	employees
+WHERE 
+	manager_id IN 
+		(SELECT employee_id FROM employees WHERE last_name = 'King');
+
+#7.查询工资最低的员工信息: last_name, salary
+SELECT 
+	last_name, salary
+FROM 
+	employees
+WHERE 
+	salary = (SELECT MIN(salary) FROM employees);
+
+#8.查询平均工资最低的部门信息
+#方式一：
+SELECT 
+	*
+FROM 
+	departments
+WHERE 
+	department_id = 
+		(SELECT department_id
+		 FROM employees
+		 GROUP BY department_id
+          HAVING AVG(salary) = (
+			SELECT MIN(dept_avgsal)
+				FROM (
+					SELECT AVG(salary) dept_avgsal
+					FROM employees
+					GROUP BY department_id
+					) avg_sal
+			)
+		);
+#方式二：
+SELECT 
+	*
+FROM 
+	departments
+WHERE 
+	department_id = 
+		(SELECT department_id
+		 FROM employees
+		 GROUP BY department_id
+		 HAVING AVG(salary) <= ALL
+         	(SELECT AVG(salary) avg_sal
+			FROM employees
+			GROUP BY department_id));
+#方式三：
+SELECT 
+	*
+FROM 
+	departments
+WHERE 
+	department_id =
+		(SELECT department_id
+		 FROM employees
+	 	 GROUP BY department_id
+		 HAVING AVG(salary) = 
+         	(SELECT AVG(salary) avg_sal
+			FROM employees
+			GROUP BY department_id
+			ORDER BY avg_sal
+			LIMIT 0,1));
+#方式四：
+SELECT 
+	d.*
+FROM 
+	departments d,
+	(SELECT department_id, AVG(salary) avg_sal
+	 FROM employees
+	 GROUP BY department_id
+	 ORDER BY avg_sal
+	 LIMIT 0,1) dept_avg_sal
+WHERE 
+	d.department_id = dept_avg_sal.department_id;
+
+#9.查询平均工资最低的部门信息和该部门的平均工资（相关子查询）
+#方式一：
+SELECT 
+	d.*, (SELECT AVG(salary) FROM employees WHERE department_id = d.department_id) "avg_sal"
+FROM 
+	departments d
+WHERE 
+	department_id = 
+		(SELECT department_id
+		 FROM employees
+		 GROUP BY department_id
+          HAVING AVG(salary) = (
+			SELECT MIN(dept_avgsal)
+				FROM (
+					SELECT AVG(salary) dept_avgsal
+					FROM employees
+					GROUP BY department_id
+					) avg_sal
+			)
+		);
+#方式二：
+SELECT 
+	d.*, (SELECT AVG(salary) FROM employees WHERE department_id = d.department_id) "avg_sal"
+FROM 
+	departments d
+WHERE 
+	department_id = 
+		(SELECT department_id
+		 FROM employees
+		 GROUP BY department_id
+		 HAVING AVG(salary) <= ALL
+         	(SELECT AVG(salary) avg_sal
+			FROM employees
+			GROUP BY department_id));
+#方式三：
+SELECT 
+	d.*, (SELECT AVG(salary) FROM employees WHERE department_id = d.department_id) "avg_sal"
+FROM 
+	departments d
+WHERE 
+	department_id =
+		(SELECT department_id
+		 FROM employees
+	 	 GROUP BY department_id
+		 HAVING AVG(salary) = 
+         	(SELECT AVG(salary) avg_sal
+			FROM employees
+			GROUP BY department_id
+			ORDER BY avg_sal
+			LIMIT 0,1));
+#方式四：
+SELECT 
+	d1.*, d2.avg_sal
+FROM 
+	departments d1,
+	(SELECT department_id, AVG(salary) avg_sal 
+	 FROM employees 
+	 GROUP BY department_id
+	 ORDER BY avg_sal
+	 LIMIT 0,1) d2
+WHERE d2.department_id = d1.department_id;
+
+#10.查询平均工资最高的 job 信息
+#方式一：
+SELECT 
+	*
+FROM 
+	jobs
+WHERE 
+	job_id = (
+		SELECT job_id
+		FROM employees
+		GROUP BY job_id
+		HAVING AVG(salary) = (
+			SELECT MAX(avg_sal)
+			FROM(
+				SELECT AVG(salary) avg_sal
+				FROM employees
+				GROUP BY job_id
+			) job_avgsal
+		)
+	);
+#方式二：
+SELECT 
+	*
+FROM 
+	jobs
+WHERE 
+	job_id = (
+		SELECT job_id
+		FROM employees
+		GROUP BY job_id
+		HAVING AVG(salary) >= ALL(
+			SELECT AVG(salary)
+			FROM employees
+			GROUP BY job_id
+		)
+	);
+#方式三：
+SELECT 
+	*
+FROM 
+	jobs
+WHERE 
+	job_id = (
+		SELECT job_id
+		FROM employees
+		GROUP BY job_id
+		HAVING AVG(salary) = (
+			SELECT AVG(salary) avg_sal
+			FROM employees
+			GROUP BY job_id
+			ORDER BY avg_sal DESC
+			LIMIT 0,1
+		)
+	);
+#方式四：
+SELECT 
+	j.*
+FROM 
+	jobs j,(
+	SELECT job_id, AVG(salary) avg_sal
+	FROM employees
+	GROUP BY job_id
+	ORDER BY avg_sal DESC
+	LIMIT 0,1 ) job_avg_sal
+WHERE 
+	j.job_id = job_avg_sal.job_id
+
+#11.查询平均工资高于公司平均工资的部门有哪些?
+SELECT 
+	department_id, AVG(salary) avg_sal
+FROM 
+	employees
+WHERE 
+	department_id IS NOT NULL
+GROUP BY 
+	department_id
+HAVING 
+	avg_sal > 
+		(SELECT AVG(salary) FROM employees)
+
+#12.查询出公司中所有 manager 的详细信息
+# 方式一：自连接
+SELECT 
+	DISTINCT mgr.employee_id, mgr.last_name, mgr.salary
+FROM 
+	employees mgr, employees wo
+WHERE 
+	mgr.employee_id = wo.manager_id;
+# or
+SELECT 
+	DISTINCT mgr.employee_id, mgr.last_name, mgr.salary
+FROM 
+	employees wo 
+JOIN 
+	employees mgr
+ON 
+	mgr.employee_id = wo.manager_id;
+#方式二：子查询
+SELECT 
+	employee_id, last_name, salary
+FROM 
+	employees
+WHERE 
+	employee_id IN (
+		SELECT DISTINCT manager_id
+		FROM employees
+	);
+#方式三
+SELECT 
+	employee_id, last_name, salary
+FROM 
+	employees e1
+WHERE EXISTS ( 
+		SELECT *
+		FROM employees e2
+		WHERE e2.manager_id = e1.employee_id);
+
+#13.各个部门中 最高工资中最低的那个部门的 最低工资是多少?
+#方式1:
+SELECT 
+	MIN(salary)
+FROM 
+	employees
+WHERE 
+	department_id = (
+		SELECT department_id
+		FROM employees
+		GROUP BY department_id
+		HAVING MAX(salary) = (
+			SELECT MIN(max_sal)
+			FROM (
+				SELECT MAX(salary) max_sal
+				FROM employees
+				GROUP BY department_id
+            ) dept_max_sal
+		)
+	);
+#方式2:
+SELECT 
+	MIN(salary)
+FROM 
+	employees
+WHERE 
+	department_id = (
+		SELECT department_id
+		FROM employees
+		GROUP BY department_id
+		HAVING MAX(salary) <= ALL(
+			SELECT MAX(salary) max_sal
+			FROM employees
+			GROUP BY department_id
+		)
+	);
+#方式3：
+SELECT 
+	MIN(salary)
+FROM 
+	employees
+WHERE 
+	department_id = (
+		SELECT department_id
+		FROM employees
+		GROUP BY department_id
+		HAVING MAX(salary) = (
+			SELECT MAX(salary) max_sal
+			FROM employees
+			GROUP BY department_id
+			ORDER BY max_sal
+			LIMIT 0,1
+		)
+	);
+#方式4：
+SELECT 
+	salary
+FROM 
+	employees e,
+	(SELECT department_id, MAX(salary) max_sal
+	 FROM employees
+	 GROUP BY department_id
+	 ORDER BY max_sal
+	 LIMIT 0,1) dept_max_sal
+WHERE 
+	e.department_id = dept_max_sal.department_id;
+
+#14.查询平均工资最高的部门的 manager 的详细信息: last_name, department_id, email, salary
+#方式1：
+SELECT 
+	last_name, department_id, email, salary
+FROM 	
+	employees
+WHERE 
+	employee_id = ANY (
+			SELECT DISTINCT manager_id
+			FROM employees
+			WHERE department_id = (
+				SELECT department_id
+				FROM employees
+				GROUP BY department_id
+				HAVING AVG(salary) = (
+					SELECT MAX(avg_sal)
+					FROM (
+						SELECT AVG(salary) avg_sal
+						FROM employees
+						GROUP BY department_id
+						) t_dept_avg_sal
+					)
+				)
+			);
+
+#方式2：
+SELECT last_name, department_id, email, salary
+FROM employees
+WHERE employee_id = ANY (
+			SELECT DISTINCT manager_id
+			FROM employees
+			WHERE department_id = (
+						SELECT department_id
+						FROM employees
+						GROUP BY department_id
+						HAVING AVG(salary) >= ALL (
+								SELECT AVG(salary) avg_sal
+								FROM employees
+								GROUP BY department_id
+								)
+						)
+			);
+#方式3：
+SELECT 
+	last_name, department_id, email, salary
+FROM 
+	employees
+WHERE 
+	employee_id IN (
+			SELECT DISTINCT manager_id
+			FROM employees e, (
+					SELECT department_id, AVG(salary) avg_sal
+					FROM employees
+					GROUP BY department_id
+					ORDER BY avg_sal DESC
+					LIMIT 0,1
+					) t_dept_avg_sal
+			WHERE e.`department_id` = t_dept_avg_sal.department_id
+			);
+
+#15. 查询部门的部门号，其中不包括job_id是"ST_CLERK"的部门号
+#方式1：
+SELECT 
+	department_id
+FROM 
+	departments
+WHERE 
+	department_id NOT IN (
+			SELECT DISTINCT department_id
+			FROM employees
+			WHERE job_id = 'ST_CLERK');
+#方式2：
+SELECT 
+	department_id
+FROM 
+	departments d
+WHERE NOT EXISTS
+	(SELECT * 
+     FROM employees e 
+     WHERE e.department_id = d.department_id 
+     AND e.job_id = 'ST_CLERK');
+
+#16. 选择所有没有管理者的员工的last_name
+SELECT 
+	last_name 
+FROM 
+	employees emp
+WHERE 
+	NOT EXISTS 
+		(SELECT * FROM employees mgr WHERE emp.manager_id = mgr.employee_id);
+
+#17．查询员工号、姓名、雇用时间、工资，其中员工的管理者为 'De Haan'
+#方式1：
+SELECT employee_id, last_name, hire_date, salary
+FROM employees
+WHERE manager_id IN (
+		SELECT employee_id
+		FROM employees
+		WHERE last_name = 'De Haan'
+		);
+#方式2：
+SELECT employee_id, last_name, hire_date, salary
+FROM employees e1
+WHERE EXISTS (
+		SELECT *
+		FROM employees e2
+		WHERE e1.`manager_id` = e2.`employee_id`
+		AND e2.last_name = 'De Haan'
+		); 
+
+#18.查询各部门中工资比本部门平均工资高的员工的员工号, 姓名和工资（相关子查询）
+#方式1：使用相关子查询
+SELECT e1.employee_id, e1.last_name, e1.salary
+FROM employees e1
+WHERE e1.salary > (
+			SELECT AVG(e2.salary) avg_sal
+			FROM employees e2
+			WHERE e1.department_id = e2.department_id);
+#方式2：在FROM中声明子查询
+SELECT e.last_name,e.salary,e.department_id
+FROM employees e,(
+		SELECT department_id, AVG(salary) avg_sal
+		FROM employees
+		GROUP BY department_id) t_dept_avg_sal
+WHERE e.department_id = t_dept_avg_sal.department_id
+AND e.salary > t_dept_avg_sal.avg_sal;
+
+#19.查询每个部门下的部门人数大于 5 的部门名称（相关子查询）
+SELECT 
+	d.department_name
+FROM 
+	departments d
+WHERE 
+	5 < (SELECT COUNT(*) FROM employees e WHERE d.department_id = e.department_id)
+
+#20.查询每个国家下的部门个数大于 2 的国家编号（相关子查询）
+SELECT 
+	l.country_id 
+FROM 
+	locations l
+WHERE 
+	2 < (SELECT COUNT(*) FROM departments d WHERE l.location_id = d.location_id)
+	
+/* 
+子查询的编写技巧（或步骤）：① 从里往外写  ② 从外往里写
+
+如何选择？
+① 如果子查询相对较简单，建议从外往里写。一旦子查询结构较复杂，则建议从里往外写
+② 如果是相关子查询的话，通常都是从外往里写。
+*/
+```
+
+------
+
+## 第09章、创建和管理表
+
+- **练习1**
+
+```mysql
+#1. 创建数据库test01_office, 指明字符集为utf8。并在此数据库下执行下述操作
+CREATE DATABASE IF NOT EXISTS test01_office CHARACTER SET 'utf8';
+USE test01_office;
+
+#2. 创建表dept01
+/*
+字段 类型
+id INT(7)
+NAME VARCHAR(25)
+*/
+CREATE TABLE IF NOT EXISTS dept01(
+	id INT(7),
+	`name` VARCHAR(25)
+);
+
+#3. 将表departments中的数据插入新表dept02中
+CREATE TABLE dept02
+AS
+SELECT * FROM atguigudb.departments;
+
+#4. 创建表emp01
+/*
+	字段           类型
+	id             INT(7)
+	first_name     VARCHAR (25)
+	last_name      VARCHAR(25)
+	dept_id        INT(7)
+*/
+CREATE TABLE emp01(
+	id INT(7),
+	first_name VARCHAR(25),
+	last_name VARCHAR(25),
+	dept_id INT(7)
+);
+
+#5. 将列last_name的长度增加到50
+DESCRIBE emp01;
+
+ALTER TABLE emp01 
+MODIFY last_name VARCHAR(50);
+
+#6. 根据表employees创建emp02
+CREATE TABLE emo02
+AS
+SELECT * FROM atguigudb.employees;
+
+SHOW TABLES FROM test01_office;
+
+#7. 删除表emp01
+DROP TABLE IF EXISTS emp01;
+
+#8. 将表emp02重命名为emp01
+RENAME TABLE emo02 TO emp01;
+# or
+ALTER TABLE emo02 RENAME TO emp01; 
+
+#9.在表dept02和emp01中添加新列test_column，并检查所作的操作
+ALTER TABLE emp01 ADD test_column VARCHAR(10);
+DESC emp01;
+
+ALTER TABLE dept02 ADD test_column VARCHAR(10);
+DESC dept02;
+
+#10.直接删除表emp01中的列 department_id
+ALTER TABLE emp01 DROP COLUMN department_id;
+```
+
+- **练习2**
+
+TABLE customers：
+
+| 字段名    | 数据类型    |
+| --------- | ----------- |
+| c_num     | int         |
+| c_name    | varchar(50) |
+| c_contact | varchar(50) |
+| c_city    | varchar(50) |
+| c_birth   | date        |
+
+```mysql
+# 1、创建数据库 test02_market;
+CREATE DATABASE IF NOT EXISTS test02_market CHARACTER SET 'utf8';
+USE test02_market;
+
+# 2、创建数据表 customers
+CREATE TABLE IF NOT EXISTS contomers(
+	c_num		INT,
+    c_name		VARCHAR(50),
+    c_concact	VARCHAR(50),
+    c_city		VARCHAR(50),
+    c_birth		DATE
+);
+
+# 3、将 c_contact 字段移动到 c_birth 字段后面
+ALTER TABLE contomers MODIFY c_contact varchar(50) AFTER c_birth;
+
+# 4、将 c_name 字段数据类型改为 varchar(70)
+ALTER TABLE contomers MODIFY c_name varchar(70);
+
+# 5、将c_contact字段改名为c_phone
+ALTER TABLE contomers CHANGE c_contact c_phone varchar(50);
+
+# 6、增加c_gender字段到c_name后面，数据类型为char(1)
+ALTER TABLE contomers ADD c_gender CHAR(1) AFTER c_name;
+
+# 7、将表名改为customers_info
+ALTER TABLE contomers RENAME TO customers_info;
+# OR
+RENAME TABLE contomers TO customers_info;
+
+# 8、删除字段c_city
+ALTER TABLE customers_info DROP COLUMN c_city;
+```
+
+- **练习3**
+
+TABLE offices：
+
+| 字段名     | 数据类型    |
+| ---------- | ----------- |
+| officeCode | int         |
+| city       | varchar(30) |
+| address    | varchar(50) |
+| country    | varchar(50) |
+| postalCode | varchar(25) |
+
+TABLE employees：
+
+| 字段名    | 数据类型     |
+| --------- | ------------ |
+| empNum    | int          |
+| lastName  | varchar(50)  |
+| firstName | varchar(50)  |
+| mobile    | varchar(25)  |
+| code      | int          |
+| jobTitle  | varchar(50)  |
+| birth     | date         |
+| note      | varchar(255) |
+| sex       | varchar(5)   |
+
+```mysql
+# 1、创建数据库 test03_company
+CREATE DATABASE IF NOT EXISTS test03_company CHARACTER SET 'utf8';
+USE test03_company;
+
+# 2、创建表offices
+CREATE TABLE IF NOT EXISTS offices(
+	officeCode				INT,
+    city					VARCHAR(30),
+    address					 VARCHAR(50),
+    country					 VARCHAR(50),
+    postalCode				 VARCHAR(25)
+);
+
+# 3、创建表employees
+CREATE TABLE IF NOT EXISTS employees(
+	empNum 				INT,
+	lastName 			VARCHAR(50),
+	firstName 			VARCHAR(50),
+	mobile 				VARCHAR(25),
+	`code` 				INT,
+	jobTitle 			 VARCHAR(50),
+	birth 				DATE,
+	note   				VARCHAR(255),
+	sex 				VARCHAR(5)
+);
+
+# 4、将表employees的mobile字段修改到code字段后面
+ALTER TABLE employees MODIFY COLUMN mobile VARCHAR(25) AFTER `code`;
+
+# 5、将表employees的birth字段改名为birthday
+ALTER TABLE employees CHANGE COLUMN birth birthday DATE;
+
+# 6、修改sex字段，数据类型为char(1)
+ALTER TABLE employees MODIFY COLUMN sex CHAR(1);
+
+# 7、删除字段note
+ALTER TABLE employees DROP COLUMN note;
+
+# 8、增加字段名favoriate_activity，数据类型为varchar(100)
+ALTER TABLE employees ADD COLUMN favoriate_activity VARCHAR(100);
+
+# 9、将表employees的名称修改为 employees_info
+ALTER TABLE employees RENAME TO employees_info;
+# OR
+RENAME TABLE employees TO employees_info;
+
+DESC employees_info;
+```
+
+------
+
+## 第10章、数据处理之增删改
+
+**练习1**
+
+```mysql
+#1. 创建数据库dbtest11
+CREATE DATABASE IF NOT EXISTS dbtest11 CHARACTER SET 'utf8';
+
+#2. 运行以下脚本创建表my_employees
+USE dbtest11;
+CREATE TABLE my_employees(
+	id INT(10),
+	first_name VARCHAR(10),
+	last_name VARCHAR(10),
+	userid VARCHAR(10),
+	salary DOUBLE(10,2)
+);
+CREATE TABLE users(
+	id INT,
+	userid VARCHAR(10),
+	department_id INT
+);
+
+#3. 显示表my_employees的结构
+DESC my_employees;
+
+#4. 向my_employees表中插入下列数据
+ID FIRST_NAME LAST_NAME USERID SALARY
+1  patel      Ralph     Rpatel   895
+2  Dancs      Betty     Bdancs   860
+3  Biri       Ben       Bbiri    1100
+4  Newman     Chad      Cnewman  750
+5  Ropeburn   Audrey    Aropebur 1550
+# 方式一
+INSERT INTO my_employees 
+VALUES(1, 'patel', 'Ralph', 'Rpatel', 895);
+INSERT INTO my_employees
+VALUES
+(2,'Dancs','Betty','Bdancs',860),
+(3,'Biri','Ben','Bbiri',1100),
+(4,'Newman','Chad','Cnewman',750),
+(5,'Ropeburn','Audrey','Aropebur',1550);
+
+DELETE FROM my_employees;
+# 方式二
+INSERT INTO my_employees
+SELECT 1,'patel','Ralph','Rpatel',895 UNION ALL
+SELECT 2,'Dancs','Betty','Bdancs',860 UNION ALL
+SELECT 3,'Biri','Ben','Bbiri',1100 UNION ALL
+SELECT 4,'Newman','Chad','Cnewman',750 UNION ALL
+SELECT 5,'Ropeburn','Audrey','Aropebur',1550;
+
+#5. 向users表中插入数据
+ID	userid	department_id
+1   Rpatel     10
+2   Bdancs     10
+3   Biri      20
+4   Cnewman    30
+5   Aropebur   40
+INSERT INTO users VALUES
+(1,'Rpatel',10),
+(2,'Bdancs',10),
+(3,'Bbiri',20),
+(4,'Cnewman',30),
+(5,'Aropebur',40);
+
+#6. 将3号员工的last_name修改为“drelxer”
+UPDATE my_employees SET last_name = 'drelxer' where id = 3;
+
+#7. 将所有工资少于900的员工的工资修改为1000
+UPDATE my_employees SET salary = 1000 WHERE salary < 900;
+
+#8. 将userid为Biri的users表和my_employees表的记录全部删除
+DELETE 
+	u, e
+FROM 
+	users u 
+JOIN 
+	my_employees e 
+ON  
+	u.userid = e.userid
+WHERE 
+	u.userid = 'Bbirl';
+
+#9. 删除my_employees、users表所有数据
+DELETE FROM my_employees;
+DELETE FROM users;
+
+#10. 检查所作的修正
+SELECT * FROM my_employees;
+SELECT * FROM users;
+
+#11. 清空表my_employees
+TRUNCATE TABLE my_employees;
+```
+
+**练习2**
+
+```mysql
+# 1. 使用现有数据库dbtest11
+USE dbtest11;
+
+# 2. 创建表格pet
+CREATE TABLE IF NOT EXISTS pet(
+	`name` VARCHAR(20),
+	`owner` VARCHAR(20),
+    species VARCHAR(20),
+    sex CHAR(1),
+    birth YEAR,
+    death YEAR
+);
+```
+
+| 字段名  | 字段说明 | 数据类型    |
+| ------- | -------- | ----------- |
+| name    | 宠物名称 | VARCHAR(20) |
+| owner   | 宠物主人 | VARCHAR(20) |
+| species | 种类     | VARCHAR(20) |
+| sex     | 性别     | CHAR(1)     |
+| birth   | 出生日期 | YEAR        |
+| death   | 死亡日期 | YEAR        |
+
+```mysql
+# 3. 添加记录
+INSERT INTO pet 
+VALUES
+('Fluffy', 'harold', 'Cat', 'f', 2003, 2010), #1
+('bowser', 'diane', 'Dog', 'm', 2003, 2009); #5
+INSERT INTO pet VALUES('Claws', 'gwen', 'Cat', 'm', 2004, NULL); #2
+INSERT INTO pet(name,owner,species,sex,birth) VALUES('Buffy', 'benny', 'Dog', 'f', 2009); #3
+INSERT INTO pet(name,species,sex,birth) VALUES('Chirpy', 'Bird', 'f', 2008); #6
+```
+
+| name   | owner  | species | sex  | birth | death |
+| ------ | ------ | ------- | ---- | ----- | ----- |
+| Fluffy | harold | Cat     | f    | 2003  | 2010  |
+| Claws  | gwen   | Cat     | m    | 2004  |       |
+| Buffy  | benny  | benny   | f    | 2009  |       |
+| Fang   |        | Dog     | m    | 2000  |       |
+| bowser | diane  | Dog     | m    | 2003  | 2009  |
+| Chirpy |        | Bird    | f    | 2008  |       |
+
+```mysql
+# 4. 添加字段:主人的生日owner_birth DATE类型。
+ALTER TABLE pet ADD COLUMN owner_birth DATE;
+
+# 5. 将名称为Claws的猫的主人改为kevin
+UPDATE pet SET owner = 'kevin' WHERE name = 'Claws' AND species='Cat';
+
+# 6. 将没有死的狗的主人改为duck
+UPDATE pet SET owner = 'duck' WHERE death IS NULL AND species = 'Dog';
+
+# 7. 查询没有主人的宠物的名字；
+SELECT name FROM pet WHERE owner IS NULL;
+
+# 8. 查询已经死了的cat的姓名，主人，以及去世时间；
+SELECT 
+	`name`, `owner`, death 
+FROM 
+	pet 
+WHERE 
+	death IS NOT NULL 
+AND
+	species = 'Cat';
+	
+# 9. 删除已经死亡的狗
+DELETE FROM pet WHERE death IS NOT NULL AND species = 'DOG';
+
+# 10. 查询所有宠物信息
+SELECT * FROM pet;
+```
+
+**练习3**
+
+```mysql
+# 1. 使用已有的数据库dbtest11
+USE dbtest11;
+
+# 2. 创建表employee，并添加记录
+CREATE TABLE employee(
+	id 		INT,
+	`name` 	VARCHAR(20),
+	sex 	VARCHAR(2),
+	tel 	VARCHAR(20),
+	addr	VARCHAR(50),
+	salary 	DOUBLE(10,2)
+);
+# 添加信息
+INSERT INTO employee(id, `name`, sex, tel, addr, salary)VALUES
+(10001,'张一一','男','13456789000','山东青岛',1001.58),
+(10002,'刘小红','女','13454319000','河北保定',1201.21),
+(10003,'李四','男','0751-1234567','广东佛山',1004.11),
+(10004,'刘小强','男','0755-5555555','广东深圳',1501.23),
+(10005,'王艳','男','020-1232133','广东广州',1405.16);
+```
+
+| id    | name   | sex  | tel          | addr     | salary  |
+| ----- | ------ | ---- | ------------ | -------- | ------- |
+| 10001 | 张一一 | 男   | 13456789000  | 山东青岛 | 1001.58 |
+| 10002 | 刘小红 | 女   | 13454319000  | 河北保定 | 1201.21 |
+| 10003 | 李四   | 男   | 0751-1234567 | 广东佛山 | 1004.11 |
+| 10004 | 刘小强 | 男   | 0755-5555555 | 广东深圳 | 1501.23 |
+| 10005 | 王艳   | 女   | 020-1232133  | 广东广州 | 1405.16 |
+
+```mysql
+# 3. 查询出薪资在1200~1300之间的员工信息。
+SELECT * FROM employee WHERE salary BETWEEN 1200 AND 1300;
+
+# 4. 查询出姓“刘”的员工的工号，姓名，家庭住址。
+SELECT id,name,addr FROM enployee WHERE `name` LIKE '刘%';
+
+# 5. 将“李四”的家庭住址改为“广东韶关”
+UPDATE employee SET addr = '广东韶关' WHERE `name` = '李四';
+
+# 6. 查询出名字中带“小”的员工
+SELECT * FROM enployee WHERE `name` LIKE '%小%';
+```
+
+------
+
+## 第11章、MySQL数据类型精讲
+
+**无**
+
+------
+
+## 第12章、约束
+
+
+
+
+
+
+
+
+
+
+
