@@ -8,3 +8,4 @@ root
 093617
 
 linux中mysql密码为：xxxx 123456
+
