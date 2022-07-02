@@ -18,8 +18,6 @@
 - MySQL的服务（要想通过客户端能够访问MySQL的服务器，必须保证服务是开启状态的）
 - MySQL的path环境变量
 
-
-
 **2.卸载MySQL主要卸载哪几个位置的内容？**
 
 - 使用控制面板的软件卸载，去卸载MySQL DBMS软件的安装位置。
@@ -31,11 +29,7 @@
 - MySQL的服务进入注册表删除。（ **regedit** ）
 - 务必重启电脑
 
-
-
 **3.能够独立完成MySQL8.0、MySQL5.7版本的下载、安装、配置 （掌握）**
-
-
 
 **4.MySQL5.7在配置完以后，如何修改配置文件？**
 
@@ -60,7 +54,6 @@
   net start mysql服务名;
   ```
 
-  
 
 **5.熟悉常用的数据库管理和操作的工具**
 
@@ -76,8 +69,6 @@
 
 Oracle、MySQl、SQL Server、DB2、PGSQL；Redis、MongoDB、ES.....
 
-
-
 **2.谈谈你对MySQL历史、特点的理解**
 
 - 历史：
@@ -90,8 +81,6 @@ Oracle、MySQl、SQL Server、DB2、PGSQL；Redis、MongoDB、ES.....
   - 开源的、关系型的数据库
   - 支持千万级别数据量的存储，大型的数据库
 
-
-
 **3.说说你对DB、DBMS、SQL的理解**
 
 DB：database，看做是数据库文件。 （类似于：.doc、.txt、.mp3、.avi、。。。）
@@ -100,8 +89,6 @@ DBMS：数据库管理系统。（类似于word工具、wps工具、记事本工
 
 MySQL数据库服务器中安装了MySQL DBMS,使用MySQL DBMS 来管理和操作DB，使用的是SQL语言。
 
-
-
 **4.你知道哪些非关系型数据库的类型呢？（了解）**
 
 - 键值型数据库：Redis
@@ -109,8 +96,6 @@ MySQL数据库服务器中安装了MySQL DBMS,使用MySQL DBMS 来管理和操�
 - 搜索引擎数据库：ES、Solr
 - 列式数据库：HBase
 - 图形数据库：InfoGrid
-
-
 
 **5.表与表的记录之间存在哪些关联关**
 
@@ -1651,6 +1636,309 @@ SELECT * FROM enployee WHERE `name` LIKE '%小%';
 ------
 
 ## 第12章、约束
+
+**练习1**
+
+```mysql
+# 已经存在数据库test04_emp，两张表emp2和dept2
+CREATE DATABASE test04_emp;
+USE test04_emp;
+
+CREATE TABLE emp2(
+	id INT,
+	emp_name VARCHAR(15)
+);
+
+CREATE TABLE dept2(
+	id INT,
+	dept_name VARCHAR(15)
+);
+```
+
+```mysql
+# 题目：
+#1.向表emp2的id列中添加PRIMARY KEY约束
+ALTER TABLE emp2 MODIFY COLUMN id INT PRIMARY KEY;
+# or
+ALTER TABLE emp2 ADD PRIMARY KEY(id);
+
+#2. 向表dept2的id列中添加PRIMARY KEY约束
+ALTER TABLE dept2 MODIFY COLUMN id INT PRIMARY KEY;
+# or
+ALTER TABLE dept2 ADD PRIMARY KEY(id);
+
+#3. 向表emp2中添加列dept_id，并在其中定义FOREIGN KEY约束，与之相关联的列是dept2表中的id列。
+#先向表emp2中添加字段dept_id
+ALTER TABLE emp2 ADD COLUMN dept_id INT; 
+#再设置外键约束
+ALTER TABLE emp2 ADD CONSTRAINT fk_emp2_dept_id FOREIGN KEY (dept_id) REFERENCES dept2(id);
+```
+
+**练习2**
+
+```mysql
+# 承接《第11章_数据处理之增删改》的综合案例。
+# 1、创建数据库test01_library
+CREATE DATABASE IF NOT EXISTS test01_library CHARACTER SET 'utf8';
+USE test01_library;
+
+# 2、创建表 books，表结构如下：
+CREATE TABLE IF NOT EXISTS books(
+	id int,
+	`name` VARCHAR(50),
+	`authors` VARCHAR(100),
+	price FLOAT,
+	pubdate YEAR,
+	note VARCHAR(100),
+	num INT
+);
+```
+
+| 字段名  | 字段说明 | 数据类型     |
+| ------- | -------- | ------------ |
+| id      | 书编号   | INT          |
+| name    | 书名     | VARCHAR(50)  |
+| authors | 作者     | VARCHAR(100) |
+| price   | 价格     | FLOAT        |
+| pubdate | 出版日期 | YEAR         |
+| note    | 说明     | VARCHAR(100) |
+| num     | 库存     | INT          |
+
+```mysql
+# 3、使用ALTER语句给books按如下要求增加相应的约束
+#方式1
+#给id增加主键约束
+ALTER TABLE books ADD PRIMARY KEY(id);
+#给id增加自增约束
+ALTER TABLE books MODIFY id INT AUTO_INCREMENT;
+#方式2
+ALTER TABLE books MODIFY id INT PRIMARY KEY AUTO_INCREMENT;
+
+#给name、authors、price、pubdate、num字段增加非空约束
+ALTER TABLE books MODIFY `name` VARCHAR(50) NOT NULL;
+ALTER TABLE books MODIFY `authors` VARCHAR(100) NOT NULL;
+ALTER TABLE books MODIFY price FLOAT NOT NULL;
+ALTER TABLE books MODIFY pubdate YEAR NOT NULL;
+ALTER TABLE books MODIFY num INT NOT NULL;
+```
+
+| 字段名  | 字段说明 | 数据类型     | 主键   | 外键 | 非空   | 唯一   | 自增   |
+| ------- | -------- | ------------ | ------ | ---- | ------ | ------ | ------ |
+| id      | 书编号   | INT          | **是** | 否   | **是** | **是** | **是** |
+| name    | 书名     | VARCHAR(50)  | 否     | 否   | **是** | 否     | 否     |
+| authors | 作者     | VARCHAR(100) | 否     | 否   | **是** | 否     | 否     |
+| price   | 价格     | FLOAT        | 否     | 否   | **是** | 否     | 否     |
+| pubdate | 出版日期 | YEAR         | 否     | 否   | **是** | 否     | 否     |
+| note    | 说明     | VARCHAR(100) | 否     | 否   | 否     | 否     | 否     |
+| num     | 库存     | INT          | 否     | 否   | **是** | 否     | 否     |
+
+**练习3**
+
+```mysql
+#1. 创建数据库test04_company
+CREATE DATABASE IF NOT EXISTS test04_company;
+USE test04_company;
+
+#2. 按照下表给出的表结构在test04_company数据库中创建两个数据表offices和employees
+CREATE TABLE IF NOT EXISTS offices(
+    officeCode INT(10),
+    city VARCHAR(50) NOT NULL,
+    address VARCHAR(50),
+    country VARCHAR(50) NOT NULL,
+    postalCode VARCHAR(15),
+    CONSTRAINT uk_off_poscode UNIQUE(postalCode),
+    PRIMARY KEY(officeCode)
+);
+
+CREATE TABLE IF NOT EXISTS employees(
+    employeeNumber INT(11) PRIMARY KEY AUTO_INCREMENT,
+    lastName VARCHAR(50) NOT NULL,
+    firstName VARCHAR(50) NOT NULL,
+    mobile VARCHAR(25) UNIQUE,
+    officeCode INT(10) NOT NULL,
+    jobTitle VARCHAR(50) NOT NULL,
+    birth DATETIME NOT NULL,
+    note VARCHAR(255),
+    sex VARCHAR(5),
+    CONSTRAINT fk_emp_ofCode FOREIGN KEY(officeCode) REFERENCES offices(officeCode)
+);
+```
+
+- offices表：
+
+  ![image-20220702222512483](03-MySQL-章节练习篇.assets/image-20220702222512483.png)
+
+- employees表：
+
+  ![image-20220702222532068](03-MySQL-章节练习篇.assets/image-20220702222532068.png)
+
+```mysql
+#3. 将表employees的mobile字段修改到officeCode字段后面
+ALTER TABLE employees MODIFY mobile VARCHAR(25) UNIQUE AFTER officeCode;
+
+#4. 将表employees的birth字段改名为employee_birth
+ALTER TABLE employees CHANGE birth employee_birth DATETIME NOT NULL;
+
+#5. 修改sex字段，数据类型为CHAR(1)，非空约束
+ALTER TABLE employees MODIFY sex CHAR(1) NOT NULL;
+
+#6. 删除字段note
+ALTER TABLE employees DROP COLUMN note;
+
+#7. 增加字段名favoriate_activity，数据类型为VARCHAR(100)
+ALTER TABLE employees ADD favoriate_activity VARCHAR(100);
+
+#8. 将表employees名称修改为employees_info
+RENAME TABLE employees TO employees_info;
+# OR
+ALTER TABLE employees RENAME TO employees_info;
+```
+
+------
+
+##  第13章、视图
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
