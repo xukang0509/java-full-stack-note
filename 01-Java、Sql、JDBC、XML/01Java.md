@@ -2992,7 +2992,7 @@ public class MethodTest08{
 }
 ```
 
-![008-JVM的主要内存空间（三块）](\image\008-JVM的主要内存空间（三块）.png)
+![008-JVM的主要内存空间（三块）](image\008-JVM的主要内存空间（三块）.png)
 
 ```
 总结：
@@ -3603,7 +3603,7 @@ A学、B同学，他们俩有没有共同特征呢？
 	这个虚拟的世界需要和现实世界一一对应，这才叫模拟。
 ```
 
-![007-类和对象的理解](\image\007-类和对象的理解.png)
+![007-类和对象的理解](image\007-类和对象的理解.png)
 
 ##### 1.4 类的定义
 
@@ -3858,7 +3858,7 @@ public class StudentTest{
 }
 ```
 
-对象和引用内存图：![image-20210827230528550](\image\image-20210827230528550.png)
+对象和引用内存图：![image-20210827230528550](imageimage-20210827230528550.png)
 
 ```java
 // 住址类
@@ -3956,7 +3956,7 @@ public class Test{
 }
 ```
 
-![image-20210827233839848](\image\image-20210827233839848.png)
+![image-20210827233839848](imageimage-20210827233839848.png)
 
 ```java
 //属性是引用类型怎么访问
@@ -4037,7 +4037,7 @@ class Customer{
 }
 ```
 
-![image-20210828214002263](\image\image-20210828214002263.png)
+![image-20210828214002263](imageimage-20210828214002263.png)
 
 ##### 1.7 方法调用时参数传递问题
 
@@ -4104,7 +4104,7 @@ class Person{
 }
 ```
 
-![image-20210828221119967](\image\image-20210828221119967.png)
+![image-20210828221119967](imageimage-20210828221119967.png)
 
 #### 2 封装
 
@@ -4667,7 +4667,7 @@ public class StaticTest02{
 }
 ```
 
-![image-20210829204907551](\image\image-20210829204907551.png)
+![image-20210829204907551](imageimage-20210829204907551.png)
 
 ```java
 // 定义一个类：中国人
@@ -4713,7 +4713,7 @@ public class StaticTest02{
 }
 ```
 
-![017-变量什么时候声明为静态的2](\image\017-变量什么时候声明为静态的2.png)
+![017-变量什么时候声明为静态的2](image\017-变量什么时候声明为静态的2.png)
 
 ```java
 /*
@@ -5121,7 +5121,7 @@ public class ThisTest01{
 // 如果方法中直接访问了实例变量，该方法必须是实例方法。
 ```
 
-![image-20210830224300503](\image\image-20210830224300503.png)
+![image-20210830224300503](imageimage-20210830224300503.png)
 
 ```java
 // 分析：i变量在main方法中能不能访问？？？？
@@ -5318,7 +5318,7 @@ this小结：
 6、this() 这种语法只能出现在构造方法第一行，表示当前构造方法调用本类其他的构造方法，目的是代码复用。
 ```
 
-![018-java中的三大变量](\image\018-java中的三大变量.png)
+![018-java中的三大变量](image\018-java中的三大变量.png)
 
 #### 4 继承
 
@@ -6280,7 +6280,7 @@ public class Test01{
 }
 ```
 
-![019-向上和向下转型](\image\019-向上和向下转型.png)
+![019-向上和向下转型](image\019-向上和向下转型.png)
 
 ```java
 public class Test02{
@@ -6930,7 +6930,7 @@ class CreditAccount extends Account{
 }
 ```
 
-![image-20211007003224064](C:\Users\Amadeus\AppData\Roaming\Typora\typora-user-images\image-20211007003224064.png)
+![image-20211007003224064](C:\Users\Amadeus\AppData\Roaming\Typora\typora-user-imagesimage-20211007003224064.png)
 
 ```java
 public class SuperTest04{
@@ -7018,7 +7018,7 @@ class Vip extends Customer{
 }
 ```
 
-![023-SuperTest05](\image\023-SuperTest05.png)
+![023-SuperTest05](image\023-SuperTest05.png)
 
 ```java
 /*
@@ -7244,7 +7244,7 @@ class Person{
 }
 ```
 
-![002-final修饰的引用](\image\01-面向对象\002-final修饰的引用.png)
+![002-final修饰的引用](image\01-面向对象\002-final修饰的引用.png)
 
 ```java
 /*
@@ -7416,7 +7416,7 @@ class CreditAccount extends Account{
 //abstract class CreditAccount extends Account{ }
 ```
 
-![001-抽象类的理解](\image\01-面向对象\001-抽象类的理解.png)
+![001-抽象类的理解](image\01-面向对象\001-抽象类的理解.png)
 
 ```java
 /*
@@ -9032,7 +9032,7 @@ public class ArrayTest01 {
 }
 ```
 
-![002-数组的内存结构](\image\02-数组\002-数组的内存结构.png)
+![002-数组的内存结构](image\02-数组\002-数组的内存结构.png)
 
 ```java
 package com.bjpowernode.javase.array;
@@ -9106,7 +9106,7 @@ public class ArrayTest02 {
 }
 ```
 
-![001-数组内存图](\image\02-数组\001-数组内存图.png)
+![001-数组内存图](image\02-数组\001-数组内存图.png)
 
 ```java
 package com.bjpowernode.javase.array;
@@ -9401,7 +9401,7 @@ public class ArrayTest08 {
 }
 ```
 
-![004-数组拷贝内存图](\image\02-数组\004-数组拷贝内存图.png)
+![004-数组拷贝内存图](image\02-数组\004-数组拷贝内存图.png)
 
 ```java
 package com.bjpowernode.javase.array;
@@ -10451,7 +10451,7 @@ public class StringTest01 {
 }
 ```
 
-![001-String的内存图](\image\03-常用类\001-String的内存图.png)
+![001-String的内存图](image\03-常用类\001-String的内存图.png)
 
 ```java
 package com.bjpowernode.javase.string;
@@ -10520,7 +10520,7 @@ public class StringTest02 {
 }
 ```
 
-![003-String相关面试题](\image\03-常用类\003-String相关面试题.png)
+![003-String相关面试题](image\03-常用类\003-String相关面试题.png)
 
 ```java
 package com.bjpowernode.javase.string;
@@ -11067,7 +11067,7 @@ public class IntegerTest06 {
 }
 ```
 
-![image-20210918205813227](\image\image-20210918205813227.png)
+![image-20210918205813227](imageimage-20210918205813227.png)
 
 ```java
 package com.bjpowernode.javase.integer;
@@ -11178,7 +11178,7 @@ public class IntegerTest08 {
 }
 ```
 
-![005-String Integer int三种类型的互相转换](\image\03-常用类\005-String Integer int三种类型的互相转换.png)
+![005-String Integer int三种类型的互相转换](image\03-常用类\005-String Integer int三种类型的互相转换.png)
 
 #### 4 日期类
 
@@ -11822,7 +11822,7 @@ public class ExceptionTest02 {
 
 #### 2 异常的继承结构
 
-![Javase异常继承图](\image\Javase异常继承图.png)
+![Javase异常继承图](image\Javase异常继承图.png)
 
 ```
 1.1、异常在java中以类和对象的形式存在。那么异常的继承结构是怎样的？
@@ -12860,11 +12860,11 @@ public class Test {
 	第四个重点：Collection接口中的remove方法和contains方法底层都会调用equals，这个弄明白。
 ```
 
-![001-集合中存储的是对象的内存地址](\image\05-集合\001-集合中存储的是对象的内存地址.png)
+![001-集合中存储的是对象的内存地址](image\05-集合\001-集合中存储的是对象的内存地址.png)
 
-![image-20211006235011142](\image\image-20211006235011142.png)
+![image-20211006235011142](imageimage-20211006235011142.png)
 
-![image-20211006235105782](\image\image-20211006235105782.png)
+![image-20211006235105782](imageimage-20211006235105782.png)
 
 ```
 总结（所有的实现类）：
@@ -13025,9 +13025,9 @@ public class CollectionTest02 {
 }
 ```
 
-![004-迭代集合的原理](\image\05-集合\004-迭代集合的原理.png)
+![004-迭代集合的原理](image\05-集合\004-迭代集合的原理.png)
 
-![003-迭代原理](\image\05-集合\003-迭代原理.png)
+![003-迭代原理](image\05-集合\003-迭代原理.png)
 
 ```java
 package com.bjpowernode.javase.collection;
@@ -13121,7 +13121,7 @@ public class CollectionTest04 {
 }
 ```
 
-![002-Collection的contains方法](\image\05-集合\002-Collection的contains方法.png)
+![002-Collection的contains方法](image\05-集合\002-Collection的contains方法.png)
 
 ```java
 package com.bjpowernode.javase.collection;
@@ -13610,7 +13610,7 @@ public class Link<E> {
 }
 ```
 
-![005-链表（单向链表）](\image\05-集合\005-链表（单向链表）.png)
+![005-链表（单向链表）](image\05-集合\005-链表（单向链表）.png)
 
 ```java
 package com.bjpowernode.javase.collection;
@@ -13667,9 +13667,9 @@ public class LinkedListTest01 {
 }
 ```
 
-![006-双向链表](\image\05-集合\006-双向链表.png)
+![006-双向链表](image\05-集合\006-双向链表.png)
 
-![007-LinkedList内存图](\image\05-集合\007-LinkedList内存图.png)
+![007-LinkedList内存图](image\05-集合\007-LinkedList内存图.png)
 
 ##### 3.4 Vector
 
@@ -14255,7 +14255,7 @@ public class MapTest02 {
 }
 ```
 
-![009-Map集合转换成Set集合entrySet()方法](\image\05-集合\009-Map集合转换成Set集合entrySet()方法.png)
+![009-Map集合转换成Set集合entrySet()方法](image\05-集合\009-Map集合转换成Set集合entrySet()方法.png)
 
 ##### 6.2 HashMap
 
@@ -14338,7 +14338,7 @@ public class HashMapTest01 {
 }
 ```
 
-![008-哈希表或者散列表数据结构](\image\05-集合\008-哈希表或者散列表数据结构.png)
+![008-哈希表或者散列表数据结构](image\05-集合\008-哈希表或者散列表数据结构.png)
 
 ```java
 package com.bjpowernode.javase.bean;
@@ -14836,7 +14836,7 @@ class WuGuiComparator implements Comparator<WuGui> {
 }
 ```
 
-![010-自平衡二叉树](\image\05-集合\010-自平衡二叉树.png)
+![010-自平衡二叉树](image\05-集合\010-自平衡二叉树.png)
 
 #### 8 Collections 工具类
 
@@ -14932,7 +14932,7 @@ class WuGui2 implements Comparable<WuGui2>{
 
 #### 1 Java IO流概述
 
-![001-什么是IO](\image\06-IO流\001-什么是IO.png)
+![001-什么是IO](image\06-IO流\001-什么是IO.png)
 
 ```
 1、IO流，什么是IO？
@@ -15431,7 +15431,7 @@ public class FileWriterTest01 {
 
 ##### 2.4 文件复制
 
-![002-文件的复制原理](\image\06-IO流\002-文件的复制原理.png)
+![002-文件的复制原理](image\06-IO流\002-文件的复制原理.png)
 
 ```java
 package com.java.io;
@@ -16032,7 +16032,7 @@ public class CopyAll {
 			private static final long serialVersionUID = 1L;
 ```
 
-![003-对象的序列化和反序列化](\image\06-IO流\003-对象的序列化和反序列化.png)
+![003-对象的序列化和反序列化](image\06-IO流\003-对象的序列化和反序列化.png)
 
 ```JAVA
 public class Student implements Serializable {
@@ -16481,7 +16481,7 @@ public class IoPropertiesTest01 {
 		这个期间计算机可以进行亿万次的循环。所以计算机的执行速度很快。
 ```
 
-![004-一个线程一个栈](\image\07-多线程\004-一个线程一个栈.png)
+![004-一个线程一个栈](image\07-多线程\004-一个线程一个栈.png)
 
 ```java
 package com.bjpowernode.java.thread;
@@ -16523,7 +16523,7 @@ public class ThreadTest01 {
 
 ```
 
-![001-ThreadTest01对应的内存图](\image\07-多线程\001-ThreadTest01对应的内存图.png)
+![001-ThreadTest01对应的内存图](image\07-多线程\001-ThreadTest01对应的内存图.png)
 
 #### 2 线程的创建和使用
 
@@ -16606,9 +16606,9 @@ class MyThread extends Thread {+
 }
 ```
 
-**run**![002-线程的run](\image\07-多线程\002-线程的run.png)
+**run**![002-线程的run](image\07-多线程\002-线程的run.png)
 
-**start**![003-线程的start](\image\07-多线程\003-线程的start.png)
+**start**![003-线程的start](image\07-多线程\003-线程的start.png)
 
 ```java
 package com.bjpowernode.java.thread;
@@ -16681,7 +16681,7 @@ public class ThreadTest04 {
 	死亡状态
 ```
 
-![image-20211023221117867](\image\07-多线程\image-20211023221117867.png)
+![image-20211023221117867](image\07-多线程image-20211023221117867.png)
 
 #### 4 线程的调度与控制
 
@@ -18044,7 +18044,7 @@ class LogTimerTask extends TimerTask {
 			这个方法是唤醒o对象上处于等待的所有线程。
 ```
 
-![007-生产者和消费者模式](\image\07-多线程\007-生产者和消费者模式.png)
+![007-生产者和消费者模式](image\07-多线程\007-生产者和消费者模式.png)
 
 ```java
 package com.java.homework.thread;
@@ -18327,7 +18327,7 @@ public class ReflectTest01 {
 }
 ```
 
-![001-字节码内存图](\image\08-反射\001-字节码内存图.png)
+![001-字节码内存图](image\08-反射\001-字节码内存图.png)
 
 ```java
 通过反射实例化对象

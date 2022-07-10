@@ -2,49 +2,49 @@
 
 ### 一 MySQL的安装与配置
 
-双击![1](\image\MySql\MySql的安装与配置\1.png)
+双击![1](image\MySql\MySql的安装与配置\1.png)
 
-![2](\image\MySql\MySql的安装与配置\2.png)
+![2](image\MySql\MySql的安装与配置\2.png)
 
-![3](\image\MySql\MySql的安装与配置\3.png)
+![3](image\MySql\MySql的安装与配置\3.png)
 
-![4](\image\MySql\MySql的安装与配置\4.png)
+![4](image\MySql\MySql的安装与配置\4.png)
 
-![5](\image\MySql\MySql的安装与配置\5.png)
+![5](image\MySql\MySql的安装与配置\5.png)
 
-![6](\image\MySql\MySql的安装与配置\6.png)
+![6](image\MySql\MySql的安装与配置\6.png)
 
-![7](\image\MySql\MySql的安装与配置\7.png)
+![7](image\MySql\MySql的安装与配置\7.png)
 
-![8](\image\MySql\MySql的安装与配置\8.png)
+![8](image\MySql\MySql的安装与配置\8.png)
 
-![9](\image\MySql\MySql的安装与配置\9.png)
+![9](image\MySql\MySql的安装与配置\9.png)
 
-![10](\image\MySql\MySql的安装与配置\10.png)
+![10](image\MySql\MySql的安装与配置\10.png)
 
-![11](\image\MySql\MySql的安装与配置\11.png)
+![11](image\MySql\MySql的安装与配置\11.png)
 
-![12](\image\MySql\MySql的安装与配置\12.png)
+![12](image\MySql\MySql的安装与配置\12.png)
 
-![13](\image\MySql\MySql的安装与配置\13.png)
+![13](image\MySql\MySql的安装与配置\13.png)
 
-![14](\image\MySql\MySql的安装与配置\14.png)
+![14](image\MySql\MySql的安装与配置\14.png)
 
-![15](\image\MySql\MySql的安装与配置\15.png)
+![15](image\MySql\MySql的安装与配置\15.png)
 
-![16](\image\MySql\MySql的安装与配置\16.png)
+![16](image\MySql\MySql的安装与配置\16.png)
 
-![17](\image\MySql\MySql的安装与配置\17.png)
+![17](image\MySql\MySql的安装与配置\17.png)
 
 密码：111
 
-![18](\image\MySql\MySql的安装与配置\18.png)
+![18](image\MySql\MySql的安装与配置\18.png)
 
-![19](\image\MySql\MySql的安装与配置\19.png)
+![19](image\MySql\MySql的安装与配置\19.png)
 
 以下表示安装完成
 
-![20](\image\MySql\MySql的安装与配置\20.png)
+![20](image\MySql\MySql的安装与配置\20.png)
 
 ### 二 完美卸载MySQL
 
@@ -72,7 +72,7 @@ Enter password:***(回车)
 mysql>
 ```
 
-![QQ截图20211031201114](\image\MySql\QQ截图20211031201114.png)
+![QQ截图20211031201114](image\MySql\QQ截图20211031201114.png)
 
 ### 四 更改root密码
 
@@ -2899,7 +2899,7 @@ mysql> explain select ename,sal from emp where sal = 5000;
 	模糊查询的时候，第一个通配符使用的是%，这个时候索引是失效的。
 ```
 
-![image-20211120190056081](\02MySql.assets\image-20211120190056081.png)
+![image-20211120190056081](02MySql.assets\image-20211120190056081.png)
 
 ##### 5 视图
 
