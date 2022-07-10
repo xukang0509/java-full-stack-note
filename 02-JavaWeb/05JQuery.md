@@ -66,7 +66,7 @@
 
 **官网下载地址**：https://jquery.com/download/
 
-![image-20220115151319711](\05JQuery.assets\image-20220115151319711.png)
+![image-20220115151319711](05JQuery.assets\image-20220115151319711.png)
 
 ### 5、DOM对象、JS对象和JQuery对象
 
@@ -1089,11 +1089,11 @@ $("div") == [dom1,dom2,dom3]
 
 - province:
 
-  ![image-20220116171816686](\05JQuery.assets\image-20220116171816686.png)
+  ![image-20220116171816686](05JQuery.assets\image-20220116171816686.png)
 
 - city:
 
-  ![image-20220116171851203](\05JQuery.assets\image-20220116171851203.png)
+  ![image-20220116171851203](05JQuery.assets\image-20220116171851203.png)
 
 JAVA实体类：
 

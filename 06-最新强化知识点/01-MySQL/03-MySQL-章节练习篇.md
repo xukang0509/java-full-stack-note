@@ -1,10 +1,10 @@
 # MySQL_章节练习篇
 
-讲师：尚硅谷-宋红康（江湖人称：康师傅）
-
-尚硅谷官网：http://www.atguigu.com
-
-视频链接：https://www.bilibili.com/video/BV1iq4y1u7vj?spm_id_from=333.337.search-card.all.click
+> 讲师：尚硅谷-宋红康（江湖人称：康师傅）
+>
+> 尚硅谷官网：[http://www.atguigu.com](http://www.atguigu.com/)
+>
+> 视频链接：https://www.bilibili.com/video/BV1iq4y1u7vj?spm_id_from=333.337.search-card.all.click
 
 ------
 
@@ -18,8 +18,6 @@
 - MySQL的服务（要想通过客户端能够访问MySQL的服务器，必须保证服务是开启状态的）
 - MySQL的path环境变量
 
-
-
 **2.卸载MySQL主要卸载哪几个位置的内容？**
 
 - 使用控制面板的软件卸载，去卸载MySQL DBMS软件的安装位置。
@@ -31,11 +29,7 @@
 - MySQL的服务进入注册表删除。（ **regedit** ）
 - 务必重启电脑
 
-
-
 **3.能够独立完成MySQL8.0、MySQL5.7版本的下载、安装、配置 （掌握）**
-
-
 
 **4.MySQL5.7在配置完以后，如何修改配置文件？**
 
@@ -55,12 +49,11 @@
 
   修改完以后，需要重启服务。
 
-  ```mysql
+  ```shell
   net stop mysql服务名;
   net start mysql服务名;
   ```
 
-  
 
 **5.熟悉常用的数据库管理和操作的工具**
 
@@ -76,8 +69,6 @@
 
 Oracle、MySQl、SQL Server、DB2、PGSQL；Redis、MongoDB、ES.....
 
-
-
 **2.谈谈你对MySQL历史、特点的理解**
 
 - 历史：
@@ -90,8 +81,6 @@ Oracle、MySQl、SQL Server、DB2、PGSQL；Redis、MongoDB、ES.....
   - 开源的、关系型的数据库
   - 支持千万级别数据量的存储，大型的数据库
 
-
-
 **3.说说你对DB、DBMS、SQL的理解**
 
 DB：database，看做是数据库文件。 （类似于：.doc、.txt、.mp3、.avi、。。。）
@@ -100,8 +89,6 @@ DBMS：数据库管理系统。（类似于word工具、wps工具、记事本工
 
 MySQL数据库服务器中安装了MySQL DBMS,使用MySQL DBMS 来管理和操作DB，使用的是SQL语言。
 
-
-
 **4.你知道哪些非关系型数据库的类型呢？（了解）**
 
 - 键值型数据库：Redis
@@ -109,8 +96,6 @@ MySQL数据库服务器中安装了MySQL DBMS,使用MySQL DBMS 来管理和操�
 - 搜索引擎数据库：ES、Solr
 - 列式数据库：HBase
 - 图形数据库：InfoGrid
-
-
 
 **5.表与表的记录之间存在哪些关联关**
 
@@ -1651,6 +1636,803 @@ SELECT * FROM enployee WHERE `name` LIKE '%小%';
 ------
 
 ## 第12章、约束
+
+**练习1**
+
+```mysql
+# 已经存在数据库test04_emp，两张表emp2和dept2
+CREATE DATABASE test04_emp;
+USE test04_emp;
+
+CREATE TABLE emp2(
+	id INT,
+	emp_name VARCHAR(15)
+);
+
+CREATE TABLE dept2(
+	id INT,
+	dept_name VARCHAR(15)
+);
+```
+
+```mysql
+# 题目：
+#1.向表emp2的id列中添加PRIMARY KEY约束
+ALTER TABLE emp2 MODIFY COLUMN id INT PRIMARY KEY;
+# or
+ALTER TABLE emp2 ADD PRIMARY KEY(id);
+
+#2. 向表dept2的id列中添加PRIMARY KEY约束
+ALTER TABLE dept2 MODIFY COLUMN id INT PRIMARY KEY;
+# or
+ALTER TABLE dept2 ADD PRIMARY KEY(id);
+
+#3. 向表emp2中添加列dept_id，并在其中定义FOREIGN KEY约束，与之相关联的列是dept2表中的id列。
+#先向表emp2中添加字段dept_id
+ALTER TABLE emp2 ADD COLUMN dept_id INT; 
+#再设置外键约束
+ALTER TABLE emp2 ADD CONSTRAINT fk_emp2_dept_id FOREIGN KEY (dept_id) REFERENCES dept2(id);
+```
+
+**练习2**
+
+```mysql
+# 承接《第11章_数据处理之增删改》的综合案例。
+# 1、创建数据库test01_library
+CREATE DATABASE IF NOT EXISTS test01_library CHARACTER SET 'utf8';
+USE test01_library;
+
+# 2、创建表 books，表结构如下：
+CREATE TABLE IF NOT EXISTS books(
+	id int,
+	`name` VARCHAR(50),
+	`authors` VARCHAR(100),
+	price FLOAT,
+	pubdate YEAR,
+	note VARCHAR(100),
+	num INT
+);
+```
+
+| 字段名  | 字段说明 | 数据类型     |
+| ------- | -------- | ------------ |
+| id      | 书编号   | INT          |
+| name    | 书名     | VARCHAR(50)  |
+| authors | 作者     | VARCHAR(100) |
+| price   | 价格     | FLOAT        |
+| pubdate | 出版日期 | YEAR         |
+| note    | 说明     | VARCHAR(100) |
+| num     | 库存     | INT          |
+
+```mysql
+# 3、使用ALTER语句给books按如下要求增加相应的约束
+#方式1
+#给id增加主键约束
+ALTER TABLE books ADD PRIMARY KEY(id);
+#给id增加自增约束
+ALTER TABLE books MODIFY id INT AUTO_INCREMENT;
+#方式2
+ALTER TABLE books MODIFY id INT PRIMARY KEY AUTO_INCREMENT;
+
+#给name、authors、price、pubdate、num字段增加非空约束
+ALTER TABLE books MODIFY `name` VARCHAR(50) NOT NULL;
+ALTER TABLE books MODIFY `authors` VARCHAR(100) NOT NULL;
+ALTER TABLE books MODIFY price FLOAT NOT NULL;
+ALTER TABLE books MODIFY pubdate YEAR NOT NULL;
+ALTER TABLE books MODIFY num INT NOT NULL;
+```
+
+| 字段名  | 字段说明 | 数据类型     | 主键   | 外键 | 非空   | 唯一   | 自增   |
+| ------- | -------- | ------------ | ------ | ---- | ------ | ------ | ------ |
+| id      | 书编号   | INT          | **是** | 否   | **是** | **是** | **是** |
+| name    | 书名     | VARCHAR(50)  | 否     | 否   | **是** | 否     | 否     |
+| authors | 作者     | VARCHAR(100) | 否     | 否   | **是** | 否     | 否     |
+| price   | 价格     | FLOAT        | 否     | 否   | **是** | 否     | 否     |
+| pubdate | 出版日期 | YEAR         | 否     | 否   | **是** | 否     | 否     |
+| note    | 说明     | VARCHAR(100) | 否     | 否   | 否     | 否     | 否     |
+| num     | 库存     | INT          | 否     | 否   | **是** | 否     | 否     |
+
+**练习3**
+
+```mysql
+#1. 创建数据库test04_company
+CREATE DATABASE IF NOT EXISTS test04_company;
+USE test04_company;
+
+#2. 按照下表给出的表结构在test04_company数据库中创建两个数据表offices和employees
+CREATE TABLE IF NOT EXISTS offices(
+    officeCode INT(10),
+    city VARCHAR(50) NOT NULL,
+    address VARCHAR(50),
+    country VARCHAR(50) NOT NULL,
+    postalCode VARCHAR(15),
+    CONSTRAINT uk_off_poscode UNIQUE(postalCode),
+    PRIMARY KEY(officeCode)
+);
+
+CREATE TABLE IF NOT EXISTS employees(
+    employeeNumber INT(11) PRIMARY KEY AUTO_INCREMENT,
+    lastName VARCHAR(50) NOT NULL,
+    firstName VARCHAR(50) NOT NULL,
+    mobile VARCHAR(25) UNIQUE,
+    officeCode INT(10) NOT NULL,
+    jobTitle VARCHAR(50) NOT NULL,
+    birth DATETIME NOT NULL,
+    note VARCHAR(255),
+    sex VARCHAR(5),
+    CONSTRAINT fk_emp_ofCode FOREIGN KEY(officeCode) REFERENCES offices(officeCode)
+);
+```
+
+- offices表：
+
+  ![image-20220702222512483](03-MySQL-章节练习篇.assets/image-20220702222512483.png)
+
+- employees表：
+
+  ![image-20220702222532068](03-MySQL-章节练习篇.assets/image-20220702222532068.png)
+
+```mysql
+#3. 将表employees的mobile字段修改到officeCode字段后面
+ALTER TABLE employees MODIFY mobile VARCHAR(25) UNIQUE AFTER officeCode;
+
+#4. 将表employees的birth字段改名为employee_birth
+ALTER TABLE employees CHANGE birth employee_birth DATETIME NOT NULL;
+
+#5. 修改sex字段，数据类型为CHAR(1)，非空约束
+ALTER TABLE employees MODIFY sex CHAR(1) NOT NULL;
+
+#6. 删除字段note
+ALTER TABLE employees DROP COLUMN note;
+
+#7. 增加字段名favoriate_activity，数据类型为VARCHAR(100)
+ALTER TABLE employees ADD favoriate_activity VARCHAR(100);
+
+#8. 将表employees名称修改为employees_info
+RENAME TABLE employees TO employees_info;
+# OR
+ALTER TABLE employees RENAME TO employees_info;
+```
+
+------
+
+##  第13章、视图
+
+**练习1**
+
+```mysql
+#1. 使用表employees创建视图employee_vu，其中包括姓名（LAST_NAME），员工号（EMPLOYEE_ID），部门号(DEPARTMENT_ID)
+CREATE OR REPLACE VIEW employee_vu
+AS
+SELECT last_name, employee_id, department_id
+FROM employees;
+
+#2. 显示视图的结构
+DESC employee_vu;
+# OR
+DESCRIBE employee_vu;
+
+#3. 查询视图中的全部内容
+SELECT * FROM employee_vu
+
+#4. 将视图中的数据限定在部门号是80的范围内
+CREATE OR REPLACE VIEW employee_vu
+AS
+SELECT last_name, employee_id, department_id
+FROM employees
+WHERE department_id = 80;
+```
+
+**练习2**
+
+```mysql
+CREATE TABLE emps
+AS
+SELECT * FROM atguigudb.employees;
+
+#1. 创建视图emp_v1,要求查询电话号码以‘011’开头的员工姓名和工资、邮箱
+CREATE OR REPLACE VIEW emp_v1
+AS
+SELECT last_name, salary, email
+FROM emps
+WHERE phone_number LIKE '011%';
+
+#2. 要求将视图 emp_v1 修改为查询电话号码以‘011’开头的并且邮箱中包含 e 字符的员工姓名和邮箱、电话号码
+CREATE OR REPLACE VIEW emp_v1
+AS
+SELECT last_name, salary, email, phone_number
+FROM emps
+WHERE phone_number LIKE '011%'
+AND email LIKE '%e%';
+
+#3. 向 emp_v1 插入一条记录，是否可以？
+DESC emps;
+DESC emp_v1;
+INSERT INTO emp_v1(last_name,salary,email,phone_number)
+VALUES('Tom',2300,'tom@126.com','1322321312');
+实测不可以，因为原表中last_name,salary,email,phone_number之外的字段中有非空约束且没指定默认值
+
+#4. 修改emp_v1中员工的工资，每人涨薪1000
+UPDATE emp_v1 SET salary = salary + 1000;
+
+#5. 删除emp_v1中姓名为Olsen的员工
+DELETE FROM emp_v1 WHERE last_name = 'Olsen';
+
+#6. 创建视图emp_v2，要求查询部门的最高工资高于 12000 的部门id和其最高工资
+CREATE OR REPLACE VIEW emp_v2
+AS
+SELECT department_id, MAX(salary)
+FROM emps
+GROUP BY department_id
+HAVING MAX(salary) > 12000;
+
+#7. 向 emp_v2 中插入一条记录，是否可以？
+# [Err] 1471 - The target table emp_v2 of the INSERT is not insertable-into
+INSERT INTO emp_v2 VALUES(400,18000);
+实测不可以
+
+#8. 删除刚才的emp_v2 和 emp_v1
+DROP VIEW IF EXISTS emp_v1, emp_v2;
+```
+
+![image-20220704232342789](03-MySQL-章节练习篇.assets/image-20220704232342789.png)
+
+------
+
+## 第14章、存储过程与函数
+
+**存储过程练习**
+
+```mysql
+#0.准备工作
+CREATE DATABASE test15_pro_func;
+USE test15_pro_func;
+
+#1. 创建存储过程insert_user(),实现传入用户名和密码，插入到admin表中
+CREATE TABLE admin(
+	id INT PRIMARY KEY AUTO_INCREMENT,
+	user_name VARCHAR(15) NOT NULL,
+	pwd VARCHAR(25) NOT NULL
+);
+
+DELIMITER //
+CREATE PROCEDURE insert_user(IN username VARCHAR(15), IN pwds VARCHAR(25))
+BEGIN
+	INSERT INTO admin(user_name, pwd)
+	VALUES(username, pwds);
+END //
+DELIMITER ;
+
+#2. 创建存储过程get_phone(),实现传入女神编号，返回女神姓名和女神电话
+CREATE TABLE beauty(
+	id INT PRIMARY KEY AUTO_INCREMENT,
+	`name` VARCHAR(15) NOT NULL,
+	phone VARCHAR(15) UNIQUE,
+	birth DATE
+);
+
+INSERT INTO beauty(NAME,phone,birth)
+VALUES
+('朱茵','13201233453','1982-02-12'),
+('孙燕姿','13501233653','1980-12-09'),
+('田馥甄','13651238755','1983-08-21'),
+('邓紫棋','17843283452','1991-11-12'),
+('刘若英','18635575464','1989-05-18'),
+('杨超越','13761238755','1994-05-11');
+SELECT * FROM beauty;
+
+DELIMITER //
+CREATE PROCEDURE get_phone(IN bid INT, OUT bname VARCHAR(15), OUT bphone VARCHAR(15))
+BEGIN
+	SELECT
+		`name`, `phone` INTO bname, bphone
+	FROM
+		beauty
+	WHERE
+		id = bid;
+END //
+DELIMITER ;
+
+#3. 创建存储过程date_diff()，实现传入两个女神生日，返回日期间隔大小
+DELIMITER //
+CREATE PROCEDURE date_diff(IN birth1 DATE, IN birth2 DATE, OUT result INT)
+BEGIN
+	SELECT DATEDIFF(birth1,birth2) INTO result;
+END //
+DELIMITER ;
+
+#调用
+SET @birth1 = '1992-09-08';
+SET @birth2 = '1989-01-03';
+CALL date_diff(@birth1,@birth2,@result);
+SELECT @result;
+
+#4. 创建存储过程format_date()，实现传入一个日期，格式化成xx年xx月xx日并返回
+DELIMITER //
+CREATE PROCEDURE format_date(IN date_time DATETIME, OUT res VARCHAR(50)))
+BEGIN
+	SELECT DATE_FORMAT(date_time, '%y年%m月%d日') INTO res;
+END //
+DELIMITER ;
+
+#5. 创建存储过程beauty_limit()，根据传入的起始索引和条目数，查询女神表的记录
+DELIMITER &&
+CREATE PROCEDURE beauty_limit(IN myindex INT, IN mycount INT)
+BEGIN
+	SELECT * FROM beauty LIMIT myindex, mycount;
+END &&
+DELIMITER ;
+
+#创建带inout模式参数的存储过程
+#6. 传入a和b两个值，最终a和b都翻倍并返回
+DELIMITER &&
+CREATE PROCEDURE double_res(INOUT a INT, INOUT b INT)
+BEGIN
+	SET a = a * 2;
+	SET b = b * 2;
+END &&
+DELIMITER ;
+
+# 调用
+SET @a = 3, @b = 5;
+CALL double_res(@a, @b);
+SELECT @a, @b;
+
+#7. 删除题目5的存储过程
+DROP PROCEDURE IF EXISTS beauty_limit;
+
+#8. 查看题目6中存储过程的信息
+SHOW CREATE PROCEDURE double_res;
+SHOW PROCEDURE STATUS LIKE 'double_res';
+```
+
+**存储函数练习**
+
+```mysql
+#0. 准备工作
+USE test15_pro_func;
+
+CREATE TABLE employees
+AS
+SELECT * FROM atguigudb.`employees`;
+
+CREATE TABLE departments
+AS
+SELECT * FROM atguigudb.`departments`;
+
+#无参有返回
+#1. 创建函数get_count(),返回公司的员工个数
+DELIMITER //
+
+CREATE FUNCTION get_count()
+RETURNS INT
+BEGIN
+	RETURN (SELECT COUNT(*) FROM employees);
+END //
+
+DELIMITER ;
+
+#调用
+SELECT get_count();
+
+#有参有返回
+#2. 创建函数ename_salary(),根据员工姓名，返回它的工资
+DELIMITER &&
+
+CREATE FUNCTION ename_salary(lname VARCHAR(20))
+RETURNS DOUBLE
+BEGIN
+	RETURN (SELECT salary FROM employees WHERE last_name = lname);
+END &&
+
+DELIMITER ;
+#调用
+SELECT ename_salary('Abel');
+
+#3. 创建函数dept_sal()，根据部门名，返回该部门的平均工资
+DELIMITER @@
+
+CREATE FUNCTION dept_sal(dname VARCHAR(30))
+RETURNS DOUBLE
+BEGIN
+	RETURN (
+        	SELECT 
+        		 AVG(e.salary)
+        	FROM 
+        		employees e
+        	JOIN
+        		departments d
+        	ON
+        		e.department_id = d.department_id
+		WHERE
+        		d.department_name = dname;
+        );
+END @@
+
+DELIMITER ;
+#调用
+SELECT dept_sal('IT');
+
+#4. 创建函数add_float()，实现传入两个float，返回二者之和
+DELIMITER //
+
+CREATE FUNCTION add_float(num1 FLOAT, num2 FLOAT)
+RETUENS FLOAT
+BEGIN
+	RETURN (SELECT num1 + num2);
+END //
+
+DELIMITER ;
+```
+
+------
+
+## 第15章、变量、流程控制与游标
+
+**变量**
+
+```mysql
+#0.准备工作
+CREATE DATABASE test16_var_cur;
+use test16_var_cur;
+
+CREATE TABLE employees
+AS
+SELECT * FROM atguigudb.`employees`;
+
+CREATE TABLE departments
+AS
+SELECT * FROM atguigudb.`departments`;
+
+#无参有返回
+#1. 创建函数get_count(),返回公司的员工个数
+DELIMITER //
+
+CREATE FUNCTION get_count()
+RETURNS INT
+BEGIN
+	DECLARE emp_num INT DEFAULT 0;
+	
+	SELECT COUNT(*) INTO emp_num FROM employees;
+	
+	RETURN emp_num;
+END //
+
+DELIMITER ;
+#调用
+SELECT get_count();
+
+#有参有返回
+#2. 创建函数ename_salary(),根据员工姓名，返回它的工资
+DELIMITER $$
+
+CREATE FUNCTION ename_salary(ename VARCHAR(15))
+RETURNS DOUBLE
+BEGIN
+	#定义用户变量
+	SET @sal = 0.0;
+	#赋值
+	SELECT salary INTO @sal FROM employees WHERE last_name = ename;
+	
+	RETURN @sal;
+END $$
+
+DELIMITER ;
+#调用
+SELECT ename_salary('Abel');
+
+#3. 创建函数dept_sal() ,根据部门名，返回该部门的平均工资
+DELIMITER //
+
+CREATE FUNCTION dept_sal(dept_name VARCHAR(15))
+RETURNS DOUBLE
+BEGIN
+	DECLARE avg_sal DOUBLE DEFAULT 0.0;
+	
+	SELECT
+		AVG(e.salary) INTO avg_sal
+	FROM
+		employees e
+	JOIN
+		departments d
+	ON
+		e.department_id = d.department_id
+	WHERE
+		d.department_name = dept_name;
+	
+	RETURN avg_sal;
+END //
+
+DELIMITER ;
+#调用
+SELECT dept_sal('Marketing');
+
+#4. 创建函数add_float()，实现传入两个float，返回二者之和
+DELIMITER //
+
+CREATE FUNCTION add_float(num1 FLOAT, num2 FLOAT)
+RETURNS FLOAT
+BEGIN
+	DECLARE sum_f FLOAT;
+	
+	SET sum_f = num1 + num2; 
+
+	RETURN sum_f;
+END //
+
+DELIMITER ;
+#调用
+SET @v1 := 12.2;
+SET @v2 = 2.3;
+SELECT add_float(@v1,@v2);
+```
+
+**流程控制**
+
+```mysql
+#1. 创建函数test_if_case()，实现传入成绩，如果成绩>90,返回A，如果成绩>80,返回B，如果成绩>60,返回C，否则返回D
+#要求：分别使用if结构和case结构实现
+# 方式1：IF
+DELIMITER //
+CREATE FUNCTION test_if(score DOUBLE)
+RETUENS CHAR
+BEGIN
+	DECLARE res CHAR;
+	
+	IF score > 90 THEN
+		SET res = 'A';
+	ELSEIF score > 80 THEN
+		SET res = 'B';
+	ELSEIF score > 60 THEN
+		SET res = 'C';
+	ELSE
+		SET res = 'D';
+	END IF;
+	
+	RETURN res;
+END //
+DELIMITER ;
+
+# 方式2：CASE
+DELIMITER //
+CREATE FUNCTION test_case(score DOUBLE)
+RETUENS CHAR
+BEGIN
+	DECLARE res CHAR;
+	
+	CASE 
+	WHEN score > 90 THEN
+		SET res = 'A';
+	WHEN score > 80 THEN
+		SET res = 'B';
+	WHEN score > 60 THEN
+		SET res = 'C';
+	ELSE
+		SET res = 'D';
+	END CASE;
+	
+	RETURN res;
+END //
+DELIMITER ;
+
+#2. 创建存储过程test_if_pro()，传入工资值，如果工资值<3000,则删除工资为此值的员工，如果3000 <= 工资值 <= 5000,则修改此工资值的员工薪资涨1000，否则涨工资500
+DELIMITER //
+
+CREATE PROCEDURE test_if_pro(IN sal DOUBLE)
+BEGIN
+	IF sal < 3000 THEN
+		DELETE FROM employees WHERE salary = sal;
+	ELSEIF sal <= 5000 THEN
+		UPDATE employees SET salary = salary + 1000 WHERE salary = sal;
+	ELSE
+		UPDATE employees SET salary = salary + 500 WHERE salary = sal;
+	END IF;
+END //
+
+DELIMITER ;
+#调用
+CALL test_if_pro(3100);
+
+#3. 创建存储过程insert_data(),传入参数为 IN 的 INT 类型变量 insert_count,实现向admin表中批量插入insert_count条记录
+CREATE TABLE admin(
+	id INT PRIMARY KEY AUTO_INCREMENT,
+	user_name VARCHAR(25) NOT NULL,
+	user_pwd VARCHAR(35) NOT NULL
+);
+SELECT * FROM admin;
+
+DELIMITER //
+
+CREATE PROCEDURE insert_data(IN insert_count INT)
+BEGIN
+	DECLARE i INT DEFAULT 0;
+	
+	WHILE i < insert_count DO
+		INSERT INTO admin(user_name, user_pwd) 
+			VALUES(CONCAT('Rose-',i), ROUND(RAND() * 1000000));
+		SET i = i + 1;
+	END WHILE;
+END //
+
+DELIMITER ;
+#调用
+CALL insert_data(100);
+```
+
+**游标的使用**
+
+创建存储过程update_salary()，参数1为 IN 的INT型变量dept_id，表示部门id；参数2为 IN的INT型变量change_sal_count，表示要调整薪资的员工个数。查询指定id部门的员工信息，按照salary升序排列，根据hire_date的情况，调整前change_sal_count个员工的薪资，详情如下。
+
+| hire_date                              | salary               |
+| -------------------------------------- | -------------------- |
+| hire_date < 1995                       | salary = salary*1.2  |
+| hire_date >=1995 and hire_date <= 1998 | salary = salary*1.15 |
+| hire_date > 1998 and hire_date <= 2001 | salary = salary*1.10 |
+| hire_date > 2001                       | salary = salary*1.05 |
+
+```mysql
+DELIMITER //
+
+CREATE PROCEDURE update_salary(IN dept_id INT, IN change_sal_count INT)
+BEGIN
+	#声明变量
+	DECLARE int_count INT DEFAULT 0;
+	DECLARE salary_rate DOUBLE DEFAULT 0.0;
+
+	DECLARE date_emp DATE;
+	DECLARE emp_id INT;
+	
+	# 1.声明游标
+	DECLARE cursor_date CURSOR FOR 
+		SELECT employee_id, hire_date FROM employees WHERE department_id = dept_id ORDER BY salary ASC;
+	# 2.打开游标
+	OPEN cursor_date;
+	
+	WHILE int_count < change_sal_count DO
+		# 3.使用游标
+		FETCH cursor_date INTO emp_id, date_emp;
+		
+		IF(YEAR(date_emp) < 1995) THEN
+			SET salary_rate = 1.2;
+		ELSEIF(YEAR(date_emp) <= 1998) THEN
+			SET salary_rate = 1.15;
+		ELSEIF(YEAR(date_emp) <= 2001) THEN 
+			SET salary_rate = 1.10;
+		ELSE 
+			SET salary_rate = 1.05;
+		END IF;
+	
+		#更新工资
+		UPDATE employees SET salary = salary * salary_rate WHERE employee_id = emp_id;
+
+		#迭代条件
+		SET int_count = int_count + 1;
+	END WHILE;
+	
+	# 4.关闭游标
+	CLOSE cursor_date;
+END //
+
+DELIMITER ;
+```
+
+------
+
+## 第16章、触发器
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

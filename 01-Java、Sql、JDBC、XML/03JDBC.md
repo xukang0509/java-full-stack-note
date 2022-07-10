@@ -38,7 +38,7 @@ JDBC的本质到底是什么？
 	一套接口。
 ```
 
-![QQ截图20211121195744](\03JDBC.assets\QQ截图20211121195744.png)
+![QQ截图20211121195744](03JDBC.assets\QQ截图20211121195744.png)
 
 ##### 3、模拟实现JDBC本质
 
@@ -526,37 +526,37 @@ public class JDBCTest05 {
 }
 ```
 
-![image-20211127174603441](\03JDBC.assets\image-20211127174603441.png))
+![image-20211127174603441](03JDBC.assets\image-20211127174603441.png))
 
 ###### 6.使用IDEA开发JDBC代码配置驱动
 
 a
 
- <img src="\03JDBC.assets\image-20211127182139886.png" alt="image-20211127182139886" style="zoom:80%;" />
+ <img src="03JDBC.assets\image-20211127182139886.png" alt="image-20211127182139886" style="zoom:80%;" />
 
 b
 
-![image-20211127182302568](\03JDBC.assets\image-20211127182302568.png)
+![image-20211127182302568](03JDBC.assets\image-20211127182302568.png)
 
 c
 
-![image-20211127182423063](\03JDBC.assets\image-20211127182423063.png)
+![image-20211127182423063](03JDBC.assets\image-20211127182423063.png)
 
 d
 
-![image-20211127182551887](\03JDBC.assets\image-20211127182551887.png)
+![image-20211127182551887](03JDBC.assets\image-20211127182551887.png)
 
 e
 
-![image-20211127182636761](\03JDBC.assets\image-20211127182636761.png)
+![image-20211127182636761](03JDBC.assets\image-20211127182636761.png)
 
 f
 
-![image-20211127182720409](\03JDBC.assets\image-20211127182720409.png)
+![image-20211127182720409](03JDBC.assets\image-20211127182720409.png)
 
 g
 
-![image-20211127182813708](\03JDBC.assets\image-20211127182813708.png)
+![image-20211127182813708](03JDBC.assets\image-20211127182813708.png)
 
 ###### 7.用户登录业务
 
@@ -1222,7 +1222,7 @@ public class JDBCTest12 {
 
 ###### 13.悲观锁和乐观锁的概念
 
-![image-20211128012548810](\03JDBC.assets\image-20211128012548810.png)
+![image-20211128012548810](03JDBC.assets\image-20211128012548810.png)
 
 ```java
 /**

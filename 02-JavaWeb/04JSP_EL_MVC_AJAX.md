@@ -82,7 +82,7 @@
    int num3 = num1 + num2;
    ```
 
-   ![image-20211226200012886](\04JSP_EL_MVC_AJAX_JSON.assets\image-20211226200012886.png)
+   ![image-20211226200012886](04JSP_EL_MVC_AJAX_JSON.assets\image-20211226200012886.png)
 
    ```jsp
    <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -117,7 +117,7 @@
    num1 + num2 = <%=num1+num2%>
    ```
 
-   ![image-20211226194432876](\04JSP_EL_MVC_AJAX_JSON.assets\image-20211226194432876.png)
+   ![image-20211226194432876](04JSP_EL_MVC_AJAX_JSON.assets\image-20211226194432876.png)
 
    ```jsp
    <%@ page import="com.example.entity.Student" %><!--自动导包-->
@@ -132,7 +132,7 @@
    学员姓名:<%=stu.getSname()%>
    ```
 
-   ![image-20211226194744250](\04JSP_EL_MVC_AJAX_JSON.assets\image-20211226194744250.png)
+   ![image-20211226194744250](04JSP_EL_MVC_AJAX_JSON.assets\image-20211226194744250.png)
 
    ```jsp
    <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -204,7 +204,7 @@
    </table>
    ```
 
-   ![image-20211226200033995](\04JSP_EL_MVC_AJAX_JSON.assets\image-20211226200033995.png)
+   ![image-20211226200033995](04JSP_EL_MVC_AJAX_JSON.assets\image-20211226200033995.png)
 
 ### 七、JSP文件内置对象
 
@@ -228,7 +228,7 @@
 来访用户密码:<%=password%>
 ```
 
-![image-20211226200647604](\04JSP_EL_MVC_AJAX_JSON.assets\image-20211226200647604.png)
+![image-20211226200647604](04JSP_EL_MVC_AJAX_JSON.assets\image-20211226200647604.png)
 
 2. session
 
@@ -261,7 +261,7 @@ session2.jsp
 session_2.jsp从当前用户session中读取数据:<%=value%>
 ```
 
-![image-20211226201214658](\04JSP_EL_MVC_AJAX_JSON.assets\image-20211226201214658.png)
+![image-20211226201214658](04JSP_EL_MVC_AJAX_JSON.assets\image-20211226201214658.png)
 
 3. application
 
@@ -373,7 +373,7 @@ public class OneServlet extends HttpServlet {
 </table>
 ```
 
-![image-20220105191113932](\04JSP_EL_MVC_AJAX_JSON.assets\image-20220105191113932.png)
+![image-20220105191113932](04JSP_EL_MVC_AJAX_JSON.assets\image-20220105191113932.png)
 
 ### 九、在线考试管理系统---试题功能
 
@@ -598,9 +598,9 @@ public class QuestiomAddServlet extends HttpServlet {
 </html>
 ```
 
-![image-20220105204156325](\04JSP_EL_MVC_AJAX_JSON.assets\image-20220105204156325.png)
+![image-20220105204156325](04JSP_EL_MVC_AJAX_JSON.assets\image-20220105204156325.png)
 
- ![image-20220105204213412](\04JSP_EL_MVC_AJAX_JSON.assets\image-20220105204213412.png)
+ ![image-20220105204213412](04JSP_EL_MVC_AJAX_JSON.assets\image-20220105204213412.png)
 
 ##### 2 所有试题查询功能
 
@@ -701,7 +701,7 @@ public class QuestionDao {
 </html>
 ```
 
-![image-20220106195801195](\04JSP_EL_MVC_AJAX_JSON.assets\image-20220106195801195.png)
+![image-20220106195801195](04JSP_EL_MVC_AJAX_JSON.assets\image-20220106195801195.png)
 
 ##### 3 试题删除功能
 
@@ -804,7 +804,7 @@ public class QuestionDao {
 </html>
 ```
 
-![image-20220106201703921](\04JSP_EL_MVC_AJAX_JSON.assets\image-20220106201703921.png)
+![image-20220106201703921](04JSP_EL_MVC_AJAX_JSON.assets\image-20220106201703921.png)
 
 #####  4 试题编号查询功能
 
@@ -916,9 +916,9 @@ public class QuestionDao {
 </html>
 ```
 
-![image-20220106203638553](\04JSP_EL_MVC_AJAX_JSON.assets\image-20220106203638553.png)
+![image-20220106203638553](04JSP_EL_MVC_AJAX_JSON.assets\image-20220106203638553.png)
 
-![image-20220106203641643](\04JSP_EL_MVC_AJAX_JSON.assets\image-20220106203641643.png)
+![image-20220106203641643](04JSP_EL_MVC_AJAX_JSON.assets\image-20220106203641643.png)
 
 ##### 5 试题更新功能
 
@@ -1043,7 +1043,7 @@ public class QuestionDao {
   学员地址:<%=home%>
   ```
   
-  ![image-20220108165806394](\04JSP_EL_MVC_AJAX_JSON.assets\image-20220108165806394.png)
+  ![image-20220108165806394](04JSP_EL_MVC_AJAX_JSON.assets\image-20220108165806394.png)
 
 ### 三、EL表达式
 
@@ -1071,7 +1071,7 @@ public class QuestionDao {
 学员地址:${requestScope.home}<br>
 ```
 
-![image-20220108170302739](\04JSP_EL_MVC_AJAX_JSON.assets\image-20220108170302739.png)
+![image-20220108170302739](04JSP_EL_MVC_AJAX_JSON.assets\image-20220108170302739.png)
 
 1. 命令格式：${作用域对象别名.共享数据}
 2. 命令作用：
@@ -1172,7 +1172,7 @@ public class OneServlet extends HttpServlet {
 学员姓名:${requestScope.key.sname}
 ```
 
-![image-20220108174214310](\04JSP_EL_MVC_AJAX_JSON.assets\image-20220108174214310.png)
+![image-20220108174214310](04JSP_EL_MVC_AJAX_JSON.assets\image-20220108174214310.png)
 
 ### 六、EL表达式简化版
 
@@ -1224,7 +1224,7 @@ public class OneServlet extends HttpServlet {
 简化版EL表达式输出session中key值:${key}
 ```
 
-![image-20220108175921163](\04JSP_EL_MVC_AJAX_JSON.assets\image-20220108175921163.png)
+![image-20220108175921163](04JSP_EL_MVC_AJAX_JSON.assets\image-20220108175921163.png)
 
 ```java
 public class OneServlet extends HttpServlet {
@@ -1250,7 +1250,7 @@ public class OneServlet extends HttpServlet {
 简化版EL表达式输出session中key值:${key}
 ```
 
-![image-20220108180118317](\04JSP_EL_MVC_AJAX_JSON.assets\image-20220108180118317.png)
+![image-20220108180118317](04JSP_EL_MVC_AJAX_JSON.assets\image-20220108180118317.png)
 
 ### 七、EL表达式-----支持运算表达式
 
@@ -1292,7 +1292,7 @@ public class OneServlet extends HttpServlet {
 EL表达式计算后的结果：${key1+key2}
 ```
 
-![image-20220108182833103](\04JSP_EL_MVC_AJAX_JSON.assets\image-20220108182833103.png)
+![image-20220108182833103](04JSP_EL_MVC_AJAX_JSON.assets\image-20220108182833103.png)
 
 ```java
 public class TwoServlet extends HttpServlet {
@@ -1325,7 +1325,7 @@ EL表达式方式实现关系运算输出:${age >= 18 ? "欢迎光临" : "谢绝
 EL表达式方式实现关系运算输出:${age ge 18 ? "欢迎光临" : "谢绝入内"}
 ```
 
-![image-20220108183937535](\04JSP_EL_MVC_AJAX_JSON.assets\image-20220108183937535.png)
+![image-20220108183937535](04JSP_EL_MVC_AJAX_JSON.assets\image-20220108183937535.png)
 
 ### 八、EL表达式提供内置对象
 
@@ -1362,7 +1362,7 @@ EL表达式方式实现关系运算输出:${age ge 18 ? "欢迎光临" : "谢绝
 来访者的密码:${param.password}
 ```
 
-![image-20220108185155571](\04JSP_EL_MVC_AJAX_JSON.assets\image-20220108185155571.png)
+![image-20220108185155571](04JSP_EL_MVC_AJAX_JSON.assets\image-20220108185155571.png)
 
 ##### 2 paramValues
 
@@ -1397,7 +1397,7 @@ http://localhost:8080/myWeb/index_2.jsp?deptNo=10&deptNo=20&deptNo=30
 第三个部门编号:${paramValues.deptNo[2]}<br>
 ```
 
-![image-20220108190025048](\04JSP_EL_MVC_AJAX_JSON.assets\image-20220108190025048.png)
+![image-20220108190025048](04JSP_EL_MVC_AJAX_JSON.assets\image-20220108190025048.png)
 
 ### 九、应用
 
@@ -1621,7 +1621,7 @@ public class QuestionDao {
 </html>
 ```
 
-![image-20220108201127994](\04JSP_EL_MVC_AJAX_JSON.assets\image-20220108201127994.png)
+![image-20220108201127994](04JSP_EL_MVC_AJAX_JSON.assets\image-20220108201127994.png)
 
 ##### 2 在线阅卷
 
@@ -1652,9 +1652,9 @@ public class ExamServlet extends HttpServlet {
 }
 ```
 
-![image-20220108205827417](\04JSP_EL_MVC_AJAX_JSON.assets\image-20220108205827417.png)
+![image-20220108205827417](04JSP_EL_MVC_AJAX_JSON.assets\image-20220108205827417.png)
 
-![image-20220108205834065](\04JSP_EL_MVC_AJAX_JSON.assets\image-20220108205834065.png)
+![image-20220108205834065](04JSP_EL_MVC_AJAX_JSON.assets\image-20220108205834065.png)
 
 # MVC开发规则
 
@@ -1728,7 +1728,7 @@ public class ExamServlet extends HttpServlet {
 
 DeptDao/EmpDao---分支任务结果--->Service------>Servlet------>View------>响应体---(Tomcat负责推送)--->浏览器
 
-![image-20220108214332630](\04JSP_EL_MVC_AJAX_JSON.assets\image-20220108214332630.png)
+![image-20220108214332630](04JSP_EL_MVC_AJAX_JSON.assets\image-20220108214332630.png)
 
 # AJAX
 
@@ -1937,9 +1937,9 @@ public class BMIServlet extends HttpServlet {
 </web-app>
 ```
 
-![image-20220109152523220](\04JSP_EL_MVC_AJAX_JSON.assets\image-20220109152523220.png)
+![image-20220109152523220](04JSP_EL_MVC_AJAX_JSON.assets\image-20220109152523220.png)
 
-![image-20220109152526689](\04JSP_EL_MVC_AJAX_JSON.assets\image-20220109152526689.png)
+![image-20220109152526689](04JSP_EL_MVC_AJAX_JSON.assets\image-20220109152526689.png)
 
 ##### 2 通过HttpServletResponse输出数据
 
@@ -2003,9 +2003,9 @@ public class BMIPrintServlet extends HttpServlet {// /bmiprint
 }
 ```
 
-![image-20220109154140955](\04JSP_EL_MVC_AJAX_JSON.assets\image-20220109154140955.png)
+![image-20220109154140955](04JSP_EL_MVC_AJAX_JSON.assets\image-20220109154140955.png)
 
-![image-20220109154144934](\04JSP_EL_MVC_AJAX_JSON.assets\image-20220109154144934.png)
+![image-20220109154144934](04JSP_EL_MVC_AJAX_JSON.assets\image-20220109154144934.png)
 
 ##### 3 使用AJAX请求，计算BMI
 
@@ -2109,9 +2109,9 @@ public class BMIAJAXServlet extends HttpServlet {// /bmiAjax
 }
 ```
 
-![image-20220109163756700](\04JSP_EL_MVC_AJAX_JSON.assets\image-20220109163756700.png)
+![image-20220109163756700](04JSP_EL_MVC_AJAX_JSON.assets\image-20220109163756700.png)
 
-![image-20220109163800769](\04JSP_EL_MVC_AJAX_JSON.assets\image-20220109163800769.png)
+![image-20220109163800769](04JSP_EL_MVC_AJAX_JSON.assets\image-20220109163800769.png)
 
 ### 四、AJAX实例二
 
@@ -2142,7 +2142,7 @@ public class BMIAJAXServlet extends HttpServlet {// /bmiAjax
     ) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
     ```
 
-![image-20220109173434164](\04JSP_EL_MVC_AJAX_JSON.assets\image-20220109173434164.png)
+![image-20220109173434164](04JSP_EL_MVC_AJAX_JSON.assets\image-20220109173434164.png)
 
 ```jsp
 <!--index.jsp-->
@@ -2242,9 +2242,9 @@ public class ProvinceDao {
 }
 ```
 
-![image-20220109173713129](\04JSP_EL_MVC_AJAX_JSON.assets\image-20220109173713129.png)
+![image-20220109173713129](04JSP_EL_MVC_AJAX_JSON.assets\image-20220109173713129.png)
 
-![image-20220109173716648](\04JSP_EL_MVC_AJAX_JSON.assets\image-20220109173716648.png)
+![image-20220109173716648](04JSP_EL_MVC_AJAX_JSON.assets\image-20220109173716648.png)
 
 ### 五、JSON
 
@@ -2403,9 +2403,9 @@ public class ProvinceDao {
 }
 ```
 
-![image-20220110151541480](\04JSP_EL_MVC_AJAX_JSON.assets\image-20220110151541480.png)
+![image-20220110151541480](04JSP_EL_MVC_AJAX_JSON.assets\image-20220110151541480.png)
 
-![image-20220110151545244](\04JSP_EL_MVC_AJAX_JSON.assets\image-20220110151545244.png)
+![image-20220110151545244](04JSP_EL_MVC_AJAX_JSON.assets\image-20220110151545244.png)
 
 ```jsp
 <!--通过回调函数处理返回的数据-->

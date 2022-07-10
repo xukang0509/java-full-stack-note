@@ -17,7 +17,7 @@ Spring 使用 XML 作为容器配置文件，在 3.0 以后加入了 JavaConfig�
 
    拿来就可以使用了。
 
-3. SpringBoot开发效率高，使用方便多了.
+3. SpringBoot开发效率高，使用方便多了。
 
 
 
