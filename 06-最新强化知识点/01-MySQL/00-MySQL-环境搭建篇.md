@@ -889,6 +889,7 @@ Query OK, 1 row affected (0.00 sec)
 ```mysql
 mysql> use 0728db;
 Database changed
+
 mysql> create table student (id int , name varchar(20)) charset Latin1;
 Query OK, 0 rows affected (0.02 sec)
 mysql> show create table student\G
@@ -1117,7 +1118,7 @@ rm -rf /etc/my.cnf
 | 源码包         | 安装最复杂，时间长，参数设置灵活，性能好             |
 
 - 这里不能直接选择CentOS 7系统的版本，所以选择与之对应的`Red Hat Enterprise Linux`
-- https://downloads.mysql.com/archives/community/ 直接点Download下载RPM Bundle全量包。包括了所有下面的组件。不需要一个一个下载了。
+- https://downloads.mysql.com/archives/community/ 直接点Download下载RPM Bundle全量包。包括了所有下面的组件。不需要一个一个下载了。
 
 ![image-20220715093733793](00-MySQL-环境搭建篇.assets/image-20220715093733793.png)
 
