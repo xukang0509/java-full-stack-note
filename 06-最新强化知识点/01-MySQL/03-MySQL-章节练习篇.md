@@ -2429,4 +2429,3 @@ WINDOW w AS (ORDER BY points DESC);
 
 ![image-20220711205651885](03-MySQL-章节练习篇.assets/image-20220711205651885.png)
 
-
