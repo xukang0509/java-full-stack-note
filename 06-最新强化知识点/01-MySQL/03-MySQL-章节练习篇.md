@@ -2320,127 +2320,113 @@ DELIMITER ;
 
 ## 第16章、触发器
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+**练习一**
+
+```mysql
+#0. 准备工作
+CREATE TABLE emps
+AS
+SELECT employee_id, last_name, salary
+FROM atguigudb.`employees`;
+
+#1. 复制一张emps表的空表emps_back，只有表结构，不包含任何数据
+CREATE TABLE emps_back
+AS
+SELECT * FROM emps WHERE 1 = 2;
+
+#2. 查询emps_back表中的数据
+SELECT * FROM emps_back;
+
+#3. 创建触发器emps_insert_trigger，每当向emps表中添加一条记录时，同步将这条记录添加到emps_back表中
+DELIMITER //
+
+CREATE TRIGGER emps_insert_trigger
+AFTER INSERT ON emps
+FOR EACH ROW
+BEGIN
+	#将新添加到emps表中的记录添加到emps_back表中
+	INSERT INTO emps_back(employee_id, last_name, salary)
+	VALUES(NEW.employee_id, NEW.last_name, NEW.salary);
+END //
+
+DELIMITER ;
+
+#4. 验证触发器是否起作用
+INSERT INTO emps VALUES(300,'Tom',5600);
+
+SELECT * FROM emps_back;
+```
+
+**练习二**
+
+```mysql
+#0. 准备工作：使用练习1中的emps表
+#1. 复制一张emps表的空表emps_back1，只有表结构，不包含任何数据
+CREATE TABLE emps_back1
+AS
+SELECT * FROM emps WHERE 1 = 2;
+
+#2. 查询emps_back1表中的数据
+SELECT * FROM emps_back1;
+
+#3. 创建触发器emps_del_trigger，每当向emps表中删除一条记录时，同步将删除的这条记录添加到emps_back1表中
+DELIMITER //
+
+CREATE TRIGGER emps_del_trigger
+BEFORE DELETE ON emps
+FOR EACH ROW
+BEGIN
+	#将emps表中删除的记录，添加到emps_back1表中。
+	INSERT INTO emps_back1(employee_id, last_name, salary)
+	VALUES(OLD.employee_id, OLD.last_name, OLD.salary);
+END //
+
+DELIMITER ;
+
+#4. 验证触发器是否起作用
+#测试1
+DELETE FROM emps WHERE employee_id = 101;
+SELECT * FROM emps_back1;
+
+#测试2
+DELETE FROM emps;
+SELECT * FROM emps_back1;
+```
+
+------
+
+## 第17章、MySQL8 其它新特性
+
+```mysql
+#1. 创建students数据表，如下
+CREATE TABLE students(
+	id INT PRIMARY KEY AUTO_INCREMENT,
+	student VARCHAR(15),
+	points TINYINT
+);
+
+#2. 向表中添加数据如下
+INSERT INTO students(student,points)
+VALUES
+('张三',89),
+('李四',77),
+('王五',88),
+('赵六',90),
+('孙七',90),
+('周八',88);
+
+#3. 分别使用RANK()、DENSE_RANK() 和 ROW_NUMBER()函数对学生成绩降序排列情况进行显示
+SELECT 
+	student,
+	points,
+	RANK() OVER w AS rank_num,
+	DENSE_RANK() OVER w AS dense_num,
+	ROW_NUMBER() OVER w AS row_num
+FROM
+	students
+WINDOW w AS (ORDER BY points DESC);
+```
+
+![image-20220711205651885](03-MySQL-章节练习篇.assets/image-20220711205651885.png)
 
 

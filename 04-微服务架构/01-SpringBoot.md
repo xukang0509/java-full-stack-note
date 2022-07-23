@@ -3718,8 +3718,7 @@ C#、PHP 语言体系下也有模板引擎，甚至在 JavaScript 中也会用�
 的模板引擎有 Thymeleaf 、Freemaker、Velocity、Beetl（国产） 等。
 
 Thymeleaf 对网络环境不存在严格的要求，既能用于 Web 环境下，也能用于非 Web 环境
-下。在非 Web 环境下，他能直接显示模板上的静态数据；在 Web 环境下，它能像 Jsp 一样从
-后台接收数据并替换掉模板上的静态数据。它是基于 HTML 的，以 HTML 标签为载体，
+下。在非 Web 环境下，他能直接显示模板上的静态数据；在 Web 环境下，它能像 Jsp 一样从后台接收数据并替换掉模板上的静态数据。它是基于 HTML 的，以 HTML 标签为载体，
 Thymeleaf 要寄托在 HTML 标签下实现。
 
 Spring Boot 集成了 Thymeleaf 模板技术，并且 SpringBoot 官方也推荐使用 Thymeleaf 来
@@ -4257,7 +4256,7 @@ public class ThymeleafController {
 
 - 其中 user 及 iterStat 自己可以随便取名
 
--  interStat 是循环体的信息，通过该变量可以获取如下信息
+-  iterStat 是循环体的信息，通过该变量可以获取如下信息
 
   1. index：当前迭代对象的 index（从 0 开始计算）
   2. count：当前迭代对象的个数（从 1 开始计算）这两个用的较多
@@ -4420,7 +4419,7 @@ public class ThymeleafController {
 1. controller
 
 ```java
-	//循环Map
+     //循环Map
     @GetMapping("/eachMap")
     public String eachMap(Model model){
         HashMap<String, SysUser> map = new HashMap<>(3);
