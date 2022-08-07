@@ -13,7 +13,7 @@ Spring 使用 XML 作为容器配置文件，在 3.0 以后加入了 JavaConfig�
 
    需要了解其他框架配置规则。
 
-2. SpringBoot 就相当于**不需要配置文件的Spring + SpringMVC**。 常用的框架和第三方库都已经配置好了。
+2. SpringBoot 就相当于**不需要配置文件的Spring + SpringMVC**。常用的框架和第三方库都已经配置好了。
 
    拿来就可以使用了。
 
