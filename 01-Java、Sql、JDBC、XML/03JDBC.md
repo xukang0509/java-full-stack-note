@@ -1176,6 +1176,15 @@ public class JDBCUtil {
             }
         }
     }
+    
+    /**
+     * 关闭资源
+     * @param conn 连接对象
+     * @param ps   数据库操作对象
+     */
+    public static void close(Connection conn, Statement ps){
+        this.close(conn, ps, null);
+    }
 }
 ```
 

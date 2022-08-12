@@ -49,7 +49,7 @@ addUser.jsp                                                UserController
 
    使用@Controller 创建处理器对象，@Service 创建业务对象，@Autowired 或者@Resource 在控制器类中注入 Service，Service 类中注入 Dao。
 
-   
+
 
 ##### 3 第一个注解的 SpringMVC 程序
 
@@ -1560,8 +1560,7 @@ default这个servlet作用：
 
 ###### 4.2 静态资源访问
 
-<url-pattern/ >的值并不是说写为/后，静态资源就无法访问了。经过一些配置后，该问
-题也是可以解决的。
+<url-pattern/ >的值并不是说写为/后，静态资源就无法访问了。经过一些配置后，该问题也是可以解决的。
 
 1. 使用<mvc:default-servlet-handler/ >
 
