@@ -314,8 +314,6 @@ public class MyTest {
 
 @PropertyResource：读取properties属性配置文件。使用属性配置文件可以实现外部化配置，在程序代码之外提供数据。
 
-
-
 步骤：
 
 1. 在resources目录下，创建properties文件，使用`key=value`的格式提供数据
@@ -409,7 +407,7 @@ SpringBoot是Spring中的一个成员，可以简化Spring，SpringMVC的使用�
 
 - Provide opinionated 'starter' dependencies to simplify your build configuration
 
-  提供了starter起步依赖，简化应用的配置。   
+  提供了starter起步依赖，简化应用的配置。
 
   比如使用MyBatis框架，需要在Spring项目中，配置MyBatis的对象 SqlSessionFactory，Dao的代理对象
 
