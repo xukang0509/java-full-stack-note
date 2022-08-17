@@ -2263,8 +2263,7 @@ public class Springboot019TransactionalApplication {
 
 REST（英文：Representational State Transfer，简称 REST） 
 
-一种互联网软件架构设计的风格，但它并不是标准，它只是提出了一组客户端和服务器交
-互时的架构理念和设计原则，基于这种理念和原则设计的接口可以更简洁，更有层次，REST
+一种互联网软件架构设计的风格，但它并不是标准，它只是提出了一组客户端和服务器交互时的架构理念和设计原则，基于这种理念和原则设计的接口可以更简洁，更有层次，REST
 这个词，是 Roy Thomas Fielding 在他 2000 年的博士论文中提出的。
 
 任何的技术都可以实现这种理念，如果一个架构符合 REST 原则，就称它为 RESTFul 架构
@@ -2275,11 +2274,9 @@ REST（英文：Representational State Transfer，简称 REST）
 
 
 
-
-
 RESTful架构风格
 
-1)REST：(英文：Representational State Transfer , 中文： **表现层状态转移**)。
+1)REST：(英文：Representational State Transfer , 中文：**表现层状态转移**)。
 
    REST：是一种接口的架构风格和设计的理念，不是标准。
 
