@@ -3472,6 +3472,8 @@ public R getPage(@PathVariable int currentPage,@PathVariable int pageSize){
 
 继续说我们的打包和运行过程。所谓打包指将程序转换成一个可执行的文件，所谓运行指不依赖开发环境执行打包产生的文件。上述两个操作都有对应的命令可以快速执行。
 
+
+
 ### **程序打包**
 
 SpringBoot程序是基于Maven创建的，在Maven中提供有打包的指令，叫做package。本操作可以在Idea环境下执行。
@@ -4350,7 +4352,7 @@ logging:
 
 ### 1-1.手动启动热部署
 
-**步骤1**：导入开发者工具对应的坐标
+**步骤1**：导入`开发者工具`对应的坐标
 
 ```XML
 <dependency>
@@ -4367,7 +4369,7 @@ logging:
 对应的快捷键一定要记得
 
 ```CMD
-<CTR>L+<F9>
+CTRL + F9
 ```
 
 以上过程就实现了springboot工程的热部署，是不是挺简单的。不过这里需要把底层的工作工程给普及一下。
@@ -4390,7 +4392,7 @@ logging:
 
 上述过程每次进行热部署都需要开发者手工操作，不管是点击按钮还是快捷键都需要开发者手工执行。这种操作的应用场景主要是在开发调试期，并且调试的代码处于不同的文件中，比如服务器启动了，我需要改4个文件中的内容，然后重启，等4个文件都改完了再执行热部署，使用一个快捷键就OK了。但是如果现在开发者要修改的内容就只有一个文件中的少量代码，这个时候代码修改完毕如果能够让程序自己执行热部署功能，就可以减少开发者的操作，也就是自动进行热部署，能这么做吗？是可以的。咱们下一节再说。
 
-​		
+
 
 ### 1-2.自动启动热部署
 
@@ -4569,7 +4571,7 @@ public DruidDataSource datasource(){
 
 **步骤1**：在配置类上开启@EnableConfigurationProperties注解，并标注要使用@ConfigurationProperties注解绑定属性的类
 
-```YAML
+```java
 @SpringBootApplication
 @EnableConfigurationProperties(ServerConfig.class)
 public class Springboot13ConfigurationApplication {
@@ -4643,7 +4645,7 @@ Action:
 Modify 'dataSource' so that it conforms to the canonical names requirements.
 ```
 
-为什么会出现这种问题，这就要来说一说springboot进行属性绑定时的一个重要知识点了，有关属性名称的宽松绑定，也可以称为宽松绑定。
+为什么会出现这种问题，这就要来说一说springboot进行属性绑定时的一个重要知识点了，有关属性名称的宽松绑定，也可以称为松散绑定。
 
 什么是宽松绑定？实际上是springboot进行编程时人性化设计的一种体现，即配置文件中的命名格式与变量名的命名格式可以进行格式上的最大化兼容。兼容到什么程度呢？几乎主流的命名格式都支持，例如：
 
@@ -4685,7 +4687,7 @@ Modify 'dataSource' so that it conforms to the canonical names requirements.
 
 其中Reason描述了报错的原因，规范的名称应该是烤肉串(kebab)模式(case)，即使用-分隔，使用小写字母数字作为标准字符，且必须以字母开头。然后再看我们写的名称dataSource，就不满足上述要求。闹了半天，在书写前缀时，这个词不是随意支持的，必须使用上述标准。编程写了这么久，基本上编程习惯都养成了，到这里又被springboot教育了，没辙，谁让人家东西好用呢，按照人家的要求写吧。
 
-最后说一句，以上规则仅针对springboot中@ConfigurationProperties注解进行属性绑定时有效，对@Value注解进行属性映射无效。有人就说，那我不用你不就行了？不用，你小看springboot的推广能力了，到原理篇我们看源码时，你会发现内部全是这玩意儿，算了，拿人手短吃人嘴短，认怂吧。
+最后说一句，以上规则仅针对springboot中@ConfigurationProperties注解进行属性绑定时有效，`对@Value注解进行属性映射无效`。有人就说，那我不用你不就行了？不用，你小看springboot的推广能力了，到原理篇我们看源码时，你会发现内部全是这玩意儿，算了，拿人手短吃人嘴短，认怂吧。
 
 **总结**
 
@@ -4717,10 +4719,10 @@ servers:
 public class ServerConfig {
     @DurationUnit(ChronoUnit.HOURS)
     private Duration serverTimeOut;
+    
     @DataSizeUnit(DataUnit.MEGABYTES)
     private DataSize dataSize;
 }
-
 ```
 
 **Duration**：表示时间间隔，可以通过@DurationUnit注解描述时间单位，例如上例中描述的单位为小时（ChronoUnit.HOURS）
@@ -4741,9 +4743,11 @@ DataSize常用单位如下：
 
 ### 2-4.校验
 
-目前我们在进行属性绑定时可以通过松散绑定规则在书写时放飞自我了，但是在书写时由于无法感知模型类中的数据类型，就会出现类型不匹配的问题，比如代码中需要int类型，配置中给了非法的数值，例如写一个“a"，这种数据肯定无法有效的绑定，还会引发错误。		SpringBoot给出了强大的数据校验功能，可以有效的避免此类问题的发生。在JAVAEE的JSR303规范中给出了具体的数据校验标准，开发者可以根据自己的需要选择对应的校验框架，此处使用Hibernate提供的校验框架来作为实现进行数据校验。书写应用格式非常固定，话不多说，直接上步骤
+目前我们在进行属性绑定时可以通过松散绑定规则在书写时放飞自我了，但是在书写时由于无法感知模型类中的数据类型，就会出现类型不匹配的问题，比如代码中需要int类型，配置中给了非法的数值，例如写一个“a"，这种数据肯定无法有效的绑定，还会引发错误。
 
-**步骤①**：开启校验框架
+SpringBoot给出了强大的数据校验功能，可以有效的避免此类问题的发生。在JAVAEE的JSR303规范中给出了具体的数据校验标准，开发者可以根据自己的需要选择对应的校验框架，此处使用Hibernate提供的校验框架来作为实现进行数据校验。书写应用格式非常固定，话不多说，直接上步骤
+
+**步骤1**：开启校验框架
 
 ```xml
 <!--1.导入JSR303规范-->
@@ -4758,7 +4762,7 @@ DataSize常用单位如下：
 </dependency>
 ```
 
-**步骤②**：在需要开启校验功能的类上使用注解@Validated开启校验功能
+**步骤2**：在需要开启校验功能的类上使用注解@Validated开启校验功能
 
 ```java
 @Component
@@ -4770,7 +4774,7 @@ public class ServerConfig {
 }
 ```
 
-**步骤③**：对具体的字段设置校验规则
+**步骤3**：对具体的字段设置校验规则
 
 ```JAVA
 @Component
@@ -4792,7 +4796,8 @@ public class ServerConfig {
 
 1. 开启Bean属性校验功能一共3步：导入JSR303与Hibernate校验框架坐标、使用@Validated注解启用校验功能、使用具体校验规则规范数据校验格式
 
-   
+
+
 
 ### 2-5.数据类型转换
 
@@ -4800,7 +4805,7 @@ public class ServerConfig {
 
 先把问题描述一下，这位开发者连接数据库正常操作，但是运行程序后显示的信息是密码错误。
 
-```CMD
+```bash
 java.sql.SQLException: Access denied for user 'root'@'localhost' (using password: YES)
 ```
 
@@ -4901,7 +4906,7 @@ public class PropertiesAndArgsTest {
 
 说到这里，好奇宝宝们肯定就有新问题了，如果两者共存呢？其实如果思考一下配置属性与命令行参数的加载优先级，这个结果就不言而喻了。在属性加载的优先级设定中，有明确的优先级设定顺序，还记得下面这个顺序吗？
 
-<img src="02-SpringBoot2-黑马.assets/image-20211206100859236.png" alt="image-20211206100859236" style="zoom:67%;" />
+![image-20220819213023752](02-SpringBoot2-黑马.assets/image-20220819213023752.png)
 
 在这个属性加载优先级的顺序中，明确规定了命令行参数的优先级排序是11，而配置属性的优先级是3，结果不言而喻了，args属性配置优先于properties属性配置加载。
 
@@ -4909,7 +4914,7 @@ public class PropertiesAndArgsTest {
 
 **总结**
 
-1. 加载测试临时属性可以通过注解@SpringBootTest的properties和args属性进行设定，此设定应用范围仅适用于当前测试用例
+1. 加载测试临时属性可以通过注解`@SpringBootTest`的`properties`和`args`属性进行设定，此设定应用范围仅适用于当前测试用例
 
 **思考**
 
@@ -4923,7 +4928,7 @@ public class PropertiesAndArgsTest {
 
 学习过Spring的知识，我们都知道，其实一个spring环境中可以设置若干个配置文件或配置类，若干个配置信息可以同时生效。现在我们的需求就是在测试环境中再添加一个配置类，然后启动测试环境时，生效此配置就行了。其实做法和spring环境中加载多个配置信息的方式完全一样。具体操作步骤如下：
 
-**步骤①**：在测试包test中创建专用的测试环境配置类
+**步骤1**：在测试包test中创建专用的测试环境配置类
 
 ```java
 @Configuration
@@ -4937,7 +4942,7 @@ public class MsgConfig {
 
 上述配置仅用于演示当前实验效果，实际开发可不能这么注入String类型的数据
 
-**步骤②**：在启动测试环境时，导入测试环境专用的配置类，使用@Import注解即可实现
+**步骤2**：在启动测试环境时，导入测试环境专用的配置类，使用@Import注解即可实现
 
 ```java
 @SpringBootTest
@@ -4958,7 +4963,7 @@ public class ConfigurationTest {
 
 **总结**
 
-1. 定义测试环境专用的配置类，然后通过@Import注解在具体的测试中导入临时的配置，例如测试用例，方便测试过程，且上述配置不影响其他的测试类环境
+1. 定义测试环境专用的配置类，然后通过`@Import`注解在具体的测试中导入临时的配置，例如测试用例，方便测试过程，且上述配置不影响其他的测试类环境
 
 **思考**
 
@@ -4968,11 +4973,11 @@ public class ConfigurationTest {
 
 ### 3-3.Web环境模拟测试
 
-在测试中对表现层功能进行测试需要一个基础和一个功能。所谓的一个基础是运行测试程序时，必须启动web环境，不然没法测试web功能。一个功能是必须在测试程序中具备发送web请求的能力，不然无法实现web功能的测试。所以在测试用例中测试表现层接口这项工作就转换成了两件事，一，如何在测试类中启动web测试，二，如何在测试类中发送web请求。下面一件事一件事进行，先说第一个
+在测试中对表现层功能进行测试需要一个基础和一个功能。所谓的一个基础是运行测试程序时，必须启动web环境，不然没法测试web功能。一个功能是必须在测试程序中具备发送web请求的能力，不然无法实现web功能的测试。所以在测试用例中测试表现层接口这项工作就转换成了两件事，一，如何在测试类中启动web测试，二，如何在测试类中发送web请求。下面一件事一件事进行，先说第一个。
 
 **测试类中启动web环境**
 
-每一个springboot的测试类上方都会标准@SpringBootTest注解，而注解带有一个属性，叫做webEnvironment。通过该属性就可以设置在测试用例中启动web环境，具体如下：
+每一个springboot的测试类上方都会标准`@SpringBootTest`注解，而注解带有一个属性，叫做`webEnvironment`。通过该属性就可以设置在测试用例中启动web环境，具体如下：
 
 ```JAVA
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -4984,20 +4989,22 @@ public class WebTest {
 
 <img src="02-SpringBoot2-黑马.assets/image-20220223125453317.png" alt="image-20220223125453317" style="zoom:80%;" />
 
-- MOCK：根据当前设置确认是否启动web环境，例如使用了Servlet的API就启动web环境，属于适配性的配置
-- DEFINED_PORT：使用自定义的端口作为web服务器端口
-- RANDOM_PORT：使用随机端口作为web服务器端口
-- NONE：不启动web环境
+- **MOCK**：根据当前设置确认是否启动web环境，例如使用了Servlet的API就启动web环境，属于适配性的配置
+- **DEFINED_PORT**：使用自定义的端口作为web服务器端口
+- **RANDOM_PORT**：使用随机端口作为web服务器端口
+- **NONE**：不启动web环境
 
 通过上述配置，现在启动测试程序时就可以正常启用web环境了，建议大家测试时使用RANDOM_PORT，避免代码中因为写死设定引发线上功能打包测试时由于端口冲突导致意外现象的出现。就是说你程序中写了用8080端口，结果线上环境8080端口被占用了，结果你代码中所有写的东西都要改，这就是写死代码的代价。现在你用随机端口就可以测试出来你有没有这种问题的隐患了。
 
 测试环境中的web环境已经搭建好了，下面就可以来解决第二个问题了，如何在程序代码中发送web请求。
 
+
+
 **测试类中发送请求**
 
 对于测试类中发送请求，其实java的API就提供对应的功能，只不过平时各位小伙伴接触的比较少，所以较为陌生。springboot为了便于开发者进行对应的功能开发，对其又进行了包装，简化了开发步骤，具体操作如下：
 
-**步骤1**：在测试类中开启web虚拟调用功能，通过注解@AutoConfigureMockMvc实现此功能的开启
+**步骤1**：在测试类中开启web虚拟调用功能，通过注解`@AutoConfigureMockMvc`实现此功能的开启
 
 ```java
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -5014,7 +5021,7 @@ public class WebTest {
 //开启虚拟MVC调用
 @AutoConfigureMockMvc
 public class WebTest {
-
+ 
     @Test
     void testWeb(@Autowired MockMvc mvc) {
     }
@@ -5044,8 +5051,8 @@ public class WebTest {
 
 **总结**
 
-1. 在测试类中测试web层接口要保障测试类启动时启动web容器，使用@SpringBootTest注解的webEnvironment属性可以虚拟web环境用于测试
-2. 为测试方法注入MockMvc对象，通过MockMvc对象可以发送虚拟请求，模拟web请求调用过程
+1. 在测试类中测试web层接口要保障测试类启动时启动web容器，使用`@SpringBootTest`注解的`webEnvironment`属性可以虚拟web环境用于测试
+2. 为测试方法注入`MockMvc对象`，通过MockMvc对象可以发送虚拟请求，模拟web请求调用过程
 
 **思考**
 
@@ -5057,7 +5064,7 @@ public class WebTest {
 
 上一节已经在测试用例中成功的模拟出了web环境，并成功的发送了web请求，本节就来解决发送请求后如何比对发送结果的问题。其实发完请求得到的信息只有一种，就是响应对象。至于响应对象中包含什么，就可以比对什么。常见的比对内容如下：
 
-- 响应状态匹配
+- **响应状态匹配**
 
   ```JAVA
   @Test
@@ -5070,11 +5077,11 @@ public class WebTest {
       //预计本次调用时成功的：状态200
       ResultMatcher ok = status.isOk();
       //添加预计值到本次调用过程中进行匹配
-      action.andExpect(ok);
+      action.andExpect(ok); 
   }
   ```
 
-- 响应体匹配（非json数据格式）
+- **响应体匹配（非json数据格式）**
 
   ```JAVA
   @Test
@@ -5090,7 +5097,7 @@ public class WebTest {
   }
   ```
 
-- 响应体匹配（json数据格式，开发中的主流使用方式）
+- **响应体匹配（json数据格式，开发中的主流使用方式）**
 
   ```JAVA
   @Test
@@ -5106,7 +5113,7 @@ public class WebTest {
   }
   ```
 
-- 响应头信息匹配
+- **响应头信息匹配**
 
   ```JAVA
   @Test
@@ -5551,6 +5558,8 @@ redis-cli.exe
 
 如果启动redis服务器失败，可以先启动客户端，然后执行shutdown操作后退出，此时redis服务器就可以正常执行了。
 
+
+
 ##### 基本操作
 
 服务器启动后，使用客户端就可以连接服务器，类似于启动完MySQL数据库，然后启动SQL命令行操作数据库。		
@@ -5584,6 +5593,8 @@ hget a a2			#得到aa2
 ```
 
 有关redis的基础操作就普及到这里，需要全面掌握redis技术，请参看相关教程学习。
+
+
 
 ##### 整合
 
@@ -5630,22 +5641,26 @@ spring:
 class Springboot16RedisApplicationTests {
     @Autowired
     private RedisTemplate redisTemplate;
+    
     @Test
     void set() {
         ValueOperations ops = redisTemplate.opsForValue();
         ops.set("age",41);
     }
+    
     @Test
     void get() {
         ValueOperations ops = redisTemplate.opsForValue();
         Object age = ops.get("name");
         System.out.println(age);
     }
+    
     @Test
     void hset() {
         HashOperations ops = redisTemplate.opsForHash();
         ops.put("info","b","bb");
     }
+    
     @Test
     void hget() {
         HashOperations ops = redisTemplate.opsForHash();
@@ -5691,9 +5706,7 @@ public class StringRedisTemplateTest {
 
 **redis客户端选择**
 
-```
-	springboot整合redis技术提供了多种客户端兼容模式，默认提供的是lettucs客户端技术，也可以根据需要切换成指定客户端技术，例如jedis客户端技术，切换成jedis客户端技术操作步骤如下：
-```
+springboot整合redis技术提供了多种客户端兼容模式，默认提供的是lettucs客户端技术，也可以根据需要切换成指定客户端技术，例如jedis客户端技术，切换成jedis客户端技术操作步骤如下：
 
 **步骤1**：导入jedis坐标
 
@@ -5735,7 +5748,7 @@ spring:
 **lettcus与jedis区别**
 
 - jedis连接Redis服务器是直连模式，当多线程模式下使用jedis会存在线程安全问题，解决方案可以通过配置连接池使每个连接专用，这样整体性能就大受影响
-- lettcus基于Netty框架进行与Redis服务器连接，底层设计中采用StatefulRedisConnection。 StatefulRedisConnection自身是线程安全的，可以保障并发访问安全问题，所以一个连接可以被多线程复用。当然lettcus也支持多连接实例一起工作
+- lettcus基于Netty框架进行与Redis服务器连接，底层设计中采用StatefulRedisConnection。StatefulRedisConnection自身是线程安全的，可以保障并发访问安全问题，所以一个连接可以被多线程复用。当然lettcus也支持多连接实例一起工作
 
 **总结**
 
@@ -5807,6 +5820,8 @@ mongod --dbpath=..\data\db
 mongo --host=127.0.0.1 --port=27017
 ```
 
+
+
 ##### 基本操作
 
 MongoDB虽然是一款数据库，但是它的操作并不是使用SQL语句进行的，因此操作方式各位小伙伴可能比较陌生，好在有一些类似于Navicat的数据库客户端软件，能够便捷的操作MongoDB，先安装一个客户端，再来操作MongoDB。
@@ -5833,7 +5848,7 @@ MongoDB虽然是一款数据库，但是它的操作并不是使用SQL语句进�
 
 创建集合：在Collections上使用右键创建，输入集合名称即可，集合等同于数据库中的表的作用
 
-新增文档：（文档是一种类似json格式的数据，初学者可以先把数据理解为就是json数据）	
+新增文档：（文档是一种类似json格式的数据，初学者可以先把数据理解为就是json数据）
 
 ```CMD
 db.集合名称.insert/save/insertOne(文档)
@@ -5872,6 +5887,8 @@ db.集合名称.update(条件，{操作种类:{文档}})
 ```
 
 有关MongoDB的基础操作就普及到这里，需要全面掌握MongoDB技术，请参看相关教程学习。
+
+
 
 ##### 整合
 
@@ -6025,6 +6042,8 @@ elasticsearch.bat
   "tagline" : "You Know, for Search"
 }
 ```
+
+
 
 ##### 基本操作
 
@@ -6329,6 +6348,8 @@ ES中保存有我们要查询的数据，只不过格式和数据库存储数据
   }
   ```
 
+
+
 ##### 整合
 
 使用springboot整合ES该如何进行呢？老规矩，导入坐标，做配置，使用API接口操作。整合Redis如此，整合MongoDB如此，整合ES依然如此。太没有新意了，其实不是没有新意，这就是springboot的强大之处，所有东西都做成相同规则，对开发者来说非常友好。
@@ -6353,7 +6374,7 @@ spring:
       uris: http://localhost:9200
 ```
 
-​		配置ES服务器地址，端口9200
+配置ES服务器地址，端口9200
 
 **步骤3**：使用springboot整合ES的专用客户端接口ElasticsearchRestTemplate来进行操作
 
@@ -6366,6 +6387,8 @@ class Springboot18EsApplicationTests {
 ```
 
 上述操作形式是ES早期的操作方式，使用的客户端被称为Low Level Client，这种客户端操作方式性能方面略显不足，于是ES开发了全新的客户端操作方式，称为High Level Client。高级别客户端与ES版本同步更新，但是springboot最初整合ES的时候使用的是低级别客户端，所以企业开发需要更换成高级别的客户端模式。
+
+
 
 下面使用高级别客户端方式进行springboot整合ES，操作步骤如下：
 
@@ -6418,6 +6441,8 @@ class Springboot18EsApplicationTests {
 ```
 
 高级别客户端操作是通过发送请求的方式完成所有操作的，ES针对各种不同的操作，设定了各式各样的请求对象，上例中创建索引的对象是CreateIndexRequest，其他操作也会有自己专用的Request对象。
+
+
 
 当前操作我们发现，无论进行ES何种操作，第一步永远是获取RestHighLevelClient对象，最后一步永远是关闭该对象的连接。在测试中可以使用测试类的特性去帮助开发者一次性的完成上述操作，但是在业务书写时，还需要自行管理。将上述代码格式转换成使用测试类的初始化方法和销毁方法进行客户端对象的维护。
 
@@ -6486,7 +6511,7 @@ void testCreateIndexByIK() throws IOException {
 }
 ```
 
-IK分词器是通过请求参数的形式进行设置的，设置请求参数使用request对象中的source方法进行设置，至于参数是什么，取决于你的操作种类。当请求中需要参数时，均可使用当前形式进行参数设置。	
+IK分词器是通过请求参数的形式进行设置的，设置请求参数使用request对象中的source方法进行设置，至于参数是什么，取决于你的操作种类。当请求中需要参数时，均可使用当前形式进行参数设置。
 
 **添加文档**：
 
@@ -6502,7 +6527,7 @@ void testCreateDoc() throws IOException {
 }
 ```
 
-添加文档使用的请求对象是IndexRequest，与创建索引使用的请求对象不同。	
+添加文档使用的请求对象是IndexRequest，与创建索引使用的请求对象不同。
 
 **批量添加文档**：
 
@@ -6566,9 +6591,9 @@ void testSearch() throws IOException {
 
 springboot整合ES的操作到这里就说完了，与前期进行springboot整合redis和mongodb的差别还是蛮大的，主要原始就是我们没有使用springboot整合ES的客户端对象。至于操作，由于ES操作种类过多，所以显得操作略微有点复杂。有关springboot整合ES就先学习到这里吧。
 
-**总结**
+**总结**：
 
-1. springboot整合ES步骤
+- springboot整合ES步骤
    1. 导入springboot整合ES的High Level Client坐标
    2. 手工管理客户端对象，包括初始化和关闭操作
    3. 使用High Level Client根据操作的种类不同，选择不同的Request对象完成对应操作
@@ -6585,29 +6610,32 @@ springboot能够整合的技术实在是太多了，可以说是万物皆可整�
 
 ### 5-1.缓存
 
-​		企业级应用主要作用是信息处理，当需要读取数据时，由于受限于数据库的访问效率，导致整体系统性能偏低。
+企业级应用主要作用是信息处理，当需要读取数据时，由于受限于数据库的访问效率，导致整体系统性能偏低。
 
 <img src="02-SpringBoot2-黑马.assets/image-20220226154148303.png" alt="image-20220226154148303" style="zoom:67%;" />
 
-​															          应用程序直接与数据库打交道，访问效率低
+**应用程序直接与数据库打交道，访问效率低**
 
-​		为了改善上述现象，开发者通常会在应用程序与数据库之间建立一种临时的数据存储机制，该区域中的数据在内存中保存，读写速度较快，可以有效解决数据库访问效率低下的问题。这一块临时存储数据的区域就是缓存。
+为了改善上述现象，开发者通常会在应用程序与数据库之间建立一种临时的数据存储机制，该区域中的数据在内存中保存，读写速度较快，可以有效解决数据库访问效率低下的问题。这一块临时存储数据的区域就是缓存。
 
 <img src="02-SpringBoot2-黑马.assets/image-20220226154233010.png" alt="image-20220226154233010" style="zoom:67%;" />
 
-```
-										使用缓存后，应用程序与缓存打交道，缓存与数据库打交道，数据访问效率提高
-```
+**使用缓存后，应用程序与缓存打交道，缓存与数据库打交道，数据访问效率提高**
 
-​		缓存是什么？缓存是一种介于数据永久存储介质与应用程序之间的数据临时存储介质，使用缓存可以有效的减少低速数据读取过程的次数（例如磁盘IO），提高系统性能。此外缓存不仅可以用于提高永久性存储介质的数据读取效率，还可以提供临时的数据存储空间。而springboot提供了对市面上几乎所有的缓存技术进行整合的方案，下面就一起开启springboot整合缓存之旅。
+缓存是什么？
+
+- 缓存是一种介于数据永久存储介质与应用程序之间的数据临时存储介质
+- 使用缓存可以有效的减少低速数据读取过程的次数（例如磁盘IO），提高系统性能。
+
+此外缓存不仅可以用于提高永久性存储介质的数据读取效率，还可以提供临时的数据存储空间。而springboot提供了对市面上几乎所有的缓存技术进行整合的方案，下面就一起开启springboot整合缓存之旅。
 
 
 
 #### SpringBoot内置缓存解决方案
 
-​		springboot技术提供有内置的缓存解决方案，可以帮助开发者快速开启缓存技术，并使用缓存技术进行数据的快速操作，例如读取缓存数据和写入数据到缓存。
+springboot技术提供有内置的缓存解决方案，可以帮助开发者快速开启缓存技术，并使用缓存技术进行数据的快速操作，例如读取缓存数据和写入数据到缓存。
 
-**步骤①**：导入springboot提供的缓存技术对应的starter
+**步骤1**：导入springboot提供的缓存技术对应的starter
 
 ```xml
 <dependency>
@@ -6616,7 +6644,7 @@ springboot能够整合的技术实在是太多了，可以说是万物皆可整�
 </dependency>
 ```
 
-**步骤②**：启用缓存，在引导类上方标注注解@EnableCaching配置springboot程序中可以使用缓存
+**步骤2**：启用缓存，在引导类上方标注注解@EnableCaching配置springboot程序中可以使用缓存
 
 ```java
 @SpringBootApplication
@@ -6629,7 +6657,7 @@ public class Springboot19CacheApplication {
 }
 ```
 
-**步骤③**：设置操作的数据是否使用缓存
+**步骤3**：设置操作的数据是否使用缓存
 
 ```java
 @Service
@@ -6644,24 +6672,24 @@ public class BookServiceImpl implements BookService {
 }
 ```
 
-​		在业务方法上面使用注解@Cacheable声明当前方法的返回值放入缓存中，其中要指定缓存的存储位置，以及缓存中保存当前方法返回值对应的名称。上例中value属性描述缓存的存储位置，可以理解为是一个存储空间名，key属性描述了缓存中保存数据的名称，使用#id读取形参中的id值作为缓存名称。
+在业务方法上面使用注解@Cacheable声明当前方法的返回值放入缓存中，其中要指定缓存的存储位置，以及缓存中保存当前方法返回值对应的名称。上例中value属性描述缓存的存储位置，可以理解为是一个存储空间名，key属性描述了缓存中保存数据的名称，使用#id读取形参中的id值作为缓存名称。
 
-​		使用@Cacheable注解后，执行当前操作，如果发现对应名称在缓存中没有数据，就正常读取数据，然后放入缓存；如果对应名称在缓存中有数据，就终止当前业务方法执行，直接返回缓存中的数据。
+使用@Cacheable注解后，执行当前操作，如果发现对应名称在缓存中没有数据，就正常读取数据，然后放入缓存；如果对应名称在缓存中有数据，就终止当前业务方法执行，直接返回缓存中的数据。
 
 
 
 #### 手机验证码案例
 
-​		为了便于下面演示各种各样的缓存技术，我们创建一个手机验证码的案例环境，模拟使用缓存保存手机验证码的过程。
+为了便于下面演示各种各样的缓存技术，我们创建一个手机验证码的案例环境，模拟使用缓存保存手机验证码的过程。
 
-​		手机验证码案例需求如下：
+手机验证码案例需求如下：
 
 - 输入手机号获取验证码，组织文档以短信形式发送给用户（页面模拟）
 - 输入手机号和验证码验证结果
 
-​		为了描述上述操作，我们制作两个表现层接口，一个用来模拟发送短信的过程，其实就是根据用户提供的手机号生成一个验证码，然后放入缓存，另一个用来模拟验证码校验的过程，其实就是使用传入的手机号和验证码进行匹配，并返回最终匹配结果。下面直接制作本案例的模拟代码，先以上例中springboot提供的内置缓存技术来完成当前案例的制作。
+为了描述上述操作，我们制作两个表现层接口，一个用来模拟发送短信的过程，其实就是根据用户提供的手机号生成一个验证码，然后放入缓存，另一个用来模拟验证码校验的过程，其实就是使用传入的手机号和验证码进行匹配，并返回最终匹配结果。下面直接制作本案例的模拟代码，先以上例中springboot提供的内置缓存技术来完成当前案例的制作。
 
-**步骤①**：导入springboot提供的缓存技术对应的starter
+**步骤1**：导入springboot提供的缓存技术对应的starter
 
 ```xml
 <dependency>
@@ -6670,7 +6698,7 @@ public class BookServiceImpl implements BookService {
 </dependency>
 ```
 
-**步骤②**：启用缓存，在引导类上方标注注解@EnableCaching配置springboot程序中可以使用缓存
+**步骤2**：启用缓存，在引导类上方标注注解@EnableCaching配置springboot程序中可以使用缓存
 
 ```java
 @SpringBootApplication
@@ -6683,7 +6711,7 @@ public class Springboot19CacheApplication {
 }
 ```
 
-**步骤③**：定义验证码对应的实体类，封装手机号与验证码两个属性
+**步骤3**：定义验证码对应的实体类，封装手机号与验证码两个属性
 
 ```java
 @Data
@@ -6693,7 +6721,7 @@ public class SMSCode {
 }
 ```
 
-**步骤④**：定义验证码功能的业务层接口与实现类
+**步骤4**：定义验证码功能的业务层接口与实现类
 
 ```java
 public interface SMSCodeService {
@@ -6721,11 +6749,11 @@ public class SMSCodeServiceImpl implements SMSCodeService {
 }
 ```
 
-​		获取验证码后，当验证码失效时必须重新获取验证码，因此在获取验证码的功能上不能使用@Cacheable注解，@Cacheable注解是缓存中没有值则放入值，缓存中有值则取值。此处的功能仅仅是生成验证码并放入缓存，并不具有从缓存中取值的功能，因此不能使用@Cacheable注解，应该使用仅具有向缓存中保存数据的功能，使用@CachePut注解即可。
+获取验证码后，当验证码失效时必须重新获取验证码，因此在获取验证码的功能上不能使用@Cacheable注解，@Cacheable注解是缓存中没有值则放入值，缓存中有值则取值。此处的功能仅仅是生成验证码并放入缓存，并不具有从缓存中取值的功能，因此不能使用@Cacheable注解，应该使用仅具有向缓存中保存数据的功能，使用@CachePut注解即可。
 
-​		对于校验验证码的功能建议放入工具类中进行。
+对于校验验证码的功能建议放入工具类中进行。
 
-**步骤⑤**：定义验证码的生成策略与根据手机号读取验证码的功能
+**步骤5**：定义验证码的生成策略与根据手机号读取验证码的功能
 
 ```java
 @Component
@@ -6752,7 +6780,7 @@ public class CodeUtils {
 }
 ```
 
-**步骤⑥**：定义验证码功能的web层接口，一个方法用于提供手机号获取验证码，一个方法用于提供手机号和验证码进行校验
+**步骤6**：定义验证码功能的web层接口，一个方法用于提供手机号获取验证码，一个方法用于提供手机号和验证码进行校验
 
 ```java
 @RestController
@@ -6778,9 +6806,9 @@ public class SMSCodeController {
 
 #### SpringBoot整合Ehcache缓存
 
-​		手机验证码的案例已经完成了，下面就开始springboot整合各种各样的缓存技术，第一个整合Ehcache技术。Ehcache是一种缓存技术，使用springboot整合Ehcache其实就是变更一下缓存技术的实现方式，话不多说，直接开整
+手机验证码的案例已经完成了，下面就开始springboot整合各种各样的缓存技术，第一个整合Ehcache技术。Ehcache是一种缓存技术，使用springboot整合Ehcache其实就是变更一下缓存技术的实现方式，话不多说，直接开整
 
-**步骤①**：导入Ehcache的坐标
+**步骤1**：导入Ehcache的坐标
 
 ```xml
 <dependency>
@@ -6789,9 +6817,9 @@ public class SMSCodeController {
 </dependency>
 ```
 
-​		此处为什么不是导入Ehcache的starter，而是导入技术坐标呢？其实springboot整合缓存技术做的是通用格式，不管你整合哪种缓存技术，只是实现变化了，操作方式一样。这也体现出springboot技术的优点，统一同类技术的整合方式。
+此处为什么不是导入Ehcache的starter，而是导入技术坐标呢？其实springboot整合缓存技术做的是通用格式，不管你整合哪种缓存技术，只是实现变化了，操作方式一样。这也体现出springboot技术的优点，统一同类技术的整合方式。
 
-**步骤②**：配置缓存技术实现使用Ehcache
+**步骤2**：配置缓存技术实现使用Ehcache
 
 ```yaml
 spring:
@@ -6801,9 +6829,9 @@ spring:
       config: ehcache.xml
 ```
 
-​		配置缓存的类型type为ehcache，此处需要说明一下，当前springboot可以整合的缓存技术中包含有ehcach，所以可以这样书写。其实这个type不可以随便写的，不是随便写一个名称就可以整合的。
+配置缓存的类型type为ehcache，此处需要说明一下，当前springboot可以整合的缓存技术中包含有ehcach，所以可以这样书写。其实这个type不可以随便写的，不是随便写一个名称就可以整合的。
 
-​		由于ehcache的配置有独立的配置文件格式，因此还需要指定ehcache的配置文件，以便于读取相应配置
+由于ehcache的配置有独立的配置文件格式，因此还需要指定ehcache的配置文件，以便于读取相应配置
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -6841,7 +6869,7 @@ spring:
 </ehcache>
 ```
 
-​		注意前面的案例中，设置了数据保存的位置是smsCode
+注意前面的案例中，设置了数据保存的位置是smsCode
 
 ```java
 @CachePut(value = "smsCode", key = "#tele")
@@ -6851,24 +6879,24 @@ public String sendCodeToSMS(String tele) {
 }	
 ```
 
-​		这个设定需要保障ehcache中有一个缓存空间名称叫做smsCode的配置，前后要统一。在企业开发过程中，通过设置不同名称的cache来设定不同的缓存策略，应用于不同的缓存数据。
+这个设定需要保障ehcache中有一个缓存空间名称叫做smsCode的配置，前后要统一。在企业开发过程中，通过设置不同名称的cache来设定不同的缓存策略，应用于不同的缓存数据。
 
-​		到这里springboot整合Ehcache就做完了，可以发现一点，原始代码没有任何修改，仅仅是加了一组配置就可以变更缓存供应商了，这也是springboot提供了统一的缓存操作接口的优势，变更实现并不影响原始代码的书写。
+到这里springboot整合Ehcache就做完了，可以发现一点，原始代码没有任何修改，仅仅是加了一组配置就可以变更缓存供应商了，这也是springboot提供了统一的缓存操作接口的优势，变更实现并不影响原始代码的书写。
 
-**总结**
+**总结**：
 
 1. springboot使用Ehcache作为缓存实现需要导入Ehcache的坐标
 2. 修改设置，配置缓存供应商为ehcache，并提供对应的缓存配置文件
 
-​		
+
 
 #### SpringBoot整合Redis缓存
 
-​		上节使用Ehcache替换了springboot内置的缓存技术，其实springboot支持的缓存技术还很多，下面使用redis技术作为缓存解决方案来实现手机验证码案例。
+上节使用Ehcache替换了springboot内置的缓存技术，其实springboot支持的缓存技术还很多，下面使用redis技术作为缓存解决方案来实现手机验证码案例。
 
-​		比对使用Ehcache的过程，加坐标，改缓存实现类型为ehcache，做Ehcache的配置。如果还成redis做缓存呢？一模一样，加坐标，改缓存实现类型为redis，做redis的配置。差别之处只有一点，redis的配置可以在yml文件中直接进行配置，无需制作独立的配置文件。
+比对使用Ehcache的过程，加坐标，改缓存实现类型为ehcache，做Ehcache的配置。如果还成redis做缓存呢？一模一样，加坐标，改缓存实现类型为redis，做redis的配置。差别之处只有一点，redis的配置可以在yml文件中直接进行配置，无需制作独立的配置文件。
 
-**步骤①**：导入redis的坐标
+**步骤1**：导入redis的坐标
 
 ```xml
 <dependency>
@@ -6877,7 +6905,7 @@ public String sendCodeToSMS(String tele) {
 </dependency>
 ```
 
-**步骤②**：配置缓存技术实现使用redis
+**步骤2**：配置缓存技术实现使用redis
 
 ```yaml
 spring:
@@ -6888,7 +6916,7 @@ spring:
     type: redis
 ```
 
-​		如果需要对redis作为缓存进行配置，注意不是对原始的redis进行配置，而是配置redis作为缓存使用相关的配置，隶属于spring.cache.redis节点下，注意不要写错位置了。
+如果需要对redis作为缓存进行配置，注意不是对原始的redis进行配置，而是配置redis作为缓存使用相关的配置，隶属于spring.cache.redis节点下，注意不要写错位置了。
 
 ```yaml
 spring:
@@ -6913,50 +6941,50 @@ spring:
 
 #### SpringBoot整合Memcached缓存
 
-​		目前我们已经掌握了3种缓存解决方案的配置形式，分别是springboot内置缓存，ehcache和redis，本节研究一下国内比较流行的一款缓存memcached。
+目前我们已经掌握了3种缓存解决方案的配置形式，分别是springboot内置缓存，ehcache和redis，本节研究一下国内比较流行的一款缓存memcached。
 
-​		按照之前的套路，其实变更缓存并不繁琐，但是springboot并没有支持使用memcached作为其缓存解决方案，也就是说在type属性中没有memcached的配置选项，这里就需要更变一下处理方式了。在整合之前先安装memcached。
+按照之前的套路，其实变更缓存并不繁琐，但是springboot并没有支持使用memcached作为其缓存解决方案，也就是说在type属性中没有memcached的配置选项，这里就需要更变一下处理方式了。在整合之前先安装memcached。
 
 **安装**
 
-​		windows版安装包下载地址：https://www.runoob.com/memcached/window-install-memcached.html
+windows版安装包下载地址：https://www.runoob.com/memcached/window-install-memcached.html
 
-​		下载的安装包是解压缩就能使用的zip文件，解压缩完毕后会得到如下文件
+下载的安装包是解压缩就能使用的zip文件，解压缩完毕后会得到如下文件
 
 ![image-20220226174957040](02-SpringBoot2-黑马.assets/image-20220226174957040.png)
 
-​		可执行文件只有一个memcached.exe，使用该文件可以将memcached作为系统服务启动，执行此文件时会出现报错信息，如下：
+可执行文件只有一个memcached.exe，使用该文件可以将memcached作为系统服务启动，执行此文件时会出现报错信息，如下：
 
 <img src="02-SpringBoot2-黑马.assets/image-20220226175141986.png" alt="image-20220226175141986" style="zoom:80%;" />
 
-​		此处出现问题的原因是注册系统服务时需要使用管理员权限，当前账号权限不足导致安装服务失败，切换管理员账号权限启动命令行
+此处出现问题的原因是注册系统服务时需要使用管理员权限，当前账号权限不足导致安装服务失败，切换管理员账号权限启动命令行
 
 <img src="02-SpringBoot2-黑马.assets/image-20220226175302903.png" alt="image-20220226175302903" style="zoom:80%;" />
 
-​		然后再次执行安装服务的命令即可，如下：
+然后再次执行安装服务的命令即可，如下：
 
 ```CMD
 memcached.exe -d install
 ```
 
-​		服务安装完毕后可以使用命令启动和停止服务，如下：
+服务安装完毕后可以使用命令启动和停止服务，如下：
 
 ```cmd
 memcached.exe -d start		# 启动服务
 memcached.exe -d stop		# 停止服务
 ```
 
-​		也可以在任务管理器中进行服务状态的切换
+也可以在任务管理器中进行服务状态的切换
 
 <img src="02-SpringBoot2-黑马.assets/image-20220226175441675.png" alt="image-20220226175441675" style="zoom:67%;" />
 
 **变更缓存为Memcached**
 
-​		由于memcached未被springboot收录为缓存解决方案，因此使用memcached需要通过手工硬编码的方式来使用，于是前面的套路都不适用了，需要自己写了。
+由于memcached未被springboot收录为缓存解决方案，因此使用memcached需要通过手工硬编码的方式来使用，于是前面的套路都不适用了，需要自己写了。
 
-​		memcached目前提供有三种客户端技术，分别是Memcached Client for Java、SpyMemcached和Xmemcached，其中性能指标各方面最好的客户端是Xmemcached，本次整合就使用这个作为客户端实现技术了。下面开始使用Xmemcached
+memcached目前提供有三种客户端技术，分别是Memcached Client for Java、SpyMemcached和Xmemcached，其中性能指标各方面最好的客户端是Xmemcached，本次整合就使用这个作为客户端实现技术了。下面开始使用Xmemcached
 
-**步骤①**：导入xmemcached的坐标
+**步骤1**：导入xmemcached的坐标
 
 ```xml
 <dependency>
@@ -6966,7 +6994,7 @@ memcached.exe -d stop		# 停止服务
 </dependency>
 ```
 
-**步骤②**：配置memcached，制作memcached的配置类
+**步骤2**：配置memcached，制作memcached的配置类
 
 ```java
 @Configuration
@@ -6980,9 +7008,9 @@ public class XMemcachedConfig {
 }
 ```
 
-​		memcached默认对外服务端口11211。
+memcached默认对外服务端口11211。
 
-**步骤③**：使用xmemcached客户端操作缓存，注入MemcachedClient对象
+**步骤3**：使用xmemcached客户端操作缓存，注入MemcachedClient对象
 
 ```java
 @Service
@@ -7014,13 +7042,15 @@ public class SMSCodeServiceImpl implements SMSCodeService {
 }
 ```
 
-​		设置值到缓存中使用set操作，取值使用get操作，其实更符合我们开发者的习惯。
+设置值到缓存中使用set操作，取值使用get操作，其实更符合我们开发者的习惯。
 
-​		上述代码中对于服务器的配置使用硬编码写死到了代码中，将此数据提取出来，做成独立的配置属性。
+上述代码中对于服务器的配置使用硬编码写死到了代码中，将此数据提取出来，做成独立的配置属性。
+
+
 
 **定义配置属性**
 
-​		以下过程采用前期学习的属性配置方式进行，当前操作有助于理解原理篇中的很多知识。
+以下过程采用前期学习的属性配置方式进行，当前操作有助于理解原理篇中的很多知识。
 
 - 定义配置类，加载必要的配置属性，读取配置文件中memcached节点信息
 
@@ -7071,17 +7101,17 @@ public class XMemcachedConfig {
 
 **思考**
 
-​		到这里已经完成了三种缓存的整合，其中redis和mongodb需要安装独立的服务器，连接时需要输入对应的服务器地址，这种是远程缓存，Ehcache是一个典型的内存级缓存，因为它什么也不用安装，启动后导入jar包就有缓存功能了。这个时候就要问了，能不能这两种缓存一起用呢？咱们下节再说。
+到这里已经完成了三种缓存的整合，其中redis和mongodb需要安装独立的服务器，连接时需要输入对应的服务器地址，这种是远程缓存，Ehcache是一个典型的内存级缓存，因为它什么也不用安装，启动后导入jar包就有缓存功能了。这个时候就要问了，能不能这两种缓存一起用呢？咱们下节再说。
 
 
 
 #### SpringBoot整合jetcache缓存
 
-​		目前我们使用的缓存都是要么A要么B，能不能AB一起用呢？这一节就解决这个问题。springboot针对缓存的整合仅仅停留在用缓存上面，如果缓存自身不支持同时支持AB一起用，springboot也没办法，所以要想解决AB缓存一起用的问题，就必须找一款缓存能够支持AB两种缓存一起用，有这种缓存吗？还真有，阿里出品，jetcache。
+目前我们使用的缓存都是要么A要么B，能不能AB一起用呢？这一节就解决这个问题。springboot针对缓存的整合仅仅停留在用缓存上面，如果缓存自身不支持同时支持AB一起用，springboot也没办法，所以要想解决AB缓存一起用的问题，就必须找一款缓存能够支持AB两种缓存一起用，有这种缓存吗？还真有，阿里出品，jetcache。
 
-​		jetcache严格意义上来说，并不是一个缓存解决方案，只能说他算是一个缓存框架，然后把别的缓存放到jetcache中管理，这样就可以支持AB缓存一起用了。并且jetcache参考了springboot整合缓存的思想，整体技术使用方式和springboot的缓存解决方案思想非常类似。下面咱们就先把jetcache用起来，然后再说它里面的一些小的功能。
+jetcache严格意义上来说，并不是一个缓存解决方案，只能说他算是一个缓存框架，然后把别的缓存放到jetcache中管理，这样就可以支持AB缓存一起用了。并且jetcache参考了springboot整合缓存的思想，整体技术使用方式和springboot的缓存解决方案思想非常类似。下面咱们就先把jetcache用起来，然后再说它里面的一些小的功能。
 
-​		做之前要先明确一下，jetcache并不是随便拿两个缓存都能拼到一起去的。目前jetcache支持的缓存方案本地缓存支持两种，远程缓存支持两种，分别如下：
+做之前要先明确一下，jetcache并不是随便拿两个缓存都能拼到一起去的。目前jetcache支持的缓存方案本地缓存支持两种，远程缓存支持两种，分别如下：
 
 - 本地缓存（Local）
   - LinkedHashMap
@@ -7090,11 +7120,13 @@ public class XMemcachedConfig {
   - Redis
   - Tair
 
-​		其实也有人问我，为什么jetcache只支持2+2这么4款缓存呢？阿里研发这个技术其实主要是为了满足自身的使用需要。最初肯定只有1+1种，逐步变化成2+2种。下面就以LinkedHashMap+Redis的方案实现本地与远程缓存方案同时使用。
+其实也有人问我，为什么jetcache只支持2+2这么4款缓存呢？阿里研发这个技术其实主要是为了满足自身的使用需要。最初肯定只有1+1种，逐步变化成2+2种。下面就以LinkedHashMap+Redis的方案实现本地与远程缓存方案同时使用。
+
+
 
 ##### 纯远程方案
 
-**步骤①**：导入springboot整合jetcache对应的坐标starter，当前坐标默认使用的远程方案是redis
+**步骤1**：导入springboot整合jetcache对应的坐标starter，当前坐标默认使用的远程方案是redis
 
 ```xml
 <dependency>
@@ -7104,7 +7136,7 @@ public class XMemcachedConfig {
 </dependency>
 ```
 
-**步骤②**：远程方案基本配置
+**步骤2**：远程方案基本配置
 
 ```yaml
 jetcache:
@@ -7117,9 +7149,9 @@ jetcache:
         maxTotal: 50
 ```
 
-​		其中poolConfig是必配项，否则会报错
+其中poolConfig是必配项，否则会报错
 
-**步骤③**：启用缓存，在引导类上方标注注解@EnableCreateCacheAnnotation配置springboot程序中可以使用注解的形式创建缓存
+**步骤3**：启用缓存，在引导类上方标注注解@EnableCreateCacheAnnotation配置springboot程序中可以使用注解的形式创建缓存
 
 ```java
 @SpringBootApplication
@@ -7132,7 +7164,7 @@ public class Springboot20JetCacheApplication {
 }
 ```
 
-**步骤④**：创建缓存对象Cache，并使用注解@CreateCache标记当前缓存的信息，然后使用Cache对象的API操作缓存，put写缓存，get读缓存。
+**步骤4**：创建缓存对象Cache，并使用注解@CreateCache标记当前缓存的信息，然后使用Cache对象的API操作缓存，put写缓存，get读缓存。
 
 ```java
 @Service
@@ -7156,9 +7188,9 @@ public class SMSCodeServiceImpl implements SMSCodeService {
 }
 ```
 
-​		通过上述jetcache使用远程方案连接redis可以看出，jetcache操作缓存时的接口操作更符合开发者习惯，使用缓存就先获取缓存对象Cache，放数据进去就是put，取数据出来就是get，更加简单易懂。并且jetcache操作缓存时，可以为某个缓存对象设置过期时间，将同类型的数据放入缓存中，方便有效周期的管理。
+通过上述jetcache使用远程方案连接redis可以看出，jetcache操作缓存时的接口操作更符合开发者习惯，使用缓存就先获取缓存对象Cache，放数据进去就是put，取数据出来就是get，更加简单易懂。并且jetcache操作缓存时，可以为某个缓存对象设置过期时间，将同类型的数据放入缓存中，方便有效周期的管理。
 
-​		上述方案中使用的是配置中定义的default缓存，其实这个default是个名字，可以随便写，也可以随便加。例如再添加一种缓存解决方案，参照如下配置进行：
+上述方案中使用的是配置中定义的default缓存，其实这个default是个名字，可以随便写，也可以随便加。例如再添加一种缓存解决方案，参照如下配置进行：
 
 ```yaml
 jetcache:
@@ -7177,7 +7209,7 @@ jetcache:
         maxTotal: 50
 ```
 
-​		如果想使用名称是sms的缓存，需要再创建缓存时指定参数area，声明使用对应缓存即可
+如果想使用名称是sms的缓存，需要再创建缓存时指定参数area，声明使用对应缓存即可。
 
 ```JAVA
 @Service
@@ -7201,11 +7233,13 @@ public class SMSCodeServiceImpl implements SMSCodeService {
 }
 ```
 
+
+
 ##### 纯本地方案
 
-​		远程方案中，配置中使用remote表示远程，换成local就是本地，只不过类型不一样而已。
+远程方案中，配置中使用remote表示远程，换成local就是本地，只不过类型不一样而已。
 
-**步骤①**：导入springboot整合jetcache对应的坐标starter
+**步骤1**：导入springboot整合jetcache对应的坐标starter
 
 ```xml
 <dependency>
@@ -7215,7 +7249,7 @@ public class SMSCodeServiceImpl implements SMSCodeService {
 </dependency>
 ```
 
-**步骤②**：本地缓存基本配置
+**步骤2**：本地缓存基本配置
 
 ```yaml
 jetcache:
@@ -7225,9 +7259,9 @@ jetcache:
       keyConvertor: fastjson
 ```
 
-​		为了加速数据获取时key的匹配速度，jetcache要求指定key的类型转换器。简单说就是，如果你给了一个Object作为key的话，我先用key的类型转换器给转换成字符串，然后再保存。等到获取数据时，仍然是先使用给定的Object转换成字符串，然后根据字符串匹配。由于jetcache是阿里的技术，这里推荐key的类型转换器使用阿里的fastjson。
+为了加速数据获取时key的匹配速度，jetcache要求指定key的类型转换器。简单说就是，如果你给了一个Object作为key的话，我先用key的类型转换器给转换成字符串，然后再保存。等到获取数据时，仍然是先使用给定的Object转换成字符串，然后根据字符串匹配。由于jetcache是阿里的技术，这里推荐key的类型转换器使用阿里的fastjson。
 
-**步骤③**：启用缓存
+**步骤3**：启用缓存
 
 ```java
 @SpringBootApplication
@@ -7240,7 +7274,7 @@ public class Springboot20JetCacheApplication {
 }
 ```
 
-**步骤④**：创建缓存对象Cache时，标注当前使用本地缓存
+**步骤4**：创建缓存对象Cache时，标注当前使用本地缓存
 
 ```java
 @Service
@@ -7261,11 +7295,13 @@ public class SMSCodeServiceImpl implements SMSCodeService {
 }
 ```
 
-​		cacheType控制当前缓存使用本地缓存还是远程缓存，配置cacheType=CacheType.LOCAL即使用本地缓存。
+cacheType控制当前缓存使用本地缓存还是远程缓存，配置cacheType=CacheType.LOCAL即使用本地缓存。
+
+
 
 ##### 		本地+远程方案
 
-​		本地和远程方法都有了，两种方案一起使用如何配置呢？其实就是将两种配置合并到一起就可以了。
+本地和远程方法都有了，两种方案一起使用如何配置呢？其实就是将两种配置合并到一起就可以了。
 
 ```YAML
 jetcache:
@@ -7288,7 +7324,7 @@ jetcache:
         maxTotal: 50
 ```
 
-​		在创建缓存的时候，配置cacheType为BOTH即则本地缓存与远程缓存同时使用。
+在创建缓存的时候，配置cacheType为BOTH即则本地缓存与远程缓存同时使用。
 
 ```java
 @Service
@@ -7298,7 +7334,7 @@ public class SMSCodeServiceImpl implements SMSCodeService {
 }
 ```
 
-​		cacheType如果不进行配置，默认值是REMOTE，即仅使用远程缓存方案。关于jetcache的配置，参考以下信息
+cacheType如果不进行配置，默认值是REMOTE，即仅使用远程缓存方案。关于jetcache的配置，参考以下信息
 
 | 属性                                                      | 默认值 | 说明                                                         |
 | --------------------------------------------------------- | ------ | ------------------------------------------------------------ |
@@ -7312,13 +7348,13 @@ public class SMSCodeServiceImpl implements SMSCodeService {
 | jetcache.[local\|remote].${area}.expireAfterWriteInMillis | 无穷大 | 默认过期时间，毫秒单位                                       |
 | jetcache.local.${area}.expireAfterAccessInMillis          | 0      | 仅local类型的缓存有效，毫秒单位，最大不活动间隔              |
 
-​		以上方案仅支持手工控制缓存，但是springcache方案中的方法缓存特别好用，给一个方法添加一个注解，方法就会自动使用缓存。jetcache也提供了对应的功能，即方法缓存。
+以上方案仅支持手工控制缓存，但是springcache方案中的方法缓存特别好用，给一个方法添加一个注解，方法就会自动使用缓存。jetcache也提供了对应的功能，即方法缓存。
 
 **方法缓存**
 
-​		jetcache提供了方法缓存方案，只不过名称变更了而已。在对应的操作接口上方使用注解@Cached即可
+jetcache提供了方法缓存方案，只不过名称变更了而已。在对应的操作接口上方使用注解@Cached即可
 
-**步骤①**：导入springboot整合jetcache对应的坐标starter
+**步骤1**：导入springboot整合jetcache对应的坐标starter
 
 ```xml
 <dependency>
@@ -7328,7 +7364,7 @@ public class SMSCodeServiceImpl implements SMSCodeService {
 </dependency>
 ```
 
-**步骤②**：配置缓存
+**步骤2**：配置缓存
 
 ```yaml
 jetcache:
@@ -7354,9 +7390,9 @@ jetcache:
         maxTotal: 50
 ```
 
-​		由于redis缓存中不支持保存对象，因此需要对redis设置当Object类型数据进入到redis中时如何进行类型转换。需要配置keyConvertor表示key的类型转换方式，同时标注value的转换类型方式，值进入redis时是java类型，标注valueEncode为java，值从redis中读取时转换成java，标注valueDecode为java。
+由于redis缓存中不支持保存对象，因此需要对redis设置当Object类型数据进入到redis中时如何进行类型转换。需要配置keyConvertor表示key的类型转换方式，同时标注value的转换类型方式，值进入redis时是java类型，标注valueEncode为java，值从redis中读取时转换成java，标注valueDecode为java。
 
-​		注意，为了实现Object类型的值进出redis，需要保障进出redis的Object类型的数据必须实现序列化接口。
+注意，为了实现Object类型的值进出redis，需要保障进出redis的Object类型的数据必须实现序列化接口。
 
 ```JAVA
 @Data
@@ -7368,7 +7404,7 @@ public class Book implements Serializable {
 }
 ```
 
-**步骤③**：启用缓存时开启方法缓存功能，并配置basePackages，说明在哪些包中开启方法缓存
+**步骤3**：启用缓存时开启方法缓存功能，并配置basePackages，说明在哪些包中开启方法缓存
 
 ```java
 @SpringBootApplication
@@ -7383,7 +7419,7 @@ public class Springboot20JetCacheApplication {
 }
 ```
 
-**步骤④**：使用注解@Cached标注当前方法使用缓存
+**步骤4**：使用注解@Cached标注当前方法使用缓存
 
 ```java
 @Service
@@ -7399,9 +7435,11 @@ public class BookServiceImpl implements BookService {
 }
 ```
 
+
+
 ##### 远程方案的数据同步
 
-​		由于远程方案中redis保存的数据可以被多个客户端共享，这就存在了数据同步问题。jetcache提供了3个注解解决此问题，分别在更新、删除操作时同步缓存数据，和读取缓存时定时刷新数据
+由于远程方案中redis保存的数据可以被多个客户端共享，这就存在了数据同步问题。jetcache提供了3个注解解决此问题，分别在更新、删除操作时同步缓存数据，和读取缓存时定时刷新数据
 
 **更新缓存**
 
@@ -7431,16 +7469,18 @@ public Book getById(Integer id) {
 }
 ```
 
+
+
 ##### 数据报表
 
-​		jetcache还提供有简单的数据报表功能，帮助开发者快速查看缓存命中信息，只需要添加一个配置即可
+jetcache还提供有简单的数据报表功能，帮助开发者快速查看缓存命中信息，只需要添加一个配置即可
 
 ```yaml
 jetcache:
   statIntervalMinutes: 1
 ```
 
-​		设置后，每1分钟在控制台输出缓存数据命中信息
+设置后，每1分钟在控制台输出缓存数据命中信息
 
 ```CMD
 [DefaultExecutor] c.alicp.jetcache.support.StatInfoLogger  : jetcache stat from 2022-02-28 09:32:15,892 to 2022-02-28 09:33:00,003
@@ -7460,13 +7500,15 @@ book_    |   0.66| 75.86%|    29|     22|      0|        0|          28.0|      
 
 **思考**
 
-​		jetcache解决了前期使用缓存方案单一的问题，但是仍然不能灵活的选择缓存进行搭配使用，是否存在一种技术可以灵活的搭配各种各样的缓存使用呢？有，咱们下一节再讲。
+jetcache解决了前期使用缓存方案单一的问题，但是仍然不能灵活的选择缓存进行搭配使用，是否存在一种技术可以灵活的搭配各种各样的缓存使用呢？有，咱们下一节再讲。
+
+
 
 #### SpringBoot整合j2cache缓存
 
-​		jetcache可以在限定范围内构建多级缓存，但是灵活性不足，不能随意搭配缓存，本节介绍一种可以随意搭配缓存解决方案的缓存整合框架，j2cache。下面就来讲解如何使用这种缓存框架，以Ehcache与redis整合为例：
+jetcache可以在限定范围内构建多级缓存，但是灵活性不足，不能随意搭配缓存，本节介绍一种可以随意搭配缓存解决方案的缓存整合框架，j2cache。下面就来讲解如何使用这种缓存框架，以Ehcache与redis整合为例：
 
-**步骤①**：导入j2cache、redis、ehcache坐标
+**步骤1**：导入j2cache、redis、ehcache坐标
 
 ```xml
 <dependency>
@@ -7485,11 +7527,11 @@ book_    |   0.66| 75.86%|    29|     22|      0|        0|          28.0|      
 </dependency>
 ```
 
-​		j2cache的starter中默认包含了redis坐标，官方推荐使用redis作为二级缓存，因此此处无需导入redis坐标
+j2cache的starter中默认包含了redis坐标，官方推荐使用redis作为二级缓存，因此此处无需导入redis坐标
 
-**步骤②**：配置一级与二级缓存，并配置一二级缓存间数据传递方式，配置书写在名称为j2cache.properties的文件中。如果使用ehcache还需要单独添加ehcache的配置文件
+**步骤2**：配置一级与二级缓存，并配置一二级缓存间数据传递方式，配置书写在名称为j2cache.properties的文件中。如果使用ehcache还需要单独添加ehcache的配置文件
 
-```yaml
+```properties
 # 1级缓存
 j2cache.L1.provider_class = ehcache
 ehcache.configXml = ehcache.xml
@@ -7503,11 +7545,11 @@ redis.hosts = localhost:6379
 j2cache.broadcast = net.oschina.j2cache.cache.support.redis.SpringRedisPubSubPolicy
 ```
 
-​		此处配置不能乱配置，需要参照官方给出的配置说明进行。例如1级供应商选择ehcache，供应商名称仅仅是一个ehcache，但是2级供应商选择redis时要写专用的Spring整合Redis的供应商类名SpringRedisProvider，而且这个名称并不是所有的redis包中能提供的，也不是spring包中提供的。因此配置j2cache必须参照官方文档配置，而且还要去找专用的整合包，导入对应坐标才可以使用。
+此处配置不能乱配置，需要参照官方给出的配置说明进行。例如1级供应商选择ehcache，供应商名称仅仅是一个ehcache，但是2级供应商选择redis时要写专用的Spring整合Redis的供应商类名SpringRedisProvider，而且这个名称并不是所有的redis包中能提供的，也不是spring包中提供的。因此配置j2cache必须参照官方文档配置，而且还要去找专用的整合包，导入对应坐标才可以使用。
 
-​		一级与二级缓存最重要的一个配置就是两者之间的数据沟通方式，此类配置也不是随意配置的，并且不同的缓存解决方案提供的数据沟通方式差异化很大，需要查询官方文档进行设置。
+一级与二级缓存最重要的一个配置就是两者之间的数据沟通方式，此类配置也不是随意配置的，并且不同的缓存解决方案提供的数据沟通方式差异化很大，需要查询官方文档进行设置。
 
-**步骤③**：使用缓存
+**步骤3**：使用缓存
 
 ```java
 @Service
@@ -7531,9 +7573,9 @@ public class SMSCodeServiceImpl implements SMSCodeService {
 }
 ```
 
-​		j2cache的使用和jetcache比较类似，但是无需开启使用的开关，直接定义缓存对象即可使用，缓存对象名CacheChannel。
+j2cache的使用和jetcache比较类似，但是无需开启使用的开关，直接定义缓存对象即可使用，缓存对象名CacheChannel。
 
-​		j2cache的使用不复杂，配置是j2cache的核心，毕竟是一个整合型的缓存框架。缓存相关的配置过多，可以查阅j2cache-core核心包中的j2cache.properties文件中的说明。如下：
+j2cache的使用不复杂，配置是j2cache的核心，毕竟是一个整合型的缓存框架。缓存相关的配置过多，可以查阅j2cache-core核心包中的j2cache.properties文件中的说明。如下：
 
 ```properties
 #J2Cache configuration
@@ -7749,22 +7791,22 @@ memcached.sanitizeKeys = false
 
 ### 5-2.任务
 
-​		springboot整合第三方技术第二部分我们来说说任务系统，其实这里说的任务系统指的是定时任务。定时任务是企业级开发中必不可少的组成部分，诸如长周期业务数据的计算，例如年度报表，诸如系统脏数据的处理，再比如系统性能监控报告，还有抢购类活动的商品上架，这些都离不开定时任务。本节将介绍两种不同的定时任务技术。
+springboot整合第三方技术第二部分我们来说说任务系统，其实这里说的任务系统指的是定时任务。定时任务是企业级开发中必不可少的组成部分，诸如长周期业务数据的计算，例如年度报表，诸如系统脏数据的处理，再比如系统性能监控报告，还有抢购类活动的商品上架，这些都离不开定时任务。本节将介绍两种不同的定时任务技术。
 
 
 
 #### Quartz
 
-​		Quartz技术是一个比较成熟的定时任务框架，怎么说呢？有点繁琐，用过的都知道，配置略微复杂。springboot对其进行整合后，简化了一系列的配置，将很多配置采用默认设置，这样开发阶段就简化了很多。再学习springboot整合Quartz前先普及几个Quartz的概念。
+Quartz技术是一个比较成熟的定时任务框架，怎么说呢？有点繁琐，用过的都知道，配置略微复杂。springboot对其进行整合后，简化了一系列的配置，将很多配置采用默认设置，这样开发阶段就简化了很多。再学习springboot整合Quartz前先普及几个Quartz的概念。
 
 - 工作（Job）：用于定义具体执行的工作
 - 工作明细（JobDetail）：用于描述定时工作相关的信息
 - 触发器（Trigger）：描述了工作明细与调度器的对应关系
 - 调度器（Scheduler）：用于描述触发工作的执行规则，通常使用cron表达式定义规则
 
-​		简单说就是你定时干什么事情，这就是工作，工作不可能就是一个简单的方法，还要设置一些明细信息。工作啥时候执行，设置一个调度器，可以简单理解成设置一个工作执行的时间。工作和调度都是独立定义的，它们两个怎么配合到一起呢？用触发器。完了，就这么多。下面开始springboot整合Quartz。
+简单说就是你定时干什么事情，这就是工作，工作不可能就是一个简单的方法，还要设置一些明细信息。工作啥时候执行，设置一个调度器，可以简单理解成设置一个工作执行的时间。工作和调度都是独立定义的，它们两个怎么配合到一起呢？用触发器。完了，就这么多。下面开始springboot整合Quartz。
 
-**步骤①**：导入springboot整合Quartz的starter
+**步骤1**：导入springboot整合Quartz的starter
 
 ```xml
 <dependency>
@@ -7773,7 +7815,7 @@ memcached.sanitizeKeys = false
 </dependency>
 ```
 
-**步骤②**：定义任务Bean，按照Quartz的开发规范制作，继承QuartzJobBean
+**步骤2**：定义任务Bean，按照Quartz的开发规范制作，继承QuartzJobBean
 
 ```java
 public class MyQuartz extends QuartzJobBean {
@@ -7784,7 +7826,7 @@ public class MyQuartz extends QuartzJobBean {
 }
 ```
 
-**步骤③**：创建Quartz配置类，定义工作明细（JobDetail）与触发器的（Trigger）bean
+**步骤3**：创建Quartz配置类，定义工作明细（JobDetail）与触发器的（Trigger）bean
 
 ```java
 @Configuration
@@ -7794,6 +7836,7 @@ public class QuartzConfig {
         //绑定具体的工作
         return JobBuilder.newJob(MyQuartz.class).storeDurably().build();
     }
+    
     @Bean
     public Trigger printJobTrigger(){
         ScheduleBuilder schedBuilder = CronScheduleBuilder.cronSchedule("0/5 * * * * ?");
@@ -7803,9 +7846,9 @@ public class QuartzConfig {
 }
 ```
 
-​		工作明细中要设置对应的具体工作，使用newJob()操作传入对应的工作任务类型即可。
+工作明细中要设置对应的具体工作，使用newJob()操作传入对应的工作任务类型即可。
 
-​		触发器需要绑定任务，使用forJob()操作传入绑定的工作明细对象。此处可以为工作明细设置名称然后使用名称绑定，也可以直接调用对应方法绑定。触发器中最核心的规则是执行时间，此处使用调度器定义执行时间，执行时间描述方式使用的是cron表达式。有关cron表达式的规则，各位小伙伴可以去参看相关课程学习，略微复杂，而且格式不能乱设置，不是写个格式就能用的，写不好就会出现冲突问题。
+触发器需要绑定任务，使用forJob()操作传入绑定的工作明细对象。此处可以为工作明细设置名称然后使用名称绑定，也可以直接调用对应方法绑定。触发器中最核心的规则是执行时间，此处使用调度器定义执行时间，执行时间描述方式使用的是cron表达式。有关cron表达式的规则，各位小伙伴可以去参看相关课程学习，略微复杂，而且格式不能乱设置，不是写个格式就能用的，写不好就会出现冲突问题。
 
 **总结**
 
@@ -7815,15 +7858,15 @@ public class QuartzConfig {
 
 **思考**
 
-​		上面的操作看上去不多，但是Quartz将其中的对象划分粒度过细，导致开发的时候有点繁琐，spring针对上述规则进行了简化，开发了自己的任务管理组件——Task，如何用呢？咱们下节再说。
+上面的操作看上去不多，但是Quartz将其中的对象划分粒度过细，导致开发的时候有点繁琐，spring针对上述规则进行了简化，开发了自己的任务管理组件——Task，如何用呢？咱们下节再说。
 
 
 
 #### Task
 
-​		spring根据定时任务的特征，将定时任务的开发简化到了极致。怎么说呢？要做定时任务总要告诉容器有这功能吧，然后定时执行什么任务直接告诉对应的bean什么时间执行就行了，就这么简单，一起来看怎么做
+spring根据定时任务的特征，将定时任务的开发简化到了极致。怎么说呢？要做定时任务总要告诉容器有这功能吧，然后定时执行什么任务直接告诉对应的bean什么时间执行就行了，就这么简单，一起来看怎么做
 
-**步骤①**：开启定时任务功能，在引导类上开启定时任务功能的开关，使用注解@EnableScheduling
+**步骤1**：开启定时任务功能，在引导类上开启定时任务功能的开关，使用注解`@EnableScheduling`
 
 ```java
 @SpringBootApplication
@@ -7836,7 +7879,7 @@ public class Springboot22TaskApplication {
 }
 ```
 
-**步骤②**：定义Bean，在对应要定时执行的操作上方，使用注解@Scheduled定义执行的时间，执行时间的描述方式还是cron表达式
+**步骤2**：定义Bean，在对应要定时执行的操作上方，使用注解`@Scheduled`定义执行的时间，执行时间的描述方式还是cron表达式
 
 ```java
 @Component
@@ -7848,9 +7891,9 @@ public class MyBean {
 }
 ```
 
-​		完事，这就完成了定时任务的配置。总体感觉其实什么东西都没少，只不过没有将所有的信息都抽取成bean，而是直接使用注解绑定定时执行任务的事情而已。
+完事，这就完成了定时任务的配置。总体感觉其实什么东西都没少，只不过没有将所有的信息都抽取成bean，而是直接使用注解绑定定时执行任务的事情而已。
 
-​		如何想对定时任务进行相关配置，可以通过配置文件进行
+如何想对定时任务进行相关配置，可以通过配置文件进行
 
 ```yaml
 spring:
@@ -7859,9 +7902,9 @@ spring:
       pool:
        	size: 1							# 任务调度线程池大小 默认 1
       thread-name-prefix: ssm_      	# 调度线程名称前缀 默认 scheduling-      
-        shutdown:
-          await-termination: false		# 线程池关闭时等待所有任务完成
-          await-termination-period: 10s	# 调度线程关闭前最大等待时间，确保最后一定关闭
+      shutdown:
+        await-termination: false		# 线程池关闭时等待所有任务完成
+        await-termination-period: 10s	# 调度线程关闭前最大等待时间，确保最后一定关闭
 ```
 
 **总结**
@@ -7870,25 +7913,25 @@ spring:
 
 2. 为定时执行的的任务设置执行周期，描述方式cron表达式
 
-   
+
 
 ### 5-3.邮件
 
-​		springboot整合第三方技术第三部分我们来说说邮件系统，发邮件是java程序的基本操作，springboot整合javamail其实就是简化开发。不熟悉邮件的小伙伴可以先学习完javamail的基础操作，再来看这一部分内容才能感触到springboot整合javamail究竟简化了哪些操作。简化的多码？其实不多，差别不大，只是还个格式而已。
+springboot整合第三方技术第三部分我们来说说邮件系统，发邮件是java程序的基本操作，springboot整合javamail其实就是简化开发。不熟悉邮件的小伙伴可以先学习完javamail的基础操作，再来看这一部分内容才能感触到springboot整合javamail究竟简化了哪些操作。简化的多码？其实不多，差别不大，只是还个格式而已。
 
-​		学习邮件发送之前先了解3个概念，这些概念规范了邮件操作过程中的标准。
+学习邮件发送之前先了解3个概念，这些概念规范了邮件操作过程中的标准。
 
 - SMTP（Simple Mail Transfer Protocol）：简单邮件传输协议，用于**发送**电子邮件的传输协议
 - POP3（Post Office Protocol - Version 3）：用于**接收**电子邮件的标准协议
 - IMAP（Internet Mail Access Protocol）：互联网消息协议，是POP3的替代协议
 
-​		简单说就是SMPT是发邮件的标准，POP3是收邮件的标准，IMAP是对POP3的升级。我们制作程序中操作邮件，通常是发邮件，所以SMTP是使用的重点，收邮件大部分都是通过邮件客户端完成，所以开发收邮件的代码极少。除非你要读取邮件内容，然后解析，做邮件功能的统一处理。例如HR的邮箱收到求职者的简历，可以读取后统一处理。但是为什么不制作独立的投递简历的系统呢？所以说，好奇怪的需求，因为要想收邮件就要规范发邮件的人的书写格式，这个未免有点强人所难，并且极易收到外部攻击，你不可能使用白名单来收邮件。如果能使用白名单来收邮件然后解析邮件，还不如开发个系统给白名单中的人专用呢，更安全，总之就是鸡肋了。下面就开始学习springboot如何整合javamail发送邮件。
+简单说就是SMPT是发邮件的标准，POP3是收邮件的标准，IMAP是对POP3的升级。我们制作程序中操作邮件，通常是发邮件，所以SMTP是使用的重点，收邮件大部分都是通过邮件客户端完成，所以开发收邮件的代码极少。除非你要读取邮件内容，然后解析，做邮件功能的统一处理。例如HR的邮箱收到求职者的简历，可以读取后统一处理。但是为什么不制作独立的投递简历的系统呢？所以说，好奇怪的需求，因为要想收邮件就要规范发邮件的人的书写格式，这个未免有点强人所难，并且极易收到外部攻击，你不可能使用白名单来收邮件。如果能使用白名单来收邮件然后解析邮件，还不如开发个系统给白名单中的人专用呢，更安全，总之就是鸡肋了。下面就开始学习springboot如何整合javamail发送邮件。
 
 
 
 #### 发送简单邮件
 
-**步骤①**：导入springboot整合javamail的starter
+**步骤1**：导入springboot整合javamail的starter
 
 ```xml
 <dependency>
@@ -7897,25 +7940,25 @@ spring:
 </dependency>
 ```
 
-**步骤②**：配置邮箱的登录信息
+**步骤2**：配置邮箱的登录信息
 
 ```yaml
 spring:
   mail:
-    host: smtp.126.com
-    username: test@126.com
-    password: test
+    host: smtp.qq.com
+    username: 864544317@qq.com
+    password: text
 ```
 
-​		java程序仅用于发送邮件，邮件的功能还是邮件供应商提供的，所以这里是用别人的邮件服务，要配置对应信息。
+java程序仅用于发送邮件，邮件的功能还是邮件供应商提供的，所以这里是用别人的邮件服务，要配置对应信息。
 
-​		host配置的是提供邮件服务的主机协议，当前程序仅用于发送邮件，因此配置的是smtp的协议。
+host配置的是提供邮件服务的主机协议，当前程序仅用于发送邮件，因此配置的是smtp的协议。
 
-​		password并不是邮箱账号的登录密码，是邮件供应商提供的一个加密后的密码，也是为了保障系统安全性。不然外部人员通过地址访问下载了配置文件，直接获取到了邮件密码就会有极大的安全隐患。有关该密码的获取每个邮件供应商提供的方式都不一样，此处略过。可以到邮件供应商的设置页面找POP3或IMAP这些关键词找到对应的获取位置。下例仅供参考：
+password并不是邮箱账号的登录密码，是邮件供应商提供的一个加密后的密码，也是为了保障系统安全性。不然外部人员通过地址访问下载了配置文件，直接获取到了邮件密码就会有极大的安全隐患。有关该密码的获取每个邮件供应商提供的方式都不一样，此处略过。可以到邮件供应商的设置页面找POP3或IMAP这些关键词找到对应的获取位置。下例仅供参考：
 
 ![image-20220228111251036](02-SpringBoot2-黑马.assets/image-20220228111251036.png)
 
-**步骤③**：使用JavaMailSender接口发送邮件
+**步骤3**：使用JavaMailSender接口发送邮件
 
 ```java
 @Service
@@ -7944,13 +7987,13 @@ public class SendMailServiceImpl implements SendMailService {
 }
 ```
 
-​		将发送邮件的必要信息（发件人、收件人、标题、正文）封装到SimpleMailMessage对象中，可以根据规则设置发送人昵称等。
+将发送邮件的必要信息（发件人、收件人、标题、正文）封装到SimpleMailMessage对象中，可以根据规则设置发送人昵称等。
 
 
 
 #### 发送多组件邮件（附件、复杂正文）
 
-​		发送简单邮件仅需要提供对应的4个基本信息就可以了，如果想发送复杂的邮件，需要更换邮件对象。使用MimeMessage可以发送特殊的邮件。
+发送简单邮件仅需要提供对应的4个基本信息就可以了，如果想发送复杂的邮件，需要更换邮件对象。使用MimeMessage可以发送特殊的邮件。
 
 **发送网页正文邮件**
 
@@ -8031,83 +8074,91 @@ public class SendMailServiceImpl2 implements SendMailService {
 
 1. springboot整合javamail其实就是简化了发送邮件的客户端对象JavaMailSender的初始化过程，通过配置的形式加载信息简化开发过程
 
-   
+
 
 ### 5-4.消息
 
-​		springboot整合第三方技术最后一部分我们来说说消息中间件，首先先介绍一下消息的应用。
+springboot整合第三方技术最后一部分我们来说说消息中间件，首先先介绍一下消息的应用。
 
 #### 消息的概念
 
-​		从广义角度来说，消息其实就是信息，但是和信息又有所不同。信息通常被定义为一组数据，而消息除了具有数据的特征之外，还有消息的来源与接收的概念。通常发送消息的一方称为消息的生产者，接收消息的一方称为消息的消费者。这样比较后，发现其实消息和信息差别还是很大的。
+从广义角度来说，消息其实就是信息，但是和信息又有所不同。信息通常被定义为一组数据，而消息除了具有数据的特征之外，还有消息的来源与接收的概念。通常发送消息的一方称为消息的生产者，接收消息的一方称为消息的消费者。这样比较后，发现其实消息和信息差别还是很大的。
 
-​		为什么要设置生产者和消费者呢？这就是要说到消息的意义了。信息通常就是一组数据，但是消息由于有了生产者和消费者，就出现了消息中所包含的信息可以被二次解读，生产者发送消息，可以理解为生产者发送了一个信息，也可以理解为生产者发送了一个命令；消费者接收消息，可以理解为消费者得到了一个信息，也可以理解为消费者得到了一个命令。对比一下我们会发现信息是一个基本数据，而命令则可以关联下一个行为动作，这样就可以理解为基于接收的消息相当于得到了一个行为动作，使用这些行为动作就可以组织成一个业务逻辑，进行进一步的操作。总的来说，消息其实也是一组信息，只是为其赋予了全新的含义，因为有了消息的流动，并且是有方向性的流动，带来了基于流动的行为产生的全新解读。开发者就可以基于消息的这种特殊解，将其换成代码中的指令。
+为什么要设置生产者和消费者呢？这就是要说到消息的意义了。信息通常就是一组数据，但是消息由于有了生产者和消费者，就出现了消息中所包含的信息可以被二次解读，生产者发送消息，可以理解为生产者发送了一个信息，也可以理解为生产者发送了一个命令；消费者接收消息，可以理解为消费者得到了一个信息，也可以理解为消费者得到了一个命令。对比一下我们会发现信息是一个基本数据，而命令则可以关联下一个行为动作，这样就可以理解为基于接收的消息相当于得到了一个行为动作，使用这些行为动作就可以组织成一个业务逻辑，进行进一步的操作。总的来说，消息其实也是一组信息，只是为其赋予了全新的含义，因为有了消息的流动，并且是有方向性的流动，带来了基于流动的行为产生的全新解读。开发者就可以基于消息的这种特殊解，将其换成代码中的指令。
 
-​		对于消息的理解，初学者总认为消息内部的数据非常复杂，这是一个误区。比如我发送了一个消息，要求接受者翻译发送过去的内容。初学者会认为消息中会包含被翻译的文字，已经本次操作要执行翻译操作而不是打印操作。其实这种现象有点过度解读了，发送的消息中仅仅包含被翻译的文字，但是可以通过控制不同的人接收此消息来确认要做的事情。例如发送被翻译的文字仅到A程序，而A程序只能进行翻译操作，这样就可以发送简单的信息完成复杂的业务了，是通过接收消息的主体不同，进而执行不同的操作，而不会在消息内部定义数据的操作行为，当然如果开发者希望消息中包含操作种类信息也是可以的，只是提出消息的内容可以更简单，更单一。
+对于消息的理解，初学者总认为消息内部的数据非常复杂，这是一个误区。比如我发送了一个消息，要求接受者翻译发送过去的内容。初学者会认为消息中会包含被翻译的文字，已经本次操作要执行翻译操作而不是打印操作。其实这种现象有点过度解读了，发送的消息中仅仅包含被翻译的文字，但是可以通过控制不同的人接收此消息来确认要做的事情。例如发送被翻译的文字仅到A程序，而A程序只能进行翻译操作，这样就可以发送简单的信息完成复杂的业务了，是通过接收消息的主体不同，进而执行不同的操作，而不会在消息内部定义数据的操作行为，当然如果开发者希望消息中包含操作种类信息也是可以的，只是提出消息的内容可以更简单，更单一。
 
-​		对于消息的生产者与消费者的工作模式，还可以将消息划分成两种模式，同步消费与异步消息。
+对于消息的生产者与消费者的工作模式，还可以将消息划分成两种模式，同步消费与异步消息。
 
-​		所谓同步消息就是生产者发送完消息，等待消费者处理，消费者处理完将结果告知生产者，然后生产者继续向下执行业务。这种模式过于卡生产者的业务执行连续性，在现在的企业级开发中，上述这种业务场景通常不会采用消息的形式进行处理。
+所谓同步消息就是生产者发送完消息，等待消费者处理，消费者处理完将结果告知生产者，然后生产者继续向下执行业务。这种模式过于卡生产者的业务执行连续性，在现在的企业级开发中，上述这种业务场景通常不会采用消息的形式进行处理。
 
-​		所谓异步消息就是生产者发送完消息，无需等待消费者处理完毕，生产者继续向下执行其他动作。比如生产者发送了一个日志信息给日志系统，发送过去以后生产者就向下做其他事情了，无需关注日志系统的执行结果。日志系统根据接收到的日志信息继续进行业务执行，是单纯的记录日志，还是记录日志并报警，这些和生产者无关，这样生产者的业务执行效率就会大幅度提升。并且可以通过添加多个消费者来处理同一个生产者发送的消息来提高系统的高并发性，改善系统工作效率，提高用户体验。一旦某一个消费者由于各种问题宕机了，也不会对业务产生影响，提高了系统的高可用性。
+所谓异步消息就是生产者发送完消息，无需等待消费者处理完毕，生产者继续向下执行其他动作。比如生产者发送了一个日志信息给日志系统，发送过去以后生产者就向下做其他事情了，无需关注日志系统的执行结果。日志系统根据接收到的日志信息继续进行业务执行，是单纯的记录日志，还是记录日志并报警，这些和生产者无关，这样生产者的业务执行效率就会大幅度提升。并且可以通过添加多个消费者来处理同一个生产者发送的消息来提高系统的高并发性，改善系统工作效率，提高用户体验。一旦某一个消费者由于各种问题宕机了，也不会对业务产生影响，提高了系统的高可用性。
 
-​		以上简单的介绍了一下消息这种工作模式存在的意义，希望对各位学习者有所帮助。
+以上简单的介绍了一下消息这种工作模式存在的意义，希望对各位学习者有所帮助。
+
+
 
 #### Java处理消息的标准规范
 
-​		目前企业级开发中广泛使用的消息处理技术共三大类，具体如下：
+目前企业级开发中广泛使用的消息处理技术共三大类，具体如下：
 
 - JMS
 - AMQP
 - MQTT
 
-​		为什么是三大类，而不是三个技术呢？因为这些都是规范，就想JDBC技术，是个规范，开发针对规范开发，运行还要靠实现类，例如MySQL提供了JDBC的实现，最终运行靠的还是实现。并且这三类规范都是针对异步消息进行处理的，也符合消息的设计本质，处理异步的业务。对以上三种消息规范做一下普及
+为什么是三大类，而不是三个技术呢？因为这些都是规范，就想JDBC技术，是个规范，开发针对规范开发，运行还要靠实现类，例如MySQL提供了JDBC的实现，最终运行靠的还是实现。并且这三类规范都是针对异步消息进行处理的，也符合消息的设计本质，处理异步的业务。对以上三种消息规范做一下普及
+
+
 
 ##### JMS
 
-​		JMS（Java Message Service）,这是一个规范，作用等同于JDBC规范，提供了与消息服务相关的API接口。
+JMS（Java Message Service）,这是一个规范，作用等同于JDBC规范，提供了与消息服务相关的API接口。
 
 **JMS消息模型**
 
-​		JMS规范中规范了消息有两种模型。分别是**点对点模型**和**发布订阅模型**。
+JMS规范中规范了消息有两种模型。分别是**点对点模型**和**发布订阅模型**。
 
-​		**点对点模型**：peer-2-peer，生产者会将消息发送到一个保存消息的容器中，通常使用队列模型，使用队列保存消息。一个队列的消息只能被一个消费者消费，或未被及时消费导致超时。这种模型下，生产者和消费者是一对一绑定的。
+- **点对点模型**：peer-2-peer，生产者会将消息发送到一个保存消息的容器中，通常使用队列模型，使用队列保存消息。一个队列的消息只能被一个消费者消费，或未被及时消费导致超时。这种模型下，生产者和消费者是一对一绑定的。
+- **发布订阅模型**：publish-subscribe，生产者将消息发送到一个保存消息的容器中，也是使用队列模型来保存。但是消息可以被多个消费者消费，生产者和消费者完全独立，相互不需要感知对方的存在。
 
-​		**发布订阅模型**：publish-subscribe，生产者将消息发送到一个保存消息的容器中，也是使用队列模型来保存。但是消息可以被多个消费者消费，生产者和消费者完全独立，相互不需要感知对方的存在。
-
-​		以上这种分类是从消息的生产和消费过程来进行区分，针对消息所包含的信息不同，还可以进行不同类别的划分。
+以上这种分类是从消息的生产和消费过程来进行区分，针对消息所包含的信息不同，还可以进行不同类别的划分。
 
 **JMS消息种类**
 
-​		根据消息中包含的数据种类划分，可以将消息划分成6种消息。
+根据消息中包含的数据种类划分，可以将消息划分成6种消息。
 
 - TextMessage
 - MapMessage
-- BytesMessage
+- **BytesMessage**
 - StreamMessage
 - ObjectMessage
 - Message （只有消息头和属性）
 
-​		JMS主张不同种类的消息，消费方式不同，可以根据使用需要选择不同种类的消息。但是这一点也成为其诟病之处，后面再说。整体上来说，JMS就是典型的保守派，什么都按照J2EE的规范来，做一套规范，定义若干个标准，每个标准下又提供一大批API。目前对JMS规范实现的消息中间件技术还是挺多的，毕竟是皇家御用，肯定有人舔，例如ActiveMQ、Redis、HornetMQ。但是也有一些不太规范的实现，参考JMS的标准设计，但是又不完全满足其规范，例如：RabbitMQ、RocketMQ。
+JMS主张不同种类的消息，消费方式不同，可以根据使用需要选择不同种类的消息。但是这一点也成为其诟病之处，后面再说。整体上来说，JMS就是典型的保守派，什么都按照J2EE的规范来，做一套规范，定义若干个标准，每个标准下又提供一大批API。目前对JMS规范实现的消息中间件技术还是挺多的，毕竟是皇家御用，肯定有人舔，例如ActiveMQ、Redis、HornetMQ。
+
+但是也有一些不太规范的实现，参考JMS的标准设计，但是又不完全满足其规范，例如：RabbitMQ、RocketMQ。
+
+
 
 ##### AMQP
 
-​		JMS的问世为消息中间件提供了很强大的规范性支撑，但是使用的过程中就开始被人诟病，比如JMS设置的极其复杂的多种类消息处理机制。本来分门别类处理挺好的，为什么会被诟病呢？原因就在于JMS的设计是J2EE规范，站在Java开发的角度思考问题。但是现实往往是复杂度很高的。比如我有一个.NET开发的系统A，有一个Java开发的系统B，现在要从A系统给B系统发业务消息，结果两边数据格式不统一，没法操作。JMS不是可以统一数据格式吗？提供了6种数据种类，总有一款适合你啊。NO，一个都不能用。因为A系统的底层语言不是Java语言开发的，根本不支持那些对象。这就意味着如果想使用现有的业务系统A继续开发已经不可能了，必须推翻重新做使用Java语言开发的A系统。
+JMS的问世为消息中间件提供了很强大的规范性支撑，但是使用的过程中就开始被人诟病，比如JMS设置的极其复杂的多种类消息处理机制。本来分门别类处理挺好的，为什么会被诟病呢？原因就在于JMS的设计是J2EE规范，站在Java开发的角度思考问题。但是现实往往是复杂度很高的。比如我有一个.NET开发的系统A，有一个Java开发的系统B，现在要从A系统给B系统发业务消息，结果两边数据格式不统一，没法操作。JMS不是可以统一数据格式吗？提供了6种数据种类，总有一款适合你啊。NO，一个都不能用。因为A系统的底层语言不是Java语言开发的，根本不支持那些对象。这就意味着如果想使用现有的业务系统A继续开发已经不可能了，必须推翻重新做使用Java语言开发的A系统。
 
-​		这时候有人就提出说，你搞那么复杂，整那么多种类干什么？找一种大家都支持的消息数据类型不就解决这个跨平台的问题了吗？大家一想，对啊，于是AMQP孕育而生。
+这时候有人就提出说，你搞那么复杂，整那么多种类干什么？找一种大家都支持的消息数据类型不就解决这个跨平台的问题了吗？大家一想，对啊，于是AMQP孕育而生。
 
-​		单从上面的说明中其实可以明确感知到，AMQP的出现解决的是消息传递时使用的消息种类的问题，化繁为简，但是其并没有完全推翻JMS的操作API，所以说AMQP仅仅是一种协议，规范了数据传输的格式而已。
+单从上面的说明中其实可以明确感知到，AMQP的出现解决的是消息传递时使用的消息种类的问题，化繁为简，但是其并没有完全推翻JMS的操作API，所以说AMQP仅仅是一种协议，规范了数据传输的格式而已。
 
-​		AMQP（advanced message queuing protocol）：一种协议（高级消息队列协议，也是消息代理规范），规范了网络交换的数据格式，兼容JMS操作。
+AMQP（advanced message queuing protocol）：一种协议（高级消息队列协议，也是消息代理规范），规范了网络交换的数据格式，兼容JMS操作。
+
 **优点**
 
-​		具有跨平台性，服务器供应商，生产者，消费者可以使用不同的语言来实现
+具有跨平台性，服务器供应商，生产者，消费者可以使用不同的语言来实现
 
 **JMS消息种类**
 
-​		AMQP消息种类：byte[]
+AMQP消息种类：byte[]
 
-​		AMQP在JMS的消息模型基础上又进行了进一步的扩展，除了点对点和发布订阅的模型，开发了几种全新的消息模型，适应各种各样的消息发送。
+AMQP在JMS的消息模型基础上又进行了进一步的扩展，除了点对点和发布订阅的模型，开发了几种全新的消息模型，适应各种各样的消息发送。
 
 **AMQP消息模型**
 
@@ -8117,25 +8168,31 @@ public class SendMailServiceImpl2 implements SendMailService {
 - headers exchange
 - system exchange
 
-​		目前实现了AMQP协议的消息中间件技术也很多，而且都是较为流行的技术，例如：RabbitMQ、StormMQ、RocketMQ
+目前实现了AMQP协议的消息中间件技术也很多，而且都是较为流行的技术，例如：RabbitMQ、StormMQ、RocketMQ
+
+
 
 ##### MQTT
 
-​		MQTT（Message Queueing Telemetry Transport）消息队列遥测传输，专为小设备设计，是物联网（IOT）生态系统中主要成分之一。由于与JavaEE企业级开发没有交集，此处不作过多的说明。
+MQTT（Message Queueing Telemetry Transport）消息队列遥测传输，专为小设备设计，是物联网（IOT）生态系统中主要成分之一。由于与JavaEE企业级开发没有交集，此处不作过多的说明。
 
-​		除了上述3种J2EE企业级应用中广泛使用的三种异步消息传递技术，还有一种技术也不能忽略，Kafka。
+除了上述3种J2EE企业级应用中广泛使用的三种异步消息传递技术，还有一种技术也不能忽略，Kafka。
+
+
 
 ##### KafKa
 
-​		Kafka，一种高吞吐量的分布式发布订阅消息系统，提供实时消息功能。Kafka技术并不是作为消息中间件为主要功能的产品，但是其拥有发布订阅的工作模式，也可以充当消息中间件来使用，而且目前企业级开发中其身影也不少见。
+Kafka，一种高吞吐量的分布式发布订阅消息系统，提供实时消息功能。Kafka技术并不是作为消息中间件为主要功能的产品，但是其拥有发布订阅的工作模式，也可以充当消息中间件来使用，而且目前企业级开发中其身影也不少见。
 
-​		本节内容讲围绕着上述内容中的几种实现方案讲解springboot整合各种各样的消息中间件。由于各种消息中间件必须先安装再使用，下面的内容采用Windows系统安装，降低各位学习者的学习难度，基本套路和之前学习NoSQL解决方案一样，先安装再整合。
+本节内容讲围绕着上述内容中的几种实现方案讲解springboot整合各种各样的消息中间件。由于各种消息中间件必须先安装再使用，下面的内容采用Windows系统安装，降低各位学习者的学习难度，基本套路和之前学习NoSQL解决方案一样，先安装再整合。
+
+
 
 #### 购物订单发送手机短信案例
 
-​		为了便于下面演示各种各样的消息中间件技术，我们创建一个购物过程生成订单时为用户发送短信的案例环境，模拟使用消息中间件实现发送手机短信的过程。
+为了便于下面演示各种各样的消息中间件技术，我们创建一个购物过程生成订单时为用户发送短信的案例环境，模拟使用消息中间件实现发送手机短信的过程。
 
-​		手机验证码案例需求如下：
+手机验证码案例需求如下：
 
 - 执行下单业务时（模拟此过程），调用消息服务，将要发送短信的订单id传递给消息中间件
 
@@ -8145,7 +8202,7 @@ public class SendMailServiceImpl2 implements SendMailService {
 
 **订单业务**
 
-​		**业务层接口**
+**业务层接口**
 
 ```JAVA
 public interface OrderService {
@@ -8153,9 +8210,9 @@ public interface OrderService {
 }
 ```
 
-​		模拟传入订单id，执行下订单业务，参数为虚拟设定，实际应为订单对应的实体类
+模拟传入订单id，执行下订单业务，参数为虚拟设定，实际应为订单对应的实体类
 
-​		**业务层实现**
+**业务层实现**
 
 ```JAVA
 @Service
@@ -8175,9 +8232,9 @@ public class OrderServiceImpl implements OrderService {
 }
 ```
 
-​		业务层转调短信处理的服务MessageService
+业务层转调短信处理的服务MessageService
 
-​		**表现层服务**
+**表现层服务**
 
 ```JAVA
 @RestController
@@ -8194,11 +8251,13 @@ public class OrderController {
 }
 ```
 
-​		表现层对外开发接口，传入订单id即可（模拟）
+表现层对外开发接口，传入订单id即可（模拟）
+
+
 
 **短信处理业务**
 
-​		**业务层接口**
+**业务层接口**
 
 ```JAVA
 public interface MessageService {
@@ -8207,9 +8266,9 @@ public interface MessageService {
 }
 ```
 
-​		短信处理业务层接口提供两个操作，发送要处理的订单id到消息中间件，另一个操作目前暂且设计成处理消息，实际消息的处理过程不应该是手动执行，应该是自动执行，到具体实现时再进行设计
+短信处理业务层接口提供两个操作，发送要处理的订单id到消息中间件，另一个操作目前暂且设计成处理消息，实际消息的处理过程不应该是手动执行，应该是自动执行，到具体实现时再进行设计
 
-​		**业务层实现**
+**业务层实现**
 
 ```JAVA
 @Service
@@ -8231,9 +8290,9 @@ public class MessageServiceImpl implements MessageService {
 }
 ```
 
-​		短信处理业务层实现中使用集合先模拟消息队列，观察效果
+短信处理业务层实现中使用集合先模拟消息队列，观察效果
 
-​		**表现层服务**
+**表现层服务**
 
 ```JAVA
 @RestController
@@ -8251,19 +8310,21 @@ public class MessageController {
 }
 ```
 
-​		短信处理表现层接口暂且开发出一个处理消息的入口，但是此业务是对应业务层中设计的模拟接口，实际业务不需要设计此接口。
+短信处理表现层接口暂且开发出一个处理消息的入口，但是此业务是对应业务层中设计的模拟接口，实际业务不需要设计此接口。
 
-​		下面开启springboot整合各种各样的消息中间件，从严格满足JMS规范的ActiveMQ开始
+下面开启springboot整合各种各样的消息中间件，从严格满足JMS规范的ActiveMQ开始
+
+
 
 #### SpringBoot整合ActiveMQ
 
-​		ActiveMQ是MQ产品中的元老级产品，早期标准MQ产品之一，在AMQP协议没有出现之前，占据了消息中间件市场的绝大部分份额，后期因为AMQP系列产品的出现，迅速走弱，目前仅在一些线上运行的产品中出现，新产品开发较少采用。
+ActiveMQ是MQ产品中的元老级产品，早期标准MQ产品之一，在AMQP协议没有出现之前，占据了消息中间件市场的绝大部分份额，后期因为AMQP系列产品的出现，迅速走弱，目前仅在一些线上运行的产品中出现，新产品开发较少采用。
 
 ##### 安装
 
-​		windows版安装包下载地址：[https://activemq.apache.org/components/classic/download](https://activemq.apache.org/components/classic/download/)[/](https://activemq.apache.org/components/classic/download/)
+windows版安装包下载地址：[https://activemq.apache.org/components/classic/download](https://activemq.apache.org/components/classic/download/)[/](https://activemq.apache.org/components/classic/download/)
 
-​		下载的安装包是解压缩就能使用的zip文件，解压缩完毕后会得到如下文件
+下载的安装包是解压缩就能使用的zip文件，解压缩完毕后会得到如下文件
 
 ![image-20220228160001620](02-SpringBoot2-黑马.assets/image-20220228160001620.png)
 
@@ -8273,29 +8334,29 @@ public class MessageController {
 activemq.bat
 ```
 
-​		运行bin目录下的win32或win64目录下的activemq.bat命令即可，根据自己的操作系统选择即可，默认对外服务端口61616。
+运行bin目录下的win32或win64目录下的activemq.bat命令即可，根据自己的操作系统选择即可，默认对外服务端口61616。
 
 **访问web管理服务**
 
-​		ActiveMQ启动后会启动一个Web控制台服务，可以通过该服务管理ActiveMQ。
+ActiveMQ启动后会启动一个Web控制台服务，可以通过该服务管理ActiveMQ。
 
 ```CMD
 http://127.0.0.1:8161/
 ```
 
-​		web管理服务默认端口8161，访问后可以打开ActiveMQ的管理界面，如下：
+web管理服务默认端口8161，访问后可以打开ActiveMQ的管理界面，如下：
 
 <img src="02-SpringBoot2-黑马.assets/image-20220228160844972.png" alt="image-20220228160844972" style="zoom:67%;" />
 
-​		首先输入访问用户名和密码，初始化用户名和密码相同，均为：admin，成功登录后进入管理后台界面，如下：
+首先输入访问用户名和密码，初始化用户名和密码相同，均为：admin，成功登录后进入管理后台界面，如下：
 
 ![image-20220228161010401](02-SpringBoot2-黑马.assets/image-20220228161010401.png)
 
-​		看到上述界面视为启动ActiveMQ服务成功。
+看到上述界面视为启动ActiveMQ服务成功。
 
 **启动失败**
 
-​		在ActiveMQ启动时要占用多个端口，以下为正常启动信息：
+在ActiveMQ启动时要占用多个端口，以下为正常启动信息：
 
 ```CMD
 wrapper  | --> Wrapper Started as Console
@@ -8338,7 +8399,7 @@ jvm 1    |  INFO | ActiveMQ WebConsole available at http://127.0.0.1:8161/
 jvm 1    |  INFO | ActiveMQ Jolokia REST API available at http://127.0.0.1:8161/api/jolokia/
 ```
 
-​		其中占用的端口有：61616、5672、61613、1883、61614，如果启动失败，请先管理对应端口即可。以下就是某个端口占用的报错信息，可以从抛出异常的位置看出，启动5672端口时端口被占用，显示java.net.BindException: Address already in use: JVM_Bind。Windows系统中终止端口运行的操作参看[【命令行启动常见问题及解决方案】](#命令行启动常见问题及解决方案)
+其中占用的端口有：61616、5672、61613、1883、61614，如果启动失败，请先管理对应端口即可。以下就是某个端口占用的报错信息，可以从抛出异常的位置看出，启动5672端口时端口被占用，显示java.net.BindException: Address already in use: JVM_Bind。Windows系统中终止端口运行的操作参看[【命令行启动常见问题及解决方案】](#命令行启动常见问题及解决方案)
 
 ```CMD
 wrapper  | --> Wrapper Started as Console
@@ -8514,11 +8575,13 @@ wrapper  | <-- Wrapper Stopped
 请按任意键继续. . .
 ```
 
+
+
 ##### 整合
 
-​		做了这么多springboot整合第三方技术，已经摸到门路了，加坐标，做配置，调接口，直接开工
+做了这么多springboot整合第三方技术，已经摸到门路了，加坐标，做配置，调接口，直接开工
 
-**步骤①**：导入springboot整合ActiveMQ的starter
+**步骤1**：导入springboot整合ActiveMQ的starter
 
 ```xml
 <dependency>
@@ -8527,7 +8590,7 @@ wrapper  | <-- Wrapper Stopped
 </dependency>
 ```
 
-**步骤②**：配置ActiveMQ的服务器地址
+**步骤2**：配置ActiveMQ的服务器地址
 
 ```yaml
 spring:
@@ -8535,7 +8598,7 @@ spring:
     broker-url: tcp://localhost:61616
 ```
 
-**步骤③**：使用JmsMessagingTemplate操作ActiveMQ
+**步骤3**：使用JmsMessagingTemplate操作ActiveMQ
 
 ```java
 @Service
@@ -8558,11 +8621,11 @@ public class MessageServiceActivemqImpl implements MessageService {
 }
 ```
 
-​		发送消息需要先将消息的类型转换成字符串，然后再发送，所以是convertAndSend，定义消息发送的位置，和具体的消息内容，此处使用id作为消息内容。
+发送消息需要先将消息的类型转换成字符串，然后再发送，所以是convertAndSend，定义消息发送的位置，和具体的消息内容，此处使用id作为消息内容。
 
-​		接收消息需要先将消息接收到，然后再转换成指定的数据类型，所以是receiveAndConvert，接收消息除了提供读取的位置，还要给出转换后的数据的具体类型。
+接收消息需要先将消息接收到，然后再转换成指定的数据类型，所以是receiveAndConvert，接收消息除了提供读取的位置，还要给出转换后的数据的具体类型。
 
-**步骤④**：使用消息监听器在服务器启动后，监听指定位置，当消息出现后，立即消费消息
+**步骤4**：使用消息监听器在服务器启动后，监听指定位置，当消息出现后，立即消费消息
 
 ```JAVA
 @Component
@@ -8576,11 +8639,11 @@ public class MessageListener {
 }
 ```
 
-​		使用注解@JmsListener定义当前方法监听ActiveMQ中指定名称的消息队列。
+使用注解@JmsListener定义当前方法监听ActiveMQ中指定名称的消息队列。
 
-​		如果当前消息队列处理完还需要继续向下传递当前消息到另一个队列中使用注解@SendTo即可，这样即可构造连续执行的顺序消息队列。
+如果当前消息队列处理完还需要继续向下传递当前消息到另一个队列中使用注解@SendTo即可，这样即可构造连续执行的顺序消息队列。
 
-**步骤⑤**：切换消息模型由点对点模型到发布订阅模型，修改jms配置即可
+**步骤5**：切换消息模型由点对点模型到发布订阅模型，修改jms配置即可
 
 ```yaml
 spring:
@@ -8590,7 +8653,7 @@ spring:
     pub-sub-domain: true
 ```
 
-​		pub-sub-domain默认值为false，即点对点模型，修改为true后就是发布订阅模型。
+pub-sub-domain默认值为false，即点对点模型，修改为true后就是发布订阅模型。
 
 **总结**
 
@@ -8603,28 +8666,30 @@ spring:
 
 #### SpringBoot整合RabbitMQ
 
-​		RabbitMQ是MQ产品中的目前较为流行的产品之一，它遵从AMQP协议。RabbitMQ的底层实现语言使用的是Erlang，所以安装RabbitMQ需要先安装Erlang。
+RabbitMQ是MQ产品中的目前较为流行的产品之一，它遵从AMQP协议。RabbitMQ的底层实现语言使用的是Erlang，所以安装RabbitMQ需要先安装Erlang。
 
 **Erlang安装**
 
-​		windows版安装包下载地址：[https](https://www.erlang.org/downloads)[://www.erlang.org/downloads](https://www.erlang.org/downloads)
+windows版安装包下载地址：[https](https://www.erlang.org/downloads)[://www.erlang.org/downloads](https://www.erlang.org/downloads)
 
-​		下载完毕后得到exe安装文件，一键傻瓜式安装，安装完毕需要重启，需要重启，需要重启。
+下载完毕后得到exe安装文件，一键傻瓜式安装，安装完毕需要重启，需要重启，需要重启。
 
-​		安装的过程中可能会出现依赖Windows组件的提示，根据提示下载安装即可，都是自动执行的，如下：
+安装的过程中可能会出现依赖Windows组件的提示，根据提示下载安装即可，都是自动执行的，如下：
 
 ![image-20220228164851551](02-SpringBoot2-黑马.assets/image-20220228164851551.png)
 
-​		Erlang安装后需要配置环境变量，否则RabbitMQ将无法找到安装的Erlang。需要配置项如下，作用等同JDK配置环境变量的作用。
+Erlang安装后需要配置环境变量，否则RabbitMQ将无法找到安装的Erlang。需要配置项如下，作用等同JDK配置环境变量的作用。
 
 - ERLANG_HOME
 - PATH
 
+
+
 ##### 安装
 
-​		windows版安装包下载地址：[https://](https://rabbitmq.com/install-windows.html)[rabbitmq.com/install-windows.html](https://rabbitmq.com/install-windows.html)
+windows版安装包下载地址：[https://](https://rabbitmq.com/install-windows.html)[rabbitmq.com/install-windows.html](https://rabbitmq.com/install-windows.html)
 
-​		下载完毕后得到exe安装文件，一键傻瓜式安装，安装完毕后会得到如下文件
+下载完毕后得到exe安装文件，一键傻瓜式安装，安装完毕后会得到如下文件
 
 <img src="02-SpringBoot2-黑马.assets/image-20220228165151524.png" alt="image-20220228165151524" style="zoom:67%;" />
 
@@ -8636,44 +8701,44 @@ rabbitmq-service.bat stop		# 停止服务
 rabbitmqctl status				# 查看服务状态
 ```
 
-​		运行sbin目录下的rabbitmq-service.bat命令即可，start参数表示启动，stop参数表示退出，默认对外服务端口5672。
+运行sbin目录下的rabbitmq-service.bat命令即可，start参数表示启动，stop参数表示退出，默认对外服务端口5672。
 
-​		注意：启动rabbitmq的过程实际上是开启rabbitmq对应的系统服务，需要管理员权限方可执行。
+**注意**：启动rabbitmq的过程实际上是开启rabbitmq对应的系统服务，需要管理员权限方可执行。
 
-​		说明：有没有感觉5672的服务端口很熟悉？activemq与rabbitmq有一个端口冲突问题，学习阶段无论操作哪一个？请确保另一个处于关闭状态。
+**说明**：有没有感觉5672的服务端口很熟悉？activemq与rabbitmq有一个端口冲突问题，学习阶段无论操作哪一个？请确保另一个处于关闭状态。
 
-​		说明：不喜欢命令行的小伙伴可以使用任务管理器中的服务页，找到RabbitMQ服务，使用鼠标右键菜单控制服务的启停。
+**说明**：不喜欢命令行的小伙伴可以使用任务管理器中的服务页，找到RabbitMQ服务，使用鼠标右键菜单控制服务的启停。
 
 <img src="02-SpringBoot2-黑马.assets/image-20220228170147193.png" alt="image-20220228170147193" style="zoom:67%;" />
 
 **访问web管理服务**
 
-​		RabbitMQ也提供有web控制台服务，但是此功能是一个插件，需要先启用才可以使用。
+RabbitMQ也提供有web控制台服务，但是此功能是一个插件，需要先启用才可以使用。
 
 ```CMD
 rabbitmq-plugins.bat list							# 查看当前所有插件的运行状态
 rabbitmq-plugins.bat enable rabbitmq_management		# 启动rabbitmq_management插件
 ```
 
-​		启动插件后可以在插件运行状态中查看是否运行，运行后通过浏览器即可打开服务后台管理界面
+启动插件后可以在插件运行状态中查看是否运行，运行后通过浏览器即可打开服务后台管理界面
 
 ```CMD
 http://localhost:15672
 ```
 
-​		web管理服务默认端口15672，访问后可以打开RabbitMQ的管理界面，如下：
+web管理服务默认端口15672，访问后可以打开RabbitMQ的管理界面，如下：
 
 ![image-20220228170504793](02-SpringBoot2-黑马.assets/image-20220228170504793.png)
 
-​		首先输入访问用户名和密码，初始化用户名和密码相同，均为：guest，成功登录后进入管理后台界面，如下：
+首先输入访问用户名和密码，初始化用户名和密码相同，均为：guest，成功登录后进入管理后台界面，如下：
 
 ![image-20220228170535261](02-SpringBoot2-黑马.assets/image-20220228170535261.png)
 
 ##### 整合(direct模型)
 
-​		RabbitMQ满足AMQP协议，因此不同的消息模型对应的制作不同，先使用最简单的direct模型开发。
+RabbitMQ满足AMQP协议，因此不同的消息模型对应的制作不同，先使用最简单的direct模型开发。
 
-**步骤①**：导入springboot整合amqp的starter，amqp协议默认实现为rabbitmq方案
+**步骤1**：导入springboot整合amqp的starter，amqp协议默认实现为rabbitmq方案
 
 ```xml
 <dependency>
@@ -8682,7 +8747,7 @@ http://localhost:15672
 </dependency>
 ```
 
-**步骤②**：配置RabbitMQ的服务器地址
+**步骤2**：配置RabbitMQ的服务器地址
 
 ```yaml
 spring:
@@ -8691,9 +8756,9 @@ spring:
     port: 5672
 ```
 
-**步骤③**：初始化直连模式系统设置
+**步骤3**：初始化直连模式系统设置
 
-​		由于RabbitMQ不同模型要使用不同的交换机，因此需要先初始化RabbitMQ相关的对象，例如队列，交换机等
+由于RabbitMQ不同模型要使用不同的交换机，因此需要先初始化RabbitMQ相关的对象，例如队列，交换机等
 
 ```JAVA
 @Configuration
@@ -8721,9 +8786,9 @@ public class RabbitConfigDirect {
 }
 ```
 
-​		队列Queue与直连交换机DirectExchange创建后，还需要绑定他们之间的关系Binding，这样就可以通过交换机操作对应队列。
+队列Queue与直连交换机DirectExchange创建后，还需要绑定他们之间的关系Binding，这样就可以通过交换机操作对应队列。
 
-**步骤④**：使用AmqpTemplate操作RabbitMQ
+**步骤4**：使用AmqpTemplate操作RabbitMQ
 
 ```java
 @Service
@@ -8734,14 +8799,14 @@ public class MessageServiceRabbitmqDirectImpl implements MessageService {
     @Override
     public void sendMessage(String id) {
         System.out.println("待发送短信的订单已纳入处理队列（rabbitmq direct），id："+id);
-        amqpTemplate.convertAndSend("directExchange","direct",id);
+        amqpTemplate.convertAndSend("directExchange", "direct", id);
     }
 }
 ```
 
-​		amqp协议中的操作API接口名称看上去和jms规范的操作API接口很相似，但是传递参数差异很大。
+amqp协议中的操作API接口名称看上去和jms规范的操作API接口很相似，但是传递参数差异很大。
 
-**步骤⑤**：使用消息监听器在服务器启动后，监听指定位置，当消息出现后，立即消费消息
+**步骤5**：使用消息监听器在服务器启动后，监听指定位置，当消息出现后，立即消费消息
 
 ```JAVA
 @Component
@@ -8753,15 +8818,17 @@ public class MessageListener {
 }
 ```
 
-​		使用注解@RabbitListener定义当前方法监听RabbitMQ中指定名称的消息队列。
+使用注解@RabbitListener定义当前方法监听RabbitMQ中指定名称的消息队列。
+
+
 
 ##### 整合(topic模型)
 
-**步骤①**：同上
+**步骤1**：同上
 
-**步骤②**：同上
+**步骤2**：同上
 
-**步骤③**：初始化主题模式系统设置
+**步骤3**：初始化主题模式系统设置
 
 ```JAVA
 @Configuration
@@ -8789,7 +8856,7 @@ public class RabbitConfigTopic {
 }
 ```
 
-​		主题模式支持routingKey匹配模式，*表示匹配一个单词，#表示匹配任意内容，这样就可以通过主题交换机将消息分发到不同的队列中，详细内容请参看RabbitMQ系列课程。	
+主题模式支持routingKey匹配模式，*表示匹配一个单词，#表示匹配任意内容，这样就可以通过主题交换机将消息分发到不同的队列中，详细内容请参看RabbitMQ系列课程。
 
 | **匹配键**        | **topic.\*.\*** | **topic.#** |
 | ----------------- | --------------- | ----------- |
@@ -8801,7 +8868,7 @@ public class RabbitConfigTopic {
 | topic.id          | false           | true        |
 | topic.order       | false           | true        |
 
-**步骤④**：使用AmqpTemplate操作RabbitMQ
+**步骤4**：使用AmqpTemplate操作RabbitMQ
 
 ```java
 @Service
@@ -8817,9 +8884,9 @@ public class MessageServiceRabbitmqTopicImpl implements MessageService {
 }
 ```
 
-​		发送消息后，根据当前提供的routingKey与绑定交换机时设定的routingKey进行匹配，规则匹配成功消息才会进入到对应的队列中。
+发送消息后，根据当前提供的routingKey与绑定交换机时设定的routingKey进行匹配，规则匹配成功消息才会进入到对应的队列中。
 
-**步骤⑤**：使用消息监听器在服务器启动后，监听指定队列
+**步骤5**：使用消息监听器在服务器启动后，监听指定队列
 
 ```JAVA
 @Component
@@ -8835,7 +8902,7 @@ public class MessageListener {
 }
 ```
 
-​		使用注解@RabbitListener定义当前方法监听RabbitMQ中指定名称的消息队列。
+使用注解@RabbitListener定义当前方法监听RabbitMQ中指定名称的消息队列。
 
 **总结**
 
@@ -8848,27 +8915,27 @@ public class MessageListener {
 
 #### SpringBoot整合RocketMQ
 
-​		RocketMQ由阿里研发，后捐赠给apache基金会，目前是apache基金会顶级项目之一，也是目前市面上的MQ产品中较为流行的产品之一，它遵从AMQP协议。
+RocketMQ由阿里研发，后捐赠给apache基金会，目前是apache基金会顶级项目之一，也是目前市面上的MQ产品中较为流行的产品之一，它遵从AMQP协议。
 
 ##### 安装
 
-​		windows版安装包下载地址：[https://rocketmq.apache.org](https://rocketmq.apache.org/)[/](https://rocketmq.apache.org/)
+windows版安装包下载地址：[https://rocketmq.apache.org](https://rocketmq.apache.org/)[/](https://rocketmq.apache.org/)
 
-​		下载完毕后得到zip压缩文件，解压缩即可使用，解压后得到如下文件
+下载完毕后得到zip压缩文件，解压缩即可使用，解压后得到如下文件
 
 ![image-20220228174453471](02-SpringBoot2-黑马.assets/image-20220228174453471.png)
 
-​		RocketMQ安装后需要配置环境变量，具体如下：
+RocketMQ安装后需要配置环境变量，具体如下：
 
 - ROCKETMQ_HOME
 - PATH
 - NAMESRV_ADDR （建议）： 127.0.0.1:9876
 
-​		关于NAMESRV_ADDR对于初学者来说建议配置此项，也可以通过命令设置对应值，操作略显繁琐，建议配置。系统学习RocketMQ知识后即可灵活控制该项。
+关于NAMESRV_ADDR对于初学者来说建议配置此项，也可以通过命令设置对应值，操作略显繁琐，建议配置。系统学习RocketMQ知识后即可灵活控制该项。
 
 **RocketMQ工作模式**
 
-​		在RocketMQ中，处理业务的服务器称为broker，生产者与消费者不是直接与broker联系的，而是通过命名服务器进行通信。broker启动后会通知命名服务器自己已经上线，这样命名服务器中就保存有所有的broker信息。当生产者与消费者需要连接broker时，通过命名服务器找到对应的处理业务的broker，因此命名服务器在整套结构中起到一个信息中心的作用。并且broker启动前必须保障命名服务器先启动。
+在RocketMQ中，处理业务的服务器称为broker，生产者与消费者不是直接与broker联系的，而是通过命名服务器进行通信。broker启动后会通知命名服务器自己已经上线，这样命名服务器中就保存有所有的broker信息。当生产者与消费者需要连接broker时，通过命名服务器找到对应的处理业务的broker，因此命名服务器在整套结构中起到一个信息中心的作用。并且broker启动前必须保障命名服务器先启动。
 
 <img src="02-SpringBoot2-黑马.assets/image-20220228175123790.png" alt="image-20220228175123790" style="zoom:80%;" />
 
@@ -8879,22 +8946,24 @@ mqnamesrv		# 启动命名服务器
 mqbroker		# 启动broker
 ```
 
-​		运行bin目录下的mqnamesrv命令即可启动命名服务器，默认对外服务端口9876。
+运行bin目录下的mqnamesrv命令即可启动命名服务器，默认对外服务端口9876。
 
-​		运行bin目录下的mqbroker命令即可启动broker服务器，如果环境变量中没有设置NAMESRV_ADDR则需要在运行mqbroker指令前通过set指令设置NAMESRV_ADDR的值，并且每次开启均需要设置此项。
+运行bin目录下的mqbroker命令即可启动broker服务器，如果环境变量中没有设置NAMESRV_ADDR则需要在运行mqbroker指令前通过set指令设置NAMESRV_ADDR的值，并且每次开启均需要设置此项。
 
 **测试服务器启动状态**
 
-​		RocketMQ提供有一套测试服务器功能的测试程序，运行bin目录下的tools命令即可使用。
+RocketMQ提供有一套测试服务器功能的测试程序，运行bin目录下的tools命令即可使用。
 
 ```CMD
 tools org.apache.rocketmq.example.quickstart.Producer		# 生产消息
 tools org.apache.rocketmq.example.quickstart.Consumer		# 消费消息
 ```
 
+
+
 ##### 整合（异步消息）
 
-**步骤①**：导入springboot整合RocketMQ的starter，此坐标不由springboot维护版本
+**步骤1**：导入springboot整合RocketMQ的starter，此坐标不由springboot维护版本
 
 ```xml
 <dependency>
@@ -8904,7 +8973,7 @@ tools org.apache.rocketmq.example.quickstart.Consumer		# 消费消息
 </dependency>
 ```
 
-**步骤②**：配置RocketMQ的服务器地址
+**步骤2**：配置RocketMQ的服务器地址
 
 ```yaml
 rocketmq:
@@ -8913,9 +8982,9 @@ rocketmq:
     group: group_rocketmq
 ```
 
-​		设置默认的生产者消费者所属组group。
+设置默认的生产者消费者所属组group。
 
-**步骤③**：使用RocketMQTemplate操作RocketMQ
+**步骤3**：使用RocketMQTemplate操作RocketMQ
 
 ```java
 @Service
@@ -8939,12 +9008,11 @@ public class MessageServiceRocketmqImpl implements MessageService {
         rocketMQTemplate.asyncSend("order_id",id,callback);
     }
 }
-
 ```
 
-​		使用asyncSend方法发送异步消息。
+使用asyncSend方法发送异步消息。
 
-**步骤④**：使用消息监听器在服务器启动后，监听指定位置，当消息出现后，立即消费消息
+**步骤4**：使用消息监听器在服务器启动后，监听指定位置，当消息出现后，立即消费消息
 
 ```JAVA
 @Component
@@ -8957,9 +9025,9 @@ public class MessageListener implements RocketMQListener<String> {
 }
 ```
 
-​		RocketMQ的监听器必须按照标准格式开发，实现RocketMQListener接口，泛型为消息类型。
+RocketMQ的监听器必须按照标准格式开发，实现RocketMQListener接口，泛型为消息类型。
 
-​		使用注解@RocketMQMessageListener定义当前类监听RabbitMQ中指定组、指定名称的消息队列。
+使用注解@RocketMQMessageListener定义当前类监听RabbitMQ中指定组、指定名称的消息队列。
 
 **总结**
 
@@ -8973,30 +9041,30 @@ public class MessageListener implements RocketMQListener<String> {
 
 ##### 安装
 
-​		windows版安装包下载地址：[https://](https://kafka.apache.org/downloads)[kafka.apache.org/downloads](https://kafka.apache.org/downloads)
+windows版安装包下载地址：[https://](https://kafka.apache.org/downloads)[kafka.apache.org/downloads](https://kafka.apache.org/downloads)
 
-​		下载完毕后得到tgz压缩文件，使用解压缩软件解压缩即可使用，解压后得到如下文件
+下载完毕后得到tgz压缩文件，使用解压缩软件解压缩即可使用，解压后得到如下文件
 
 ![image-20220228181442155](02-SpringBoot2-黑马.assets/image-20220228181442155.png)
 
-​		建议使用windows版2.8.1版本。
+建议使用windows版2.8.1版本。
 
 **启动服务器**
 
-​		kafka服务器的功能相当于RocketMQ中的broker，kafka运行还需要一个类似于命名服务器的服务。在kafka安装目录中自带一个类似于命名服务器的工具，叫做zookeeper，它的作用是注册中心，相关知识请到对应课程中学习。
+kafka服务器的功能相当于RocketMQ中的broker，kafka运行还需要一个类似于命名服务器的服务。在kafka安装目录中自带一个类似于命名服务器的工具，叫做zookeeper，它的作用是注册中心，相关知识请到对应课程中学习。
 
 ```CMD
 zookeeper-server-start.bat ..\..\config\zookeeper.properties		# 启动zookeeper
 kafka-server-start.bat ..\..\config\server.properties				# 启动kafka
 ```
 
-​		运行bin目录下的windows目录下的zookeeper-server-start命令即可启动注册中心，默认对外服务端口2181。
+运行bin目录下的windows目录下的zookeeper-server-start命令即可启动注册中心，默认对外服务端口2181。
 
-​		运行bin目录下的windows目录下的kafka-server-start命令即可启动kafka服务器，默认对外服务端口9092。
+运行bin目录下的windows目录下的kafka-server-start命令即可启动kafka服务器，默认对外服务端口9092。
 
 **创建主题**
 
-​		和之前操作其他MQ产品相似，kakfa也是基于主题操作，操作之前需要先初始化topic。
+和之前操作其他MQ产品相似，kakfa也是基于主题操作，操作之前需要先初始化topic。
 
 ```CMD
 # 创建topic
@@ -9009,16 +9077,18 @@ kafka-topics.bat --delete --zookeeper localhost:2181 --topic itheima
 
 **测试服务器启动状态**
 
-​		Kafka提供有一套测试服务器功能的测试程序，运行bin目录下的windows目录下的命令即可使用。
+Kafka提供有一套测试服务器功能的测试程序，运行bin目录下的windows目录下的命令即可使用。
 
 ```CMD
-kafka-console-producer.bat --broker-list localhost:9092 --topic itheima							# 测试生产消息
+kafka-console-producer.bat --broker-list localhost:9092 --topic itheima					      # 测试生产消息
 kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic itheima --from-beginning	# 测试消息消费
 ```
 
+
+
 ##### 整合
 
-**步骤①**：导入springboot整合Kafka的starter，此坐标由springboot维护版本
+**步骤1**：导入springboot整合Kafka的starter，此坐标由springboot维护版本
 
 ```xml
 <dependency>
@@ -9027,7 +9097,7 @@ kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic itheima --f
 </dependency>
 ```
 
-**步骤②**：配置Kafka的服务器地址
+**步骤2**：配置Kafka的服务器地址
 
 ```yaml
 spring:
@@ -9037,9 +9107,9 @@ spring:
       group-id: order
 ```
 
-​		设置默认的生产者消费者所属组id。
+设置默认的生产者消费者所属组id。
 
-**步骤③**：使用KafkaTemplate操作Kafka
+**步骤3**：使用KafkaTemplate操作Kafka
 
 ```java
 @Service
@@ -9055,9 +9125,9 @@ public class MessageServiceKafkaImpl implements MessageService {
 }
 ```
 
-​		使用send方法发送消息，需要传入topic名称。
+使用send方法发送消息，需要传入topic名称。
 
-**步骤④**：使用消息监听器在服务器启动后，监听指定位置，当消息出现后，立即消费消息
+**步骤4**：使用消息监听器在服务器启动后，监听指定位置，当消息出现后，立即消费消息
 
 ```JAVA
 @Component
@@ -9069,7 +9139,7 @@ public class MessageListener {
 }
 ```
 
-​		使用注解@KafkaListener定义当前方法监听Kafka中指定topic的消息，接收到的消息封装在对象ConsumerRecord中，获取数据从ConsumerRecord对象中获取即可。
+使用注解@KafkaListener定义当前方法监听Kafka中指定topic的消息，接收到的消息封装在对象ConsumerRecord中，获取数据从ConsumerRecord对象中获取即可。
 
 **总结**
 
@@ -9079,41 +9149,41 @@ public class MessageListener {
 
 3. 企业开发时通常使用监听器来处理消息队列中的消息，设置监听器使用注解@KafkaListener。接收消息保存在形参ConsumerRecord对象中
 
-   
+
 
 ## 6.监控
 
-​		在说监控之前，需要回顾一下软件业的发展史。最早的软件完成一些非常简单的功能，代码不多，错误也少。随着软件功能的逐步完善，软件的功能变得越来越复杂，功能不能得到有效的保障，这个阶段出现了针对软件功能的检测，也就是软件测试。伴随着计算机操作系统的逐步升级，软件的运行状态也变得开始让人捉摸不透，出现了不稳定的状况。伴随着计算机网络的发展，程序也从单机状态切换成基于计算机网络的程序，应用于网络的程序开始出现，由于网络的不稳定性，程序的运行状态让使用者更加堪忧。互联网的出现彻底打破了软件的思维模式，随之而来的互联网软件就更加凸显出应对各种各样复杂的网络情况之下的弱小。计算机软件的运行状况已经成为了软件运行的一个大话题，针对软件的运行状况就出现了全新的思维，建立起了初代的软件运行状态监控。
+在说监控之前，需要回顾一下软件业的发展史。最早的软件完成一些非常简单的功能，代码不多，错误也少。随着软件功能的逐步完善，软件的功能变得越来越复杂，功能不能得到有效的保障，这个阶段出现了针对软件功能的检测，也就是软件测试。伴随着计算机操作系统的逐步升级，软件的运行状态也变得开始让人捉摸不透，出现了不稳定的状况。伴随着计算机网络的发展，程序也从单机状态切换成基于计算机网络的程序，应用于网络的程序开始出现，由于网络的不稳定性，程序的运行状态让使用者更加堪忧。互联网的出现彻底打破了软件的思维模式，随之而来的互联网软件就更加凸显出应对各种各样复杂的网络情况之下的弱小。计算机软件的运行状况已经成为了软件运行的一个大话题，针对软件的运行状况就出现了全新的思维，建立起了初代的软件运行状态监控。
 
-​		什么是监控？就是通过软件的方式展示另一个软件的运行情况，运行的情况则通过各种各样的指标数据反馈给监控人员。例如网络是否顺畅、服务器是否在运行、程序的功能是否能够整百分百运行成功，内存是否够用，等等等等。
+什么是监控？就是通过软件的方式展示另一个软件的运行情况，运行的情况则通过各种各样的指标数据反馈给监控人员。例如网络是否顺畅、服务器是否在运行、程序的功能是否能够整百分百运行成功，内存是否够用，等等等等。
 
-​		本章要讲解的监控就是对软件的运行情况进行监督，但是springboot程序与非springboot程序的差异还是很大的，为了方便监控软件的开发，springboot提供了一套功能接口，为开发者加速开发过程。
+本章要讲解的监控就是对软件的运行情况进行监督，但是springboot程序与非springboot程序的差异还是很大的，为了方便监控软件的开发，springboot提供了一套功能接口，为开发者加速开发过程。
 
 
 
 ### 6-1.监控的意义
 
-​		对于现代的互联网程序来说，规模越来越大，功能越来越复杂，还要追求更好的客户体验，因此要监控的信息量也就比较大了。由于现在的互联网程序大部分都是基于微服务的程序，一个程序的运行需要若干个服务来保障，因此第一个要监控的指标就是服务是否正常运行，也就是**监控服务状态是否处理宕机状态**。一旦发现某个服务宕机了，必须马上给出对应的解决方案，避免整体应用功能受影响。其次，由于互联网程序服务的客户量是巨大的，当客户的请求在短时间内集中达到服务器后，就会出现各种程序运行指标的波动。比如内存占用严重，请求无法及时响应处理等，这就是第二个要监控的重要指标，**监控服务运行指标**。虽然软件是对外提供用户的访问需求，完成对应功能的，但是后台的运行是否平稳，是否出现了不影响客户使用的功能隐患，这些也是要密切监控的，此时就需要在不停机的情况下，监控系统运行情况，日志是一个不错的手段。如果在众多日志中找到开发者或运维人员所关注的日志信息，简单快速有效的过滤出要看的日志也是监控系统需要考虑的问题，这就是第三个要监控的指标，**监控程序运行日志**。虽然我们期望程序一直平稳运行，但是由于突发情况的出现，例如服务器被攻击、服务器内存溢出等情况造成了服务器宕机，此时当前服务不能满足使用需要，就要将其重启甚至关闭，如果快速控制服务器的启停也是程序运行过程中不可回避的问题，这就是第四个监控项，**管理服务状态**。以上这些仅仅是从大的方面来思考监控这个问题，还有很多的细节点，例如上线了一个新功能，定时提醒用户续费，这种功能不是上线后马上就运行的，但是当前功能是否真的启动，如果快速的查询到这个功能已经开启，这也是监控中要解决的问题，等等。看来监控真的是一项非常重要的工作。
+对于现代的互联网程序来说，规模越来越大，功能越来越复杂，还要追求更好的客户体验，因此要监控的信息量也就比较大了。由于现在的互联网程序大部分都是基于微服务的程序，一个程序的运行需要若干个服务来保障，因此第一个要监控的指标就是服务是否正常运行，也就是**监控服务状态是否处理宕机状态**。一旦发现某个服务宕机了，必须马上给出对应的解决方案，避免整体应用功能受影响。其次，由于互联网程序服务的客户量是巨大的，当客户的请求在短时间内集中达到服务器后，就会出现各种程序运行指标的波动。比如内存占用严重，请求无法及时响应处理等，这就是第二个要监控的重要指标，**监控服务运行指标**。虽然软件是对外提供用户的访问需求，完成对应功能的，但是后台的运行是否平稳，是否出现了不影响客户使用的功能隐患，这些也是要密切监控的，此时就需要在不停机的情况下，监控系统运行情况，日志是一个不错的手段。如果在众多日志中找到开发者或运维人员所关注的日志信息，简单快速有效的过滤出要看的日志也是监控系统需要考虑的问题，这就是第三个要监控的指标，**监控程序运行日志**。虽然我们期望程序一直平稳运行，但是由于突发情况的出现，例如服务器被攻击、服务器内存溢出等情况造成了服务器宕机，此时当前服务不能满足使用需要，就要将其重启甚至关闭，如果快速控制服务器的启停也是程序运行过程中不可回避的问题，这就是第四个监控项，**管理服务状态**。以上这些仅仅是从大的方面来思考监控这个问题，还有很多的细节点，例如上线了一个新功能，定时提醒用户续费，这种功能不是上线后马上就运行的，但是当前功能是否真的启动，如果快速的查询到这个功能已经开启，这也是监控中要解决的问题，等等。看来监控真的是一项非常重要的工作。
 
-​		通过上述描述，可以看出监控很重要。那具体的监控要如何开展呢？还要从实际的程序运行角度出发。比如现在有3个服务支撑着一个程序的运行，每个服务都有自己的运行状态。
+通过上述描述，可以看出监控很重要。那具体的监控要如何开展呢？还要从实际的程序运行角度出发。比如现在有3个服务支撑着一个程序的运行，每个服务都有自己的运行状态。
 
 <img src="02-SpringBoot2-黑马.assets/image-20220301093704396.png" alt="image-20220301093704396" style="zoom:50%;" />
 
-​		此时被监控的信息就要在三个不同的程序中去查询并展示，但是三个服务是服务于一个程序的运行的，如果不能合并到一个平台上展示，监控工作量巨大，而且信息对称性差，要不停的在三个监控端查看数据。如果将业务放大成30个，300个，3000个呢？看来必须有一个单独的平台，将多个被监控的服务对应的监控指标信息汇总在一起，这样更利于监控工作的开展。
+此时被监控的信息就要在三个不同的程序中去查询并展示，但是三个服务是服务于一个程序的运行的，如果不能合并到一个平台上展示，监控工作量巨大，而且信息对称性差，要不停的在三个监控端查看数据。如果将业务放大成30个，300个，3000个呢？看来必须有一个单独的平台，将多个被监控的服务对应的监控指标信息汇总在一起，这样更利于监控工作的开展。
 
 <img src="02-SpringBoot2-黑马.assets/image-20220301094001896.png" alt="image-20220301094001896" style="zoom:50%;" />
 
-​		新的程序专门用来监控，新的问题就出现了，是被监控程序主动上报信息还是监控程序主动获取信息？如果监控程序不能主动获取信息，这就意味着监控程序有可能看到的是很久之前被监控程序上报的信息，万一被监控程序宕机了，监控程序就无法区分究竟是好久没法信息了，还是已经下线了。所以监控程序必须具有主动发起请求获取被监控服务信息的能力。
+新的程序专门用来监控，新的问题就出现了，是被监控程序主动上报信息还是监控程序主动获取信息？如果监控程序不能主动获取信息，这就意味着监控程序有可能看到的是很久之前被监控程序上报的信息，万一被监控程序宕机了，监控程序就无法区分究竟是好久没法信息了，还是已经下线了。所以监控程序必须具有主动发起请求获取被监控服务信息的能力。
 
 <img src="02-SpringBoot2-黑马.assets/image-20220301094259844.png" alt="image-20220301094259844" style="zoom:50%;" />
 
-​		如果监控程序要监控服务时，主动获取对方的信息。那监控程序如何知道哪些程序被自己监控呢？不可能在监控程序中设置我监控谁，这样互联网上的所有程序岂不是都可以被监控到，这样的话信息安全将无法得到保障。合理的做法只能是在被监控程序启动时上报监控程序，告诉监控程序你可以监控我了。看来需要在被监控程序端做主动上报的操作，这就要求被监控程序中配置对应的监控程序是谁。
+如果监控程序要监控服务时，主动获取对方的信息。那监控程序如何知道哪些程序被自己监控呢？不可能在监控程序中设置我监控谁，这样互联网上的所有程序岂不是都可以被监控到，这样的话信息安全将无法得到保障。合理的做法只能是在被监控程序启动时上报监控程序，告诉监控程序你可以监控我了。看来需要在被监控程序端做主动上报的操作，这就要求被监控程序中配置对应的监控程序是谁。
 
 <img src="02-SpringBoot2-黑马.assets/image-20220301094547748.png" alt="image-20220301094547748" style="zoom:50%;" />
 
-​		被监控程序可以提供各种各样的指标数据给监控程序看，但是每一个指标都代表着公司的机密信息，并不是所有的指标都可以给任何人看的，乃至运维人员，所以对被监控指标的是否开放出来给监控系统看，也需要做详细的设定。
+被监控程序可以提供各种各样的指标数据给监控程序看，但是每一个指标都代表着公司的机密信息，并不是所有的指标都可以给任何人看的，乃至运维人员，所以对被监控指标的是否开放出来给监控系统看，也需要做详细的设定。
 
-​		以上描述的整个过程就是一个监控系统的基本流程。
+以上描述的整个过程就是一个监控系统的基本流程。
 
 **总结**
 
@@ -9123,21 +9193,21 @@ public class MessageListener {
 
 **思考**
 
-​		下面就要开始做监控了，新的问题就来了，监控程序怎么做呢？难道要自己写吗？肯定是不现实的，如何进行监控，咱们下节再讲。
+下面就要开始做监控了，新的问题就来了，监控程序怎么做呢？难道要自己写吗？肯定是不现实的，如何进行监控，咱们下节再讲。
 
 
 
 ### 6-2.可视化监控平台
 
-​		springboot抽取了大部分监控系统的常用指标，提出了监控的总思想。然后就有好心的同志根据监控的总思想，制作了一个通用性很强的监控系统，因为是基于springboot监控的核心思想制作的，所以这个程序被命名为**Spring Boot Admin**。
+springboot抽取了大部分监控系统的常用指标，提出了监控的总思想。然后就有好心的同志根据监控的总思想，制作了一个通用性很强的监控系统，因为是基于springboot监控的核心思想制作的，所以这个程序被命名为**Spring Boot Admin**。
 
-​		Spring Boot Admin，这是一个开源社区项目，用于管理和监控SpringBoot应用程序。这个项目中包含有客户端和服务端两部分，而监控平台指的就是服务端。我们做的程序如果需要被监控，将我们做的程序制作成客户端，然后配置服务端地址后，服务端就可以通过HTTP请求的方式从客户端获取对应的信息，并通过UI界面展示对应信息。
+Spring Boot Admin，这是一个开源社区项目，用于管理和监控SpringBoot应用程序。这个项目中包含有客户端和服务端两部分，而监控平台指的就是服务端。我们做的程序如果需要被监控，将我们做的程序制作成客户端，然后配置服务端地址后，服务端就可以通过HTTP请求的方式从客户端获取对应的信息，并通过UI界面展示对应信息。
 
-​		下面就来开发这套监控程序，先制作服务端，其实服务端可以理解为是一个web程序，收到一些信息后展示这些信息。
+下面就来开发这套监控程序，先制作服务端，其实服务端可以理解为是一个web程序，收到一些信息后展示这些信息。
 
 **服务端开发**
 
-**步骤①**：导入springboot admin对应的starter，版本与当前使用的springboot版本保持一致，并将其配置成web工程
+**步骤1**：导入springboot admin对应的starter，版本与当前使用的springboot版本保持一致，并将其配置成web工程
 
 ```xml
 <dependency>
@@ -9152,11 +9222,11 @@ public class MessageListener {
 </dependency>
 ```
 
-​		上述过程可以通过创建项目时使用勾选的形式完成。
+上述过程可以通过创建项目时使用勾选的形式完成。
 
 <img src="02-SpringBoot2-黑马.assets/image-20220301102432817.png" alt="image-20220301102432817" style="zoom:50%;" />
 
-**步骤②**：在引导类上添加注解@EnableAdminServer，声明当前应用启动后作为SpringBootAdmin的服务器使用
+**步骤2**：在引导类上添加注解@EnableAdminServer，声明当前应用启动后作为SpringBootAdmin的服务器使用
 
 ```java
 @SpringBootApplication
@@ -9168,17 +9238,17 @@ public class Springboot25AdminServerApplication {
 }
 ```
 
-​		做到这里，这个服务器就开发好了，启动后就可以访问当前程序了，界面如下。
+做到这里，这个服务器就开发好了，启动后就可以访问当前程序了，界面如下。
 
 <img src="02-SpringBoot2-黑马.assets/image-20220301103028468.png" alt="image-20220301103028468" style="zoom: 50%;" />
 
-​		由于目前没有启动任何被监控的程序，所以里面什么信息都没有。下面制作一个被监控的客户端程序。
+由于目前没有启动任何被监控的程序，所以里面什么信息都没有。下面制作一个被监控的客户端程序。
 
 **客户端开发**
 
-​		客户端程序开发其实和服务端开发思路基本相似，多了一些配置而已。
+客户端程序开发其实和服务端开发思路基本相似，多了一些配置而已。
 
-**步骤①**：导入springboot admin对应的starter，版本与当前使用的springboot版本保持一致，并将其配置成web工程
+**步骤1**：导入springboot admin对应的starter，版本与当前使用的springboot版本保持一致，并将其配置成web工程
 
 ```xml
 <dependency>
@@ -9193,9 +9263,9 @@ public class Springboot25AdminServerApplication {
 </dependency>
 ```
 
-​		上述过程也可以通过创建项目时使用勾选的形式完成，不过一定要小心，端口配置成不一样的，否则会冲突。
+上述过程也可以通过创建项目时使用勾选的形式完成，不过一定要小心，端口配置成不一样的，否则会冲突。
 
-**步骤②**：设置当前客户端将信息上传到哪个服务器上，通过yml文件配置
+**步骤2**：设置当前客户端将信息上传到哪个服务器上，通过yml文件配置
 
 ```yaml
 spring:
@@ -9205,15 +9275,15 @@ spring:
         url: http://localhost:8080
 ```
 
-​		做到这里，这个客户端就可以启动了。启动后再次访问服务端程序，界面如下。
+做到这里，这个客户端就可以启动了。启动后再次访问服务端程序，界面如下。
 
 <img src="02-SpringBoot2-黑马.assets/image-20220301103838079.png" alt="image-20220301103838079" style="zoom: 50%;" />
 
-​		可以看到，当前监控了1个程序，点击进去查看详细信息。
+可以看到，当前监控了1个程序，点击进去查看详细信息。
 
 <img src="02-SpringBoot2-黑马.assets/image-20220301103936386.png" alt="image-20220301103936386" style="zoom: 50%;" />
 
-​		由于当前没有设置开放哪些信息给监控服务器，所以目前看不到什么有效的信息。下面需要做两组配置就可以看到信息了。
+由于当前没有设置开放哪些信息给监控服务器，所以目前看不到什么有效的信息。下面需要做两组配置就可以看到信息了。
 
 1. 开放指定信息给服务器看
 
@@ -9239,11 +9309,11 @@ management:
         include: "*"
 ```
 
-​		上述配置对于初学者来说比较容易混淆。简单解释一下，到下一节再做具体的讲解。springbootadmin的客户端默认开放了13组信息给服务器，但是这些信息除了一个之外，其他的信息都不让通过HTTP请求查看。所以你看到的信息基本上就没什么内容了，只能看到一个内容，就是下面的健康信息。
+上述配置对于初学者来说比较容易混淆。简单解释一下，到下一节再做具体的讲解。springbootadmin的客户端默认开放了13组信息给服务器，但是这些信息除了一个之外，其他的信息都不让通过HTTP请求查看。所以你看到的信息基本上就没什么内容了，只能看到一个内容，就是下面的健康信息。
 
 <img src="02-SpringBoot2-黑马.assets/image-20220301104742563.png" alt="image-20220301104742563" style="zoom: 50%;" />
 
-​		但是即便如此我们看到健康信息中也没什么内容，原因在于健康信息中有一些信息描述了你当前应用使用了什么技术等信息，如果无脑的对外暴露功能会有安全隐患。通过配置就可以开放所有的健康信息明细查看了。
+但是即便如此我们看到健康信息中也没什么内容，原因在于健康信息中有一些信息描述了你当前应用使用了什么技术等信息，如果无脑的对外暴露功能会有安全隐患。通过配置就可以开放所有的健康信息明细查看了。
 
 ```yaml
 management:
@@ -9252,11 +9322,11 @@ management:
       show-details: always
 ```
 
-​		健康明细信息如下：
+健康明细信息如下：
 
 <img src="02-SpringBoot2-黑马.assets/image-20220301105116554.png" alt="image-20220301105116554" style="zoom: 50%;" />
 
-​		目前除了健康信息，其他信息都查阅不了。原因在于其他12种信息是默认不提供给服务器通过HTTP请求查阅的，所以需要开启查阅的内容项，使用*表示查阅全部。记得带引号。
+目前除了健康信息，其他信息都查阅不了。原因在于其他12种信息是默认不提供给服务器通过HTTP请求查阅的，所以需要开启查阅的内容项，使用*表示查阅全部。记得带引号。
 
 ```yaml
 endpoints:
@@ -9265,19 +9335,19 @@ endpoints:
       include: "*"
 ```
 
-​		配置后再刷新服务器页面，就可以看到所有的信息了。
+配置后再刷新服务器页面，就可以看到所有的信息了。
 
 <img src="02-SpringBoot2-黑马.assets/image-20220301105554494.png" alt="image-20220301105554494" style="zoom: 50%;" />
 
-​		以上界面中展示的信息量就非常大了，包含了13组信息，有性能指标监控，加载的bean列表，加载的系统属性，日志的显示控制等等。
+以上界面中展示的信息量就非常大了，包含了13组信息，有性能指标监控，加载的bean列表，加载的系统属性，日志的显示控制等等。
 
 **配置多个客户端**
 
-​		可以通过配置客户端的方式在其他的springboot程序中添加客户端坐标，这样当前服务器就可以监控多个客户端程序了。每个客户端展示不同的监控信息。
+可以通过配置客户端的方式在其他的springboot程序中添加客户端坐标，这样当前服务器就可以监控多个客户端程序了。每个客户端展示不同的监控信息。
 
 <img src="02-SpringBoot2-黑马.assets/image-20220301110352170.png" alt="image-20220301110352170" style="zoom: 50%;" />
 
-​		进入监控面板，如果你加载的应用具有功能，在监控面板中可以看到3组信息展示的与之前加载的空工程不一样。
+进入监控面板，如果你加载的应用具有功能，在监控面板中可以看到3组信息展示的与之前加载的空工程不一样。
 
 - 类加载面板中可以查阅到开发者自定义的类，如左图
 
@@ -9299,21 +9369,21 @@ endpoints:
 
 **思考**
 
-​		之前说过，服务端要想监控客户端，需要主动的获取到对应信息并展示出来。但是目前我们并没有在客户端开发任何新的功能，但是服务端确可以获取监控信息，谁帮我们做的这些功能呢？咱们下一节再讲。
+之前说过，服务端要想监控客户端，需要主动的获取到对应信息并展示出来。但是目前我们并没有在客户端开发任何新的功能，但是服务端确可以获取监控信息，谁帮我们做的这些功能呢？咱们下一节再讲。
 
 
 
 ### 6-3.监控原理
 
-​		通过查阅监控中的映射指标，可以看到当前系统中可以运行的所有请求路径，其中大部分路径以/actuator开头
+通过查阅监控中的映射指标，可以看到当前系统中可以运行的所有请求路径，其中大部分路径以/actuator开头
 
 <img src="02-SpringBoot2-黑马.assets/image-20220301170214076.png" alt="image-20220301170214076" style="zoom: 50%;" />
 
-​		首先这些请求路径不是开发者自己编写的，其次这个路径代表什么含义呢？既然这个路径可以访问，就可以通过浏览器发送该请求看看究竟可以得到什么信息。
+首先这些请求路径不是开发者自己编写的，其次这个路径代表什么含义呢？既然这个路径可以访问，就可以通过浏览器发送该请求看看究竟可以得到什么信息。
 
 ![image-20220301170723057](02-SpringBoot2-黑马.assets/image-20220301170723057.png)
 
-​		通过发送请求，可以得到一组json信息，如下
+通过发送请求，可以得到一组json信息，如下
 
 ```json
 {
@@ -9406,7 +9476,7 @@ endpoints:
 }
 ```
 
-​		其中每一组数据都有一个请求路径，而在这里请求路径中有之前看到过的health，发送此请求又得到了一组信息
+其中每一组数据都有一个请求路径，而在这里请求路径中有之前看到过的health，发送此请求又得到了一组信息
 
 ```JSON
 {
@@ -9428,19 +9498,19 @@ endpoints:
 }
 ```
 
-​		当前信息与监控面板中的数据存在着对应关系
+当前信息与监控面板中的数据存在着对应关系
 
 <img src="02-SpringBoot2-黑马.assets/image-20220301171025615.png" alt="image-20220301171025615" style="zoom:50%;" />
 
-​		原来监控中显示的信息实际上是通过发送请求后得到json数据，然后展示出来。按照上述操作，可以发送更多的以/actuator开头的链接地址，获取更多的数据，这些数据汇总到一起组成了监控平台显示的所有数据。
+原来监控中显示的信息实际上是通过发送请求后得到json数据，然后展示出来。按照上述操作，可以发送更多的以/actuator开头的链接地址，获取更多的数据，这些数据汇总到一起组成了监控平台显示的所有数据。
 
-​		到这里我们得到了一个核心信息，监控平台中显示的信息实际上是通过对被监控的应用发送请求得到的。那这些请求谁开发的呢？打开被监控应用的pom文件，其中导入了springboot admin的对应的client，在这个资源中导入了一个名称叫做actuator的包。被监控的应用之所以可以对外提供上述请求路径，就是因为添加了这个包。
+到这里我们得到了一个核心信息，监控平台中显示的信息实际上是通过对被监控的应用发送请求得到的。那这些请求谁开发的呢？打开被监控应用的pom文件，其中导入了springboot admin的对应的client，在这个资源中导入了一个名称叫做actuator的包。被监控的应用之所以可以对外提供上述请求路径，就是因为添加了这个包。
 
 ![image-20220301171437817](02-SpringBoot2-黑马.assets/image-20220301171437817.png)
 
-​		这个actuator是什么呢？这就是本节要讲的核心内容，监控的端点。
+这个actuator是什么呢？这就是本节要讲的核心内容，监控的端点。
 
-​		Actuator，可以称为端点，描述了一组监控信息，SpringBootAdmin提供了多个内置端点，通过访问端点就可以获取对应的监控信息，也可以根据需要自定义端点信息。通过发送请求路劲**/actuator**可以访问应用所有端点信息，如果端点中还有明细信息可以发送请求**/actuator/端点名称**来获取详细信息。以下列出了所有端点信息说明：
+Actuator，可以称为端点，描述了一组监控信息，SpringBootAdmin提供了多个内置端点，通过访问端点就可以获取对应的监控信息，也可以根据需要自定义端点信息。通过发送请求路劲**/actuator**可以访问应用所有端点信息，如果端点中还有明细信息可以发送请求**/actuator/端点名称**来获取详细信息。以下列出了所有端点信息说明：
 
 | ID               | 描述                                                         | 默认启用 |
 | ---------------- | ------------------------------------------------------------ | -------- |
@@ -9468,7 +9538,7 @@ endpoints:
 | logfile          | 返回日志文件的内容（如果已设置 logging.file 或 logging.path 属性）。支持使用 HTTP Range 头来检索部分日志文件的内容。 | 是       |
 | prometheus       | 以可以由 Prometheus 服务器抓取的格式暴露指标。               | 是       |
 
-​		上述端点每一项代表被监控的指标，如果对外开放则监控平台可以查询到对应的端点信息，如果未开放则无法查询对应的端点信息。通过配置可以设置端点是否对外开放功能。使用enable属性控制端点是否对外开放。其中health端点为默认端点，不能关闭。
+上述端点每一项代表被监控的指标，如果对外开放则监控平台可以查询到对应的端点信息，如果未开放则无法查询对应的端点信息。通过配置可以设置端点是否对外开放功能。使用enable属性控制端点是否对外开放。其中health端点为默认端点，不能关闭。
 
 ```yaml
 management:
@@ -9479,7 +9549,7 @@ management:
       enabled: true				# 是否开放
 ```
 
-​		为了方便开发者快速配置端点，springboot admin设置了13个较为常用的端点作为默认开放的端点，如果需要控制默认开放的端点的开放状态，可以通过配置设置，如下：
+为了方便开发者快速配置端点，springboot admin设置了13个较为常用的端点作为默认开放的端点，如果需要控制默认开放的端点的开放状态，可以通过配置设置，如下：
 
 ```YAML
 management:
@@ -9487,7 +9557,7 @@ management:
     enabled-by-default: true	# 是否开启默认端点，默认值true
 ```
 
-​		上述端点开启后，就可以通过端点对应的路径查看对应的信息了。但是此时还不能通过HTTP请求查询此信息，还需要开启通过HTTP请求查询的端点名称，使用“*”可以简化配置成开放所有端点的WEB端HTTP请求权限。
+上述端点开启后，就可以通过端点对应的路径查看对应的信息了。但是此时还不能通过HTTP请求查询此信息，还需要开启通过HTTP请求查询的端点名称，使用“*”可以简化配置成开放所有端点的WEB端HTTP请求权限。
 
 ```YAML
 management:
@@ -9497,7 +9567,7 @@ management:
         include: "*"
 ```
 
-​		整体上来说，对于端点的配置有两组信息，一组是endpoints开头的，对所有端点进行配置，一组是endpoint开头的，对具体端点进行配置。
+整体上来说，对于端点的配置有两组信息，一组是endpoints开头的，对所有端点进行配置，一组是endpoint开头的，对具体端点进行配置。
 
 ```YAML
 management:
@@ -9525,11 +9595,11 @@ management:
 
 ### 6-4.自定义监控指标
 
-​		端点描述了被监控的信息，除了系统默认的指标，还可以自行添加显示的指标，下面就通过3种不同的端点的指标自定义方式来学习端点信息的二次开发。
+端点描述了被监控的信息，除了系统默认的指标，还可以自行添加显示的指标，下面就通过3种不同的端点的指标自定义方式来学习端点信息的二次开发。
 
 **INFO端点**
 
-​		info端点描述了当前应用的基本信息，可以通过两种形式快速配置info端点的信息
+info端点描述了当前应用的基本信息，可以通过两种形式快速配置info端点的信息
 
 - 配置形式
 
@@ -9570,7 +9640,7 @@ management:
 
 **Health端点**
 
-​		health端点描述当前应用的运行健康指标，即应用的运行是否成功。通过编程的形式可以扩展指标信息。
+health端点描述当前应用的运行健康指标，即应用的运行是否成功。通过编程的形式可以扩展指标信息。
 
 ```JAVA
 @Component
@@ -9592,13 +9662,13 @@ public class HealthConfig extends AbstractHealthIndicator {
 }
 ```
 
-​		当任意一个组件状态不为UP时，整体应用对外服务状态为非UP状态。
+当任意一个组件状态不为UP时，整体应用对外服务状态为非UP状态。
 
 <img src="02-SpringBoot2-黑马.assets/image-20220301174751845.png" alt="image-20220301174751845" style="zoom:50%;" />
 
 **Metrics端点**
 
-​		metrics端点描述了性能指标，除了系统自带的监控性能指标，还可以自定义性能指标。
+metrics端点描述了性能指标，除了系统自带的监控性能指标，还可以自定义性能指标。
 
 ```JAVA
 @Service
@@ -9621,13 +9691,13 @@ public class BookServiceImpl extends ServiceImpl<BookDao, Book> implements IBook
 }
 ```
 
-​		在性能指标中就出现了自定义的性能指标监控项
+在性能指标中就出现了自定义的性能指标监控项
 
 <img src="02-SpringBoot2-黑马.assets/image-20220301175101812.png" alt="image-20220301175101812" style="zoom:50%;" />
 
 **自定义端点**
 
-​		可以根据业务需要自定义端点，方便业务监控
+可以根据业务需要自定义端点，方便业务监控
 
 ```JAVA
 @Component
@@ -9644,7 +9714,7 @@ public class PayEndpoint {
 }
 ```
 
-​		由于此端点数据spirng boot admin无法预知该如何展示，所以通过界面无法看到此数据，通过HTTP请求路径可以获取到当前端点的信息，但是需要先开启当前端点对外功能，或者设置当前端点为默认开发的端点。
+由于此端点数据spirng boot admin无法预知该如何展示，所以通过界面无法看到此数据，通过HTTP请求路径可以获取到当前端点的信息，但是需要先开启当前端点对外功能，或者设置当前端点为默认开发的端点。
 
 <img src="02-SpringBoot2-黑马.assets/image-20220301175355482.png" alt="image-20220301175355482" style="zoom:50%;" />
 
@@ -9660,13 +9730,13 @@ public class PayEndpoint {
 
 ## 开发实用篇完结
 
-​		开发实用篇到这里就暂时完结了，在开发实用篇中我们讲解了大量的第三方技术的整合方案，选择的方案都是市面上比较流行的常用方案，还有一些国内流行度较低的方案目前还没讲，留到番外篇中慢慢讲吧。
+开发实用篇到这里就暂时完结了，在开发实用篇中我们讲解了大量的第三方技术的整合方案，选择的方案都是市面上比较流行的常用方案，还有一些国内流行度较低的方案目前还没讲，留到番外篇中慢慢讲吧。
 
-​		整体开发实用篇中讲解的内容可以分为两大类知识：实用性知识与经验性知识。
+整体开发实用篇中讲解的内容可以分为两大类知识：实用性知识与经验性知识。
 
-​		实用性知识就是新知识了，springboot整合各种技术，每种技术整合中都有一些特殊操作，整体来说其实就是三句话。加坐标做配置调接口。经验性知识是对前面两篇中出现的一些知识的补充，在学习基础篇时如果将精力放在这些东西上就有点学偏了，容易钻牛角尖，放到实用开发篇中结合实际开发说一些不常见的但是对系统功能又危害的操作解决方案，提升理解。
+实用性知识就是新知识了，springboot整合各种技术，每种技术整合中都有一些特殊操作，整体来说其实就是三句话。加坐标做配置调接口。经验性知识是对前面两篇中出现的一些知识的补充，在学习基础篇时如果将精力放在这些东西上就有点学偏了，容易钻牛角尖，放到实用开发篇中结合实际开发说一些不常见的但是对系统功能又危害的操作解决方案，提升理解。
 
-​		开发实用篇做到这里就告一段落，下面就要着手准备原理篇了。市面上很多课程原理篇讲的过于高深莫测，在新手还没明白123的时候就开始讲微积分了，着实让人看了着急。至于原理篇我讲成什么样子？一起期待吧。
+开发实用篇做到这里就告一段落，下面就要着手准备原理篇了。市面上很多课程原理篇讲的过于高深莫测，在新手还没明白123的时候就开始讲微积分了，着实让人看了着急。至于原理篇我讲成什么样子？一起期待吧。
 
 
 
@@ -9674,19 +9744,19 @@ public class PayEndpoint {
 
 # SpringBoot原理篇
 
-​		在学习前面三篇的时候，好多小伙伴一直在B站评论区嚷嚷着期待原理篇，今天可以正式的宣布了，他来了他来了他脚踏祥云进来了（此处请自行脑补BGM）。
+在学习前面三篇的时候，好多小伙伴一直在B站评论区嚷嚷着期待原理篇，今天可以正式的宣布了，他来了他来了他脚踏祥云进来了（此处请自行脑补BGM）。
 
-​		其实从本人的角度出发，看了这么多学习java的小伙伴的学习过程，个人观点，不建议小伙伴过早的去研究技术的原理。原因有二：一，**先应用熟练**，**培养技术应用的条件反射**，然后再学原理。大把的学习者天天还纠结于这里少写一个这，那里少写一个那，程序都跑不下去，要啥原理，要啥自行车。这里要说一句啊，懂不懂啥意思那不叫原理，原理是抽象到顶层设计层面的东西。知道为什么写这句话，知道错误的原因和懂原理是两码事。二， **原理真不是看源码**，源码只能称作原理的落地实现方式，当好的落地实现方式出现后，就会有新旧版本的迭代，底层实现方式也会伴随着更新升级。但是原理不变，只是找到了更好的实现最初目标的路径。一个好的课程，一位好的老师，不会用若干行云里雾里的源代码把学习者带到沟里，然后爬不出来，深陷泥潭。一边沮丧的看着源码，一边舔着老师奉其为大神，这就叫不干人事。原理就应该使用最通俗易懂的语言，把设计思想讲出来，至于看源码，只是因为目前的技术原创人员只想到了当前这种最笨的设计方案，还没有更好的。比如spirng程序，写起来很费劲，springboot出来以后就简单轻松了很多，实现方案变了，原理不变。但凡你想通过下面的课程学习去读懂若干行代码，然后特别装逼的告诉自己，我懂原理了。我只能告诉你，你选了一条成本最高的路线，看源码仅仅是验证原理，源码仅对应程序流程，不对应原理。原理是思想级的，不是代码级的，原理是原本的道理。
+其实从本人的角度出发，看了这么多学习java的小伙伴的学习过程，个人观点，不建议小伙伴过早的去研究技术的原理。原因有二：一，**先应用熟练**，**培养技术应用的条件反射**，然后再学原理。大把的学习者天天还纠结于这里少写一个这，那里少写一个那，程序都跑不下去，要啥原理，要啥自行车。这里要说一句啊，懂不懂啥意思那不叫原理，原理是抽象到顶层设计层面的东西。知道为什么写这句话，知道错误的原因和懂原理是两码事。二， **原理真不是看源码**，源码只能称作原理的落地实现方式，当好的落地实现方式出现后，就会有新旧版本的迭代，底层实现方式也会伴随着更新升级。但是原理不变，只是找到了更好的实现最初目标的路径。一个好的课程，一位好的老师，不会用若干行云里雾里的源代码把学习者带到沟里，然后爬不出来，深陷泥潭。一边沮丧的看着源码，一边舔着老师奉其为大神，这就叫不干人事。原理就应该使用最通俗易懂的语言，把设计思想讲出来，至于看源码，只是因为目前的技术原创人员只想到了当前这种最笨的设计方案，还没有更好的。比如spirng程序，写起来很费劲，springboot出来以后就简单轻松了很多，实现方案变了，原理不变。但凡你想通过下面的课程学习去读懂若干行代码，然后特别装逼的告诉自己，我懂原理了。我只能告诉你，你选了一条成本最高的路线，看源码仅仅是验证原理，源码仅对应程序流程，不对应原理。原理是思想级的，不是代码级的，原理是原本的道理。
 
-​		springboot技术本身就是为了加速spring程序的开发的，可以大胆的说，springboot技术没有自己的原理层面的设计，仅仅是实现方案进行了改进。将springboot定位成工具，你就不会去想方设法的学习其原理了。就像是将木头分割成若干份，我们可以用斧子，用锯子，用刀，用火烧或者一脚踹断它，这些都是方式方法，而究其本质底层原理是植物纤维的组织方式，研究完这个，你再看前述的各种工具，都是基于这个原理在说如何变更破坏这种植物纤维的方式。所以不要一张嘴说了若干种技术，然后告诉自己，这就是spirngboot的原理。没有的事，springboot作为一款工具，压根就没有原理。我们下面要学习的其实就是spirngboot程序的工作流程。
+springboot技术本身就是为了加速spring程序的开发的，可以大胆的说，springboot技术没有自己的原理层面的设计，仅仅是实现方案进行了改进。将springboot定位成工具，你就不会去想方设法的学习其原理了。就像是将木头分割成若干份，我们可以用斧子，用锯子，用刀，用火烧或者一脚踹断它，这些都是方式方法，而究其本质底层原理是植物纤维的组织方式，研究完这个，你再看前述的各种工具，都是基于这个原理在说如何变更破坏这种植物纤维的方式。所以不要一张嘴说了若干种技术，然后告诉自己，这就是spirngboot的原理。没有的事，springboot作为一款工具，压根就没有原理。我们下面要学习的其实就是spirngboot程序的工作流程。
 
-​		下面就开始学习原理篇，因为没有想出来特别好的名字，所以还是先称作原理篇吧。原理篇中包含如下内容：
+下面就开始学习原理篇，因为没有想出来特别好的名字，所以还是先称作原理篇吧。原理篇中包含如下内容：
 
 - 自动配置工作流程
 - 自定义starter开发
 - springboot程序启动流程
 
-​		下面开启第一部分自动配置工作流程的学习
+下面开启第一部分自动配置工作流程的学习
 
 
 
