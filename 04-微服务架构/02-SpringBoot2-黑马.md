@@ -10320,10 +10320,10 @@ public class CartoonCatAndMouse implements ApplicationContextAware {
 
 做到这里都已经做完了，但是遇到了一个全新的问题，如何让springboot启动的时候去加载这个类呢？如果不加载的话，我们做的条件判定，做的属性加载这些全部都失效了。springboot为我们开放了一个配置入口，在配置目录中创建META-INF目录，并创建spring.factories文件，在其中添加设置，说明哪些类要启动自动配置就可以了。
 
-```CMD
+```xml
 # Auto Configure
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.itheima.bean.CartoonCatAndMouse
+	com.itheima.bean.CartoonCatAndMouse
 ```
 
 其实这个文件就做了一件事，通过这种配置的方式加载了指定的类。转了一圈，就是个普通的bean的加载，和最初使用xml格式加载bean几乎没有区别，格式变了而已。那自动配置的核心究竟是什么呢？自动配置其实是一个小的生态，可以按照如下思想理解：
@@ -10442,7 +10442,7 @@ spring:
 
 ```JAVA
 public class IpCountService {
-    private Map<String,Integer> ipCountMap = new HashMap<String,Integer>();
+    private Map<String,Integer> ipCountMap = new HashMap<>();
 }
 ```
 
@@ -10454,18 +10454,13 @@ public class IpCountService {
 
 ```JAVA
 public class IpCountService {
-    private Map<String,Integer> ipCountMap = new HashMap<String,Integer>();
+    private Map<String,Integer> ipCountMap = new HashMap<>();
+    //每次调用当前操作，就记录当前访问的IP，然后累加访问次数
     public void count(){
-        //每次调用当前操作，就记录当前访问的IP，然后累加访问次数
         //1.获取当前操作的IP地址
         String ip = null;
         //2.根据IP地址从Map取值，并递增
-        Integer count = ipCountMap.get(ip);
-        if(count == null){
-            ipCountMap.put(ip,1);
-        }else{
-            ipCountMap.put(ip,count + 1);
-        }
+        ipCountMap.put(ip, ipCountMap.getOrDefault(ip, 0) + 1);
     }
 }
 ```
@@ -10474,21 +10469,18 @@ public class IpCountService {
 
 ```JAVA
 public class IpCountService {
-    private Map<String,Integer> ipCountMap = new HashMap<String,Integer>();
-    @Autowired
+    private Map<String,Integer> ipCountMap = new HashMap<>();
+    
     //当前的request对象的注入工作由使用当前starter的工程提供自动装配
+    @Autowired
     private HttpServletRequest httpServletRequest;
+    
+    //每次调用当前操作，就记录当前访问的IP，然后累加访问次数
     public void count(){
-        //每次调用当前操作，就记录当前访问的IP，然后累加访问次数
         //1.获取当前操作的IP地址
         String ip = httpServletRequest.getRemoteAddr();
         //2.根据IP地址从Map取值，并递增
-        Integer count = ipCountMap.get(ip);
-        if(count == null){
-            ipCountMap.put(ip,1);
-        }else{
-            ipCountMap.put(ip,count + 1);
-        }
+        ipCountMap.put(ip, ipCountMap.getOrDefault(ip, 0) + 1);
     }
 }
 ```
@@ -10580,6 +10572,7 @@ public class IpAutoConfiguration {
 ```JAVA
 public class IpCountService {
     private Map<String,Integer> ipCountMap = new HashMap<String,Integer>();
+    
     @Scheduled(cron = "0/5 * * * * ?")
     public void print(){
         System.out.println("         IP访问监控");
@@ -10587,7 +10580,7 @@ public class IpCountService {
         for (Map.Entry<String, Integer> entry : ipCountMap.entrySet()) {
             String key = entry.getKey();
             Integer value = entry.getValue();
-            System.out.println(String.format("|%18s  |%5d  |",key,value));
+            System.out.println(String.format("|%18s  |%5d  |", key, value));
         }
         System.out.println("+--------------------+-------+");
       }
@@ -10654,6 +10647,8 @@ public class IpProperties {
             return value;
         }
     }
+    
+    //get set
 }
 ```
 
@@ -10681,6 +10676,7 @@ public class IpCountService {
     private Map<String,Integer> ipCountMap = new HashMap<String,Integer>();
     @Autowired
     private IpProperties ipProperties;
+    
     @Scheduled(cron = "0/5 * * * * ?")
     public void print(){
         if(ipProperties.getModel().equals(IpProperties.LogModel.DETAIL.getValue())){
@@ -10906,7 +10902,7 @@ springboot初始化的参数根据参数的提供方，划分成如下3个大类
 
 以下通过代码流向介绍了springboot程序启动时每一环节做的具体事情。
 
-```JAVA
+```properties
 Springboot30StartupApplication【10】->SpringApplication.run(Springboot30StartupApplication.class, args);
     SpringApplication【1332】->return run(new Class<?>[] { primarySource }, args);
         SpringApplication【1343】->return new SpringApplication(primarySources).run(args);
@@ -10928,6 +10924,7 @@ Springboot30StartupApplication【10】->SpringApplication.run(Springboot30Startu
                         # 初始化监听器，对初始化过程及运行过程进行干预
                         SpringApplication【288】->this.mainApplicationClass = deduceMainApplicationClass();
                         # 初始化了引导类类名信息，备用
+                        
             SpringApplication【1343】->new SpringApplication(primarySources).run(args)
             # 初始化容器，得到ApplicationContext对象
                 SpringApplication【323】->StopWatch stopWatch = new StopWatch();
