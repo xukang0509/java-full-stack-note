@@ -174,7 +174,7 @@ Tomcat服务器安装只需去官网下载安装，下载完成后直接解压�
 
 ![image-20211212162602416](02Http网络协议与Tomcat.assets\image-20211212162602416.png)
 
-## 四、IDEA配置管理Tomcat
+### 四、IDEA配置管理Tomcat
 
 1. 通知IDEA管理的Tomcat位置
 
