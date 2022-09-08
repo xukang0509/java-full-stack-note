@@ -3436,6 +3436,45 @@ public class HelloServlet implements Servlet {
 
 ![image-20220907182253823](JavaWeb-尚硅谷.assets/image-20220907182253823.png)
 
+```
+2. Servlet的继承关系 - 重点查看的是服务方法（service()）
+    1. 继承关系
+      javax.servlet.Servlet接口
+          javax.servlet.GenericServlet抽象类
+              javax.servlet.http.HttpServlet抽象子类
+
+    2. 相关方法
+      javax.servlet.Servlet接口:
+        void init(config) - 初始化方法
+        void service(request,response) - 服务方法
+        void destory() - 销毁方法
+
+      javax.servlet.GenericServlet抽象类：
+        void service(request,response) - 仍然是抽象的
+
+      javax.servlet.http.HttpServlet 抽象子类：
+        void service(request,response) - 不是抽象的
+        1. String method = req.getMethod(); 获取请求的方式
+        2. 各种if判断，根据请求方式不同，决定去调用不同的do方法
+            if (method.equals("GET")) {
+                this.doGet(req,resp);
+            } else if (method.equals("HEAD")) {
+                this.doHead(req, resp);
+            } else if (method.equals("POST")) {
+                this.doPost(req, resp);
+            } else if (method.equals("PUT")) {
+        3. 在HttpServlet这个抽象类中，do方法都差不多:
+        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+            String protocol = req.getProtocol();
+            String msg = lStrings.getString("http.method_get_not_supported");
+            if (protocol.endsWith("1.1")) {
+                resp.sendError(405, msg);
+            } else {
+                resp.sendError(400, msg);
+            }
+        }
+```
+
 
 
 #### 3.2 Servlet创建对象的时机
