@@ -3848,8 +3848,8 @@ spring.thymeleaf.suffix=.html
 
 语法：`${key}`
 
-说明：标准变量表达式用于访问容器（tomcat）上下文环境中的变量，功能和 EL 中的 ${} 相
-同。Thymeleaf 中的变量表达式使用 ${变量名} 的方式获取 Controller 中 model 其中的数据；也就是 request 作用域中的数据。
+说明：标准变量表达式用于访问容器（tomcat）上下文环境中的变量，功能和 EL 中的 \${} 相
+同。Thymeleaf 中的变量表达式使用 \${变量名} 的方式获取 Controller 中 model 其中的数据；也就是 request 作用域中的数据。
 
 在页面中的html标签中，使用`th:text="${key}"`
 
