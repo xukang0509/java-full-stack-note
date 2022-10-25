@@ -136,17 +136,20 @@
   + 什么是JDK？
 
     ​	Java开发工具包
+  
     ​	做Java开发必须安装的一个工具包,该工具包需要从官网下载。
+    ​	
+  
     ​	目前sun被oracle收购了,所以下载需要去oracle下载。http://www.oracle.com
-
+  
   + 目前JDK常用版本：Java8、JDK1.8、JDK8
-
+  
   + Java包括三大块：
-
+  
     ​	JavaSE：Java标准版（基础）
-
+  
     ​	JavaEE：Java企业版（主攻方向）
-
+  
     ​	JavaME：Java微型版
 
 ##### 3.3 Java语言特性
