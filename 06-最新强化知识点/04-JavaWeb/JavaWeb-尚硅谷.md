@@ -2432,15 +2432,662 @@ document.getElementById("eventArea").onmousemove = function (event){
 
 ## 四、Vue.js
 
+### 1 Vue.js简介
+
+#### 1.1 框架
+
+任何编程语言在最初的时候都是没有框架的，后来随着在实际开发过程中不断总结**『经验』**，积累**『最佳实践』**，慢慢的人们发现很多**『特定场景』**下的**『特定问题』**总是可以**『套用固定解决方案』**。
+
+于是有人把成熟的**『固定解决方案』**收集起来，整合在一起，就成了**『框架』**。
+
+在使用框架的过程中，我们往往只需要告诉框架**『做什么（声明）』**，而不需要关心框架**『怎么做（编程）』**。
+
+对于Java程序来说，我们使用框架就是导入那些封装了**『固定解决方案』**的jar包，然后通过**『配置文件』**告诉框架做什么，就能够大大简化编码，提高开发效率。我们使用过的junit其实就是一款单元测试框架。
+
+而对于JavaScript程序来说，我们使用框架就是导入那些封装了**『固定解决方案』**的**『js文件』**，然后在框架的基础上编码。
+
+> 用洗衣服来类比框架：
+>
+> 典型应用场景：洗衣服
+>
+> 输入数据：衣服、洗衣液、水
+>
+> 不使用框架：手洗
+>
+> 使用框架：使用洗衣机，对人来说，只需要按键，具体操作是洗衣机完成的。人只是告诉洗衣机做什么，具体的操作是洗衣机完成的。
+
+实际开发中使用框架时，我们也主要是告诉框架要做什么，具体操作是框架完成的
 
 
 
+#### 1.2 Vue.js
+
+##### 1.2.1 Vue.js的作者
+
+在为AngularJS工作之后，Vue的作者**尤雨溪**开Vue.js。他声称自己的思路是提取Angular中自己喜欢的部分，构建出一款相当轻量的框架。
+
+Vue最早发布于2014年2月。作者在Hacker News、Echo JS与 Reddit的JavaScript版块发布了最早的版本。一天之内，Vue 就登上了这三个网站的首页。
+
+Vue是Github上最受欢迎的开源项目之一。同时，在JavaScript框架/函数库中，Vue所获得的星标数已超过React，并高于Backbone.js、Angular 2、jQuery等项目。
 
 
 
+##### 1.2.2 Vue.js的官网介绍
+
+Vue (读音 /vjuː/，类似于**view**) 是一套用于构建用户界面的**渐进式框架**。与其它大型框架不同的是，Vue 被设计为可以自底向上逐层应用。Vue 的核心库只关注视图层，不仅易于上手，还便于与第三方库或既有项目整合。另一方面，当与现代化的工具链以及各种支持类库结合使用时，Vue 也完全能够为复杂的单页应用提供驱动。
+
+[Vue.js官网网址](https://cn.vuejs.org/)
 
 
 
+### 2 准备Vue.js环境
+
+#### 2.1 开发中的最佳实践
+
+『最佳实践』是实际开发中，针对特定问题提炼出来的最好的解决方案。把『最佳实践』抽取出来，封装到各自编程语言的程序包中，就是框架的基础。
+
+- Java语言的程序包：jar包
+- JavaScript语言的程序包：外部js文件
+
+对于Java程序来说，框架=jar包+配置文件。对于Vue来说，导入**Vue的外部js文件**就能够使用Vue框架了。
+
+
+
+#### 2.2 Vue框架的js文件获取
+
+官网提供的下载地址：https://cdn.jsdelivr.net/npm/vue/dist/vue.js
+
+
+
+#### 2.3 本地创建vue.js文件
+
+第一步：在HBuilderX中创建工程
+
+第二步：在工程目录下创建script目录用来存放vue.js文件
+
+第三步：创建空vue.js文件
+
+![image-20221112170254434](JavaWeb-尚硅谷.assets/image-20221112170254434.png)
+
+第四步：将官网提供的vue.js文件的内容复制粘贴到本地vue.js文件中
+
+
+
+#### 2.4 创建HTML文档并引入vue.js
+
+```html
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+	</body>
+	<script src="/pro03-vue/script/vue.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		
+	</script>
+</html>
+```
+
+
+
+### 3 Vue.js基本语法：声明式渲染
+
+#### 3.1 概念
+
+*声明式*：
+
+**『声明式』**是相对于**『编程式』**而言的。
+
+- 声明式：告诉框架做什么，具体操作由框架完成
+- 编程式：自己编写代码完成具体操作
+
+
+
+*渲染*：
+
+![image-20221112170627560](JavaWeb-尚硅谷.assets/image-20221112170627560.png)
+
+上图含义解释：
+
+- 蓝色方框：HTML标签
+- 红色圆形：动态、尚未确定的数据
+- 蓝色圆形：经过程序运算以后，计算得到的具体的，可以直接在页面上显示的数据、
+- 渲染：程序计算动态数据得到具体数据的过程
+
+
+
+#### 3.2 demo
+
+HTML代码
+
+```html
+<!-- 使用{{}}格式，指定要被渲染的数据 -->
+<div id="app">{{message}}</div>
+```
+
+vue代码
+
+```javascript
+// 1.创建一个JSON对象，作为new Vue时要使用的参数
+var argumentJson = {
+	// el用于指定Vue对象要关联的HTML元素。el就是element的缩写
+	// 通过id属性值指定HTML元素时，语法格式是：#id
+	"el":"#app",
+	
+	// data属性设置了Vue对象中保存的数据
+	"data":{
+		"message":"Hello Vue!"
+	}
+};
+
+// 2.创建Vue对象，传入上面准备好的参数
+var app = new Vue(argumentJson);
+```
+
+![image-20221112171212446](JavaWeb-尚硅谷.assets/image-20221112171212446.png)
+
+
+
+#### 3.3 查看声明式渲染的响应式效果
+
+![image-20221112171441815](JavaWeb-尚硅谷.assets/image-20221112171441815.png)
+
+通过验证Vue对象的『响应式』效果，我们看到Vue对象和页面上的HTML标签确实是始终保持着关联的关系，同时看到Vue在背后确实是做了大量的工作。
+
+
+
+### 4 Vue.js基本语法：绑定元素属性
+
+#### 4.1 基本语法
+
+`v-bind`：HTML标签的原始属性名
+
+
+
+#### 4.2 demo
+
+HTML代码：
+
+```html
+<div id="app">
+	<!-- v-bind:value表示将value属性交给Vue来进行管理，也就是绑定到Vue对象 -->
+	<!-- vueValue是一个用来渲染属性值的表达式，相当于标签体中加{{}}的表达式 -->
+	<input type="text" v-bind:value="vueValue" />
+	
+	<!-- 同样的表达式，在标签体内通过{{}}告诉Vue这里需要渲染； -->
+	<!-- 在HTML标签的属性中，通过v-bind:属性名="表达式"的方式告诉Vue这里要渲染 -->
+	<p>{{vueValue}}</p>
+</div>
+```
+
+Vue代码：
+
+```javascript
+// 创建Vue对象，挂载#app这个div标签
+var app = new Vue({
+	"el":"#app",
+	"data":{
+		"vueValue":"太阳当空照"
+	}
+});
+```
+
+
+
+#### 4.3 小结
+
+本质上，v-bind:属性名="表达式"它们都是**用Vue对象来渲染页面**。只不过：
+
+- 文本标签体：使用形式
+- 属性：使用`v-bind:属性名="表达式"`形式
+
+
+
+### 5 Vue.js基本语法：双向数据绑定
+
+#### 5.1 提出问题
+
+![image-20221112171947929](JavaWeb-尚硅谷.assets/image-20221112171947929.png)
+
+而使用了双向绑定后，就可以实现：页面上数据被修改后，Vue对象中的数据属性也跟着被修改。
+
+
+
+#### 5.2 demo
+
+Html代码：
+
+```html
+<div id="app">
+	<!-- v-bind:属性名 效果是从Vue对象渲染到页面 -->
+	<!-- v-model:属性名 效果不仅是从Vue对象渲染到页面，而且能够在页面上数据修改后反向修改Vue对象中的数据属性 -->
+	<input type="text" v-model:value="vueValue" />
+	
+	<p>{{vueValue}}</p>
+</div>
+```
+
+Vue代码：
+
+```javascript
+// 创建Vue对象，挂载#app这个div标签
+var app = new Vue({
+	"el":"#app",
+	"data":{
+		"vueValue":"太阳当空照"
+	}
+});
+```
+
+页面效果：
+
+p标签内的数据能够和文本框中的数据实现同步修改：
+
+![image-20221112172137107](JavaWeb-尚硅谷.assets/image-20221112172137107.png)
+
+
+
+#### 5.3 去除前后空格
+
+1. `:value`可以省略
+
+   ```html
+   <input type="text" v-model="vueValue" />
+   ```
+
+2. `:trim`修饰符
+
+   实际开发中，要考虑到用户在输入数据时，有可能会包含前后空格。而这些前后的空格对我们程序运行来说都是干扰因素，要去掉。在v-model后面加上.trim修饰符即可实现。
+
+   ```html
+   <input type="text" v-model.trim="vueValue" />
+   ```
+
+   Vue会帮助我们在文本框失去焦点时自动去除前后空格。
+
+
+
+### 6 Vue.js基本语法：条件渲染
+
+根据Vue对象中，数据属性的值来判断是否对HTML页面内容进行渲染。
+
+#### 6.1 v-if
+
+HTML代码：
+
+```html
+<div id="app">
+	<h3>if</h3>
+	<img v-if="flag" src="/pro03-vue/./images/one.jpg" />
+	<img v-if="!flag" src="/pro03-vue/./images/two.jpg" />
+</div>
+```
+
+Vue代码：
+
+```javascript
+var app = new Vue({
+	"el":"#app",
+	"data":{
+		"flag":true
+    }
+});
+```
+
+
+
+#### 6.2 v-if 和 v-else
+
+HTML代码：
+
+```html
+<div id="app02">
+	<h3>if/else</h3>
+	<img v-if="flag" src="/pro03-vue/./images/one.jpg" />
+	<img v-else="flag" src="/pro03-vue/./images/two.jpg" />
+</div>
+```
+
+Vue代码：
+
+```javascript
+var app = new Vue({
+	"el":"#app02",
+	"data":{
+		"flag":true
+    }
+});
+```
+
+
+
+#### 6.3 v-show
+
+HTML代码：
+
+```html
+<div id="app03">
+	<h3>v-show</h3>
+	<img v-show="flag" src="/pro03-vue/./images/mi.jpg" />
+</div>
+```
+
+Vue代码：
+
+```javascript
+var app03 = new Vue({
+	"el":"#app03",
+	"data":{
+		"flag":true
+	}
+});
+```
+
+
+
+### 7 Vue.js基本语法：列表渲染
+
+#### 7.1 迭代一个简单的数组
+
+HTML代码：
+
+```html
+<div id="app01">
+	<ul>
+		<!-- 使用v-for语法遍历数组 -->
+		<!-- v-for的值是语法格式是：引用数组元素的变量名 in Vue对象中的数组属性名 -->
+		<!-- 在文本标签体中使用{{引用数组元素的变量名}}渲染每一个数组元素 -->
+		<li v-for="fruit in fruitList">{{fruit}}</li>
+	</ul>
+</div>
+```
+
+Vue代码：
+
+```javascript
+var app01 = new Vue({
+	"el":"#app01",
+	"data":{
+		"fruitList": [
+			"apple",
+			"banana",
+			"orange",
+			"grape",
+			"dragonfruit"
+		]
+	}
+});
+```
+
+
+
+#### 7.2 迭代一个对象数组
+
+HTML代码：
+
+```html
+<div id="app">
+	<table>
+		<tr>
+			<th>编号</th>
+			<th>姓名</th>
+			<th>年龄</th>
+			<th>专业</th>
+		</tr>
+		<tr v-for="employee in employeeList">
+			<td>{{employee.empId}}</td>
+			<td>{{employee.empName}}</td>
+			<td>{{employee.empAge}}</td>
+			<td>{{employee.empSubject}}</td>
+		</tr>
+	</table>
+</div>
+```
+
+Vue代码：
+
+```javascript
+var app = new Vue({
+	"el":"#app",
+	"data":{
+		"employeeList":[
+			{
+				"empId":11,
+				"empName":"tom",
+				"empAge":111,
+				"empSubject":"java"
+			},
+			{
+				"empId":22,
+				"empName":"jerry",
+				"empAge":222,
+				"empSubject":"php"
+			},
+			{
+				"empId":33,
+				"empName":"bob",
+				"empAge":333,
+				"empSubject":"python"
+			}
+		]
+	}
+});
+```
+
+
+
+### 8 Vue.js基本语法：事件驱动
+
+#### 8.1 demo：字符串顺序反转
+
+HTML代码：
+
+```html
+<div id="app">
+	<p>{{message}}</p>
+	
+	<!-- v-on:事件类型="事件响应函数的函数名" -->
+	<button v-on:click="reverseMessage">Click me,reverse message</button>
+</div>
+```
+
+Vue代码：
+
+```javascript
+var app = new Vue({
+	"el":"#app",
+	"data":{
+		"message":"Hello Vue!"				
+	},
+	"methods":{
+		"reverseMessage":function(){
+			this.message = this.message.split("").reverse().join("");
+		}
+	}
+});
+```
+
+
+
+#### 8.2 demo：获取鼠标移动时的坐标信息
+
+HTML代码：
+
+```html
+<div id="app">
+	<div id="area" v-on:mousemove="recordPosition"></div>
+	<p id="showPosition">{{position}}</p>
+</div>
+```
+
+Vue代码：
+
+```javascript
+var app = new Vue({
+	"el":"#app",
+	"data":{
+		"position":"暂时没有获取到鼠标的位置信息"
+	},
+	"methods":{
+		"recordPosition":function(event){
+			this.position = event.clientX + " " + event.clientY;
+		}
+	}
+});
+```
+
+
+
+### 9 Vue.js基本语法：侦听属性
+
+#### 9.1 提出需求
+
+```html
+<div id="app">
+	<p>尊姓：{{firstName}}</p>
+	<p>大名：{{lastName}}</p>
+	尊姓：<input type="text" v-model="firstName" /><br/>
+	大名：<input type="text" v-model="lastName" /><br/>
+	<p>全名：{{fullName}}</p>
+</div>
+```
+
+在上面代码的基础上，我们希望firstName或lastName属性发生变化时，修改fullName属性。此时需要对firstName或lastName属性进行**『侦听』**。
+
+具体来说，所谓**『侦听』**就是对message属性进行监控，当firstName或lastName属性的值发生变化时，调用我们准备好的函数。
+
+
+
+#### 9.2 Vue代码
+
+在watch属性中声明对firstName和lastName属性进行**『侦听』**的函数：
+
+```javascript
+var app = new Vue({
+	"el":"#app",
+	"data":{
+		"firstName":"jim",
+		"lastName":"green",
+		"fullName":"jim green"
+	},
+	"watch":{
+		"firstName":function(inputValue){
+			this.fullName = inputValue + " " + this.lastName;
+		},
+		"lastName":function(inputValue){
+			this.fullName = this.firstName + " " + inputValue;
+		}
+	}
+});
+```
+
+
+
+### 10 Vue.js基本语法：简化写法
+
+#### 10.1 v-bind的简化写法
+
+正常写法：
+
+```html
+<input type="text" v-bind:value="message" />
+```
+
+简化以后：
+
+```html
+<input type="text" :value="message" />
+```
+
+
+
+#### 10.2 v-on的简化写法
+
+正常写法：
+
+```html
+<button v-on:click="sayHello">SayHello</button>
+```
+
+简化以后：
+
+```html
+<button @click="sayHello">SayHello</button>
+```
+
+
+
+### 11 Vue对象生命周期
+
+#### 11.1 概念
+
+在我们各种语言的编程领域中，**『生命周期』**都是一个非常常见的概念。一个对象从创建、初始化、工作再到释放、清理和销毁，会经历很多环节的演变。比如我们在JavaSE阶段学习过线程的生命周期，今天学习Vue对象的生命周期，将来还要学习Servlet、Filter等Web组件的生命周期。
+
+
+
+#### 11.2 Vue对象的生命周期
+
+![./images](JavaWeb-尚硅谷.assets/img008.6f2c97f0.png)
+
+
+
+#### 11.3 生命周期钩子函数
+
+Vue允许我们在特定的生命周期环节中通过钩子函数来加入我们的代码。
+
+```html
+<div id="app">
+	<p id="content">{{message}}</p>
+	<button @click="changeValue">点我</button>
+</div>
+```
+
+```javascript
+new Vue({
+	"el":"#app",
+	"data":{
+		"message":"hello"
+	},
+	"methods":{
+		"changeValue":function(){
+			this.message = "new hello";
+		}
+	},
+    
+	// 1.实例创建之前
+	"beforeCreate":function(){
+		console.log("beforeCreate:"+this.message);
+	},
+	
+	// 2.实例创建完成
+	"created":function(){
+		console.log("created:"+this.message);
+	},
+	
+	// 3.数据挂载前
+	"beforeMount":function(){
+		console.log("beforeMount:"+document.getElementById("content").innerText);
+	},
+	
+	// 4.数据已经挂载
+	"mounted":function(){
+		console.log("mounted:"+document.getElementById("content").innerText);
+	},
+	
+	// 5.数据更新前
+	"beforeUpdate":function(){
+		console.log("beforeUpdate:"+document.getElementById("content").innerText);
+	},
+	
+	// 6.数据更新之后
+	"updated":function(){
+		console.log("updated:"+document.getElementById("content").innerText);
+	}
+});
+```
 
 +++
 
@@ -6439,7 +7086,7 @@ System.out.println("JSESSIONID = " + id);
 
 +++
 
-## 十 过滤器Filter
+## 十、过滤器Filter
 
 ### 1 过滤器简介
 
@@ -6949,27 +7596,363 @@ public class AtguiguListener implements ServletContextListener {
 
 ### 1 Ajax概述
 
+#### 1.1 服务器端渲染
+
+![./images](JavaWeb-尚硅谷.assets/img001.29052d72.png)
 
 
 
+#### 1.2 Ajax渲染（局部更新）
+
+![./images](JavaWeb-尚硅谷.assets/img002.663f0c44.png)
+
+
+
+#### 1.3 前后端分离
+
+彻底舍弃服务器端渲染，数据全部通过Ajax方式以JSON格式来传递。
+
+
+
+#### 1.4 同步与异步
+
+Ajax本身就是Asynchronous JavaScript And XML的缩写，直译为：异步的JavaScript和XML。在实际应用中Ajax指的是：**不刷新浏览器窗口**，**不做页面跳转**，**局部更新页面内容**的技术。
+
+**『同步』**和**『异步』**是一对相对的概念，那么什么是同步，什么是异步呢？
+
+##### 1.4.1 同步
+
+多个操作**按顺序执行**，前面的操作没有完成，后面的操作就必须**等待**。所以同步操作通常是**串行**的。
+
+![image-20221112163437262](JavaWeb-尚硅谷.assets/image-20221112163437262.png)
+
+
+
+##### 1.4.2 异步
+
+多个操作相继开始**并发执行**，即使开始的先后顺序不同，但是由于它们各自是**在自己独立的进程或线程中**完成，所以**互不干扰**，**谁也不用等谁**。
+
+![image-20221112163545928](JavaWeb-尚硅谷.assets/image-20221112163545928.png)
+
+
+
+1.5 Axios简介
+
+使用原生的JavaScript程序执行Ajax极其繁琐，所以一定要使用框架来完成。而Axios就是目前最流行的前端Ajax框架。
+
+Axios官网：http://www.axios-js.com/
+
+![./images](JavaWeb-尚硅谷.assets/img005.bc8b9163.png)
+
+使用Axios和使用Vue一样，导入对应的*.js文件即可。官方提供的script标签引入方式为：
+
+```html
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+```
+
+我们可以把这个axios.min.js文件下载下来保存到本地来使用。
 
 
 
 ### 2 Axios基本用法
 
+#### 2.0 在前端页面引入开发环境
+
+```html
+<script type="text/javascript" src="/demo/static/vue.js"></script>
+<script type="text/javascript" src="/demo/static/axios.min.js"></script>
+```
 
 
 
+#### 2.1 发送普通请求参数
+
+1. *前端代码*:
+
+HTML标签：
+
+```javascript
+<div id="app">
+    <button @click="commonParam">普通请求参数</button>
+</div>
+```
+
+Vue+axios代码：
+
+```javascript
+new Vue({
+    "el":"#app",
+    "data":{},
+    "methods":{
+        "commonParam":function () {
+            axios({
+                "method":"post",
+                "url":"/demo/AjaxServlet?method=commonParam",
+                "params":{
+                    "userName":"tom",
+                    "userPwd":"123456"
+                }
+            }).then(function (response) {
+                console.log(response);
+            }).catch(function (error) {
+                console.log(error);
+            });
+        }
+    }
+});
+```
+
+效果：所有请求参数都被放到URL地址后面了，哪怕我们现在用的是POST请求方式。
+
+![./images](JavaWeb-尚硅谷.assets/img007.055328ea.png)
 
 
 
+2. *后端代码*：
+
+```java
+public class AjaxServlet extends ModelBaseServlet {
+    protected void commonParam(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        String userName = request.getParameter("userName");
+        String userPwd = request.getParameter("userPwd");
+
+        System.out.println("userName = " + userName);
+        System.out.println("userPwd = " + userPwd);
+
+        response.setContentType("text/html;charset=UTF-8");
+        response.getWriter().write("服务器端返回普通文本字符串作为响应");
+    }
+}
+```
+
+> P.S.：由于我们不需要Thymeleaf了，所以ModelBaseServlet可以跳过ViewBaseServlet直接继承HttpServlet。
+
+![./images](JavaWeb-尚硅谷.assets/img006.211cb2c9.png)
 
 
 
+3. *axios程序接收到的响应对象结构*：
+
+![./images](JavaWeb-尚硅谷.assets/img011.c89871c8.png)
+
+| 属性名     | 作用                                             |
+| ---------- | ------------------------------------------------ |
+| config     | 调用axios(config对象)方法时传入的JSON对象        |
+| data       | 服务器端返回的响应体数据                         |
+| headers    | 响应消息头                                       |
+| request    | 原生JavaScript执行Ajax操作时使用的XMLHttpRequest |
+| status     | 响应状态码                                       |
+| statusText | 响应状态码的说明文本                             |
 
 
 
+4. *服务器端处理请求失败后*：
+
+```javascript
+catch(function (error) {     // catch()服务器端处理请求出错后，会调用
+
+    console.log(error);         // error就是出错时服务器端返回的响应数据
+    console.log(error.response);        // 在服务器端处理请求失败后，获取axios封装的JSON格式的响应数据对象
+    console.log(error.response.status); // 在服务器端处理请求失败后，获取响应状态码
+    console.log(error.response.statusText); // 在服务器端处理请求失败后，获取响应状态说明文本
+    console.log(error.response.data);   // 在服务器端处理请求失败后，获取响应体数据
+
+});
+```
+
+在给catch()函数传入的回调函数中，error对象封装了服务器端处理请求失败后相应的错误信息。其中，axios封装的响应数据对象，是error对象的response属性。response属性对象的结构如下图所示：
+
+![./images](JavaWeb-尚硅谷.assets/img012.d9f64993.png)
+
+可以看到，response对象的结构还是和then()函数传入的回调函数中的response是一样的：
+
+![./images](JavaWeb-尚硅谷.assets/img013.a8e9fa36.png)
+
+> 回调函数：开发人员声明，但是调用时交给系统来调用。像单击响应函数、then()、catch()里面传入的都是回调函数。回调函数是相对于普通函数来说的，普通函数就是开发人员自己声明，自己调用：
+>
+> ```javascript
+> function sum(a, b) {
+>     return a+b;
+> }
+> 
+> var result = sum(3, 2);
+> console.log("result="+result);
+> ```
 
 
+
+#### 1.2 发送请求体JSON
+
+1. *前端代码*：
+
+HTML代码：
+
+```html
+<button @click="requestBodyJSON">请求体JSON</button>
+```
+
+Vue+axios代码：
+
+```javascript
+……
+"methods":{
+    "requestBodyJSON":function () {
+        axios({
+            "method":"post",
+            "url":"/demo/AjaxServlet?method=requestBodyJSON",
+            "data":{
+                "stuId": 55,
+                "stuName": "tom",
+                "subjectList": [
+                    {
+                        "subjectName": "java",
+                        "subjectScore": 50.55
+                    },
+                    {
+                        "subjectName": "php",
+                        "subjectScore": 30.26
+                    }
+                ],
+                "teacherMap": {
+                    "one": {
+                        "teacherName":"tom",
+                        "tearcherAge":23
+                    },
+                    "two": {
+                        "teacherName":"jerry",
+                        "tearcherAge":31
+                    },
+                },
+                "school": {
+                    "schoolId": 23,
+                    "schoolName": "atguigu"
+                }
+            }
+        }).then(function (response) {
+            console.log(response);
+        }).catch(function (error) {
+            console.log(error);
+        });
+    }
+}
+……
+```
+
+效果：
+
+![./images](JavaWeb-尚硅谷.assets/img008.9f921c89.png)
+
+> P.S.：Chrome浏览器中将『请求负载』显示为英文：『Request Payload』。
+
+
+
+2. *后端代码*：
+
+加入Gson包
+
+Gson是Google研发的一款非常优秀的JSON数据解析和生成工具，它可以帮助我们将数据在JSON字符串和Java对象之间互相转换。
+
+![image-20221112164958489](JavaWeb-尚硅谷.assets/image-20221112164958489.png)
+
+Servlet代码
+
+```java
+protected void requestBodyJSON(HttpServletRequest request, HttpServletResponse response) 
+    throws ServletException, IOException {
+
+    // 1.由于请求体数据有可能很大，所以Servlet标准在设计API的时候要求我们通过输入流来读取
+    BufferedReader reader = request.getReader();
+
+    // 2.创建StringBuilder对象来累加存储从请求体中读取到的每一行
+    StringBuilder builder = new StringBuilder();
+
+    // 3.声明临时变量
+    String bufferStr = null;
+
+    // 4.循环读取
+    while((bufferStr = reader.readLine()) != null) {
+        builder.append(bufferStr);
+    }
+
+    // 5.关闭流
+    reader.close();
+
+    // 6.累加的结果就是整个请求体
+    String requestBody = builder.toString();
+
+    // 7.创建Gson对象用于解析JSON字符串
+    Gson gson = new Gson();
+
+    // 8.将JSON字符串还原为Java对象
+    Student student = gson.fromJson(requestBody, Student.class);
+    System.out.println("student = " + student);
+
+    System.out.println("requestBody = " + requestBody);
+
+    response.setContentType("text/html;charset=UTF-8");
+    response.getWriter().write("服务器端返回普通文本字符串作为响应");
+}
+```
+
+> P.S.：看着很麻烦是吧？别担心，将来我们有了**SpringMVC**之后，一个**@RequestBody**注解就能够搞定，非常方便！
+
+
+
+#### 1.3 服务器端返回JSON数据
+
+1. *前端代码*：
+
+```javascript
+axios({
+    "method":"post",
+    "url":"/demo/AjaxServlet?method=responseBodyJSON"
+}).then(function (response) {
+    console.log(response);
+}).catch(function (error) {
+    console.log(error);
+});
+```
+
+then()中获取到的response在控制台打印效果如下：我们需要通过data属性获取响应体数据
+
+![./images](JavaWeb-尚硅谷.assets/img010.ba0ea4b5.png)
+
+
+
+2. *后端代码*：
+
+加入Gson包；
+
+Servlet代码：
+
+```java
+protected void responseBodyJSON(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+    // 1.准备数据对象
+    Student student = new Student();
+    student.setStuId(10);
+    student.setStuName("tom");
+    student.setSchool(new School(11,"atguigu"));
+    student.setSubjectList(Arrays.asList(new Subject("java", 95.5), new Subject("php", 93.3)));
+
+    Map<String, Teacher> teacherMap = new HashMap<>();
+    teacherMap.put("t1", new Teacher("lili", 25));
+    teacherMap.put("t2", new Teacher("mary", 26));
+    teacherMap.put("t3", new Teacher("katty", 27));
+
+    student.setTeacherMap(teacherMap);
+
+    // 2.创建Gson对象
+    Gson gson = new Gson();
+
+    // 3.将Java对象转换为JSON对象
+    String json = gson.toJson(student);
+
+    // 4.设置响应体的内容类型
+    response.setContentType("application/json;charset=UTF-8");
+    response.getWriter().write(json);
+}
+```
 
 
