@@ -1300,7 +1300,7 @@ mapper 文件：
 	ps.setInt(1,1005) , 1005 会替换掉 #{studentId}
 ```
 
-$：字符串替换，告诉 mybatis 使用$包含的“字符串”替换所在位置。使用 Statement 把 sql 语句和${}的 内容连接起来。主要用在替换表名，列名，不同列排序等操作。
+\$：字符串替换，告诉 mybatis 使用\$包含的“字符串”替换所在位置。使用 Statement 把 sql 语句和\${}的 内容连接起来。主要用在替换表名，列名，不同列排序等操作。
 
 ```
 select id,name, email,age from student where id=#{studentId}
@@ -1348,7 +1348,7 @@ List<Student> selectUse$Order(@Param("colName") String colName);
 
 "#" 和 "$" 区别
 
-- #使用 ？在sql语句中做占位的，使用PreparedStatement执行sql，效率高
+- #使用 ? 在sql语句中做占位的，使用PreparedStatement执行sql，效率高
   
 - #能够避免sql注入，更安全。
   

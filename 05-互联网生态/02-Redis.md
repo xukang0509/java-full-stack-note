@@ -138,7 +138,7 @@ Apache Cassandra是一款免费的开源NoSQL数据库，其设计目的在于�
 ## 二、Redis 概述及安装
 
 1. Redis是一个**开源**的 **key-value** 存储系统。
-2. 和Memcached类似，它支持存储的value类型相对更多，包括**string**(字符串)、**list**(链表)、**set**(集合)、**zset**(sorted set --有序集合)和**hash**(哈希类型)。
+2. 和Memcached类似，它支持存储的value类型相对更多，包括**string**(字符串)、**list**(链表)、**set**(集合)、**zset**(sorted set--有序集合)和**hash**(哈希类型)。
 3. 这些数据类型都支持push/pop、add/remove及取交集并集和差集及更丰富的操作，而且这些操作都是**原子性**的。
 4. 在此基础上，Redis**支持各种不同方式的排序**。
 5. 与memcached一样，为了保证效率，数据都是**缓存在内存**中。
@@ -183,7 +183,7 @@ Redis 中文官方网站：http://redis.cn
 
 1. **准备工作：下载安装最新版的gcc编译器**
 
-安装C 语言的编译环境：
+安装 C 语言的编译环境：
 
 ```
 yum install gcc
@@ -228,8 +228,6 @@ gcc --version
 查看默认安装目录：
 
 ![image-20220429201311533](02-Redis.assets/image-20220429201311533.png)
-
-
 
 - redis-benchmark：性能测试工具，可以在自己本子运行，看看自己本子性能如何
 - redis-check-aof：修复有问题的AOF文件
@@ -286,8 +284,6 @@ redis-server /etc/redis.conf
 #### 2.6 Redis介绍相关知识
 
 端口**6379**从何而来：Merz
-
-
 
 - 默认16个数据库，类似数组下标从0开始，初始默认使用0号库
 - 使用命令 `select  dbid` 来切换数据库。如: select 8 
