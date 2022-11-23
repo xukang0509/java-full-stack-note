@@ -4,7 +4,7 @@
 >
 > 尚硅谷官网：http://www.atguigu.com
 >
-> 视频链接：https://www.bilibili.com/video/BV1Ya411S7aT?vd_source=6e6b2286ee9a603d7bdb2bc5ba80e449
+> 视频链接：[SSM-guigu](https://www.bilibili.com/video/BV1Ya411S7aT?vd_source=6e6b2286ee9a603d7bdb2bc5ba80e449)
 
 +++
 
@@ -685,7 +685,7 @@ public interface UserMapper {
 
 *UserMapper.xml*映射文件：
 
-```java
+```xml
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
@@ -8678,11 +8678,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-/**
- * @description:
- * @author: xu
- * @date: 2022/11/22 3:10
- */
 @Service
 @Transactional
 public class EmployeeServiceImpl implements EmployeeService {
@@ -8796,14 +8791,20 @@ employee_list_page.html
         </tr>
     </table>
     <div style="text-align: center">
-        <a th:if="${pageInfo.hasPreviousPage}" th:href="@{/employee/page/1}">首页</a>
-        <a th:if="${pageInfo.hasPreviousPage}" th:href="@{|/employee/page/${pageInfo.prePage}|}">上一页</a>
+        <a th:if="${pageInfo.hasPreviousPage}" th:href="@{/employee/page/1}">
+            首页</a>
+        <a th:if="${pageInfo.hasPreviousPage}" th:href="@{|/employee/page/${pageInfo.prePage}|}">
+            上一页</a>
         <span th:each="num:${pageInfo.navigatepageNums}">
-            <a th:if="${pageInfo.pageNum == num}" style="color: red" th:href="@{|/employee/page/${num}|}" th:text="'['+${num}+']'"></a>
-            <a th:unless="${pageInfo.pageNum == num}" th:href="@{|/employee/page/${num}|}" th:text="${num}"></a>
+            <a th:if="${pageInfo.pageNum == num}" style="color: red" 
+               th:href="@{|/employee/page/${num}|}" th:text="'['+${num}+']'"></a>
+            <a th:unless="${pageInfo.pageNum == num}" 
+               th:href="@{|/employee/page/${num}|}" th:text="${num}"></a>
         </span>
-        <a th:if="${pageInfo.hasNextPage}" th:href="@{|/employee/page/${pageInfo.nextPage}|}">下一页</a>
-        <a th:if="${pageInfo.hasNextPage}" th:href="@{|/employee/page/${pageInfo.pages}|}">尾页</a>
+        <a th:if="${pageInfo.hasNextPage}" th:href="@{|/employee/page/${pageInfo.nextPage}|}">
+            下一页</a>
+        <a th:if="${pageInfo.hasNextPage}" th:href="@{|/employee/page/${pageInfo.pages}|}">
+            尾页</a>
     </div>
 </div>
 
