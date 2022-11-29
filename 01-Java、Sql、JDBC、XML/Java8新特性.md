@@ -46,8 +46,7 @@ SUN 也变成了 Oracle。
 
 大多数 JDK 都是在 Open JDK 的基础上进一步编写实现的，比如 IBM J9，Oracle JDK 和 Azul Zulu，
 Azul Zing。
-Oracle JDK完全由 Oracle 公司开发，Oracle JDK是基于Open JDK源代码的商业版本。此外，它包含闭
-源组件。
+Oracle JDK完全由 Oracle 公司开发，Oracle JDK是基于Open JDK源代码的商业版本。此外，它包含闭源组件。
 Oracle JDK根据二进制代码许可协议获得许可，在没有商业许可的情况下，在2019年1月之后发布的
 Oracle Java SE 8
 的公开更新将无法用于商业或生产用途。但是 Open JDK是完全开源的，可以自由使用。
@@ -221,8 +220,7 @@ Person{name='刘德华', age=53, height=185}
 */
 ```
 
-3. 我们发现在sort方法的第二个参数是一个Comparator接口的匿名内部类，且执行的方法有参数和返回
-   值，那么我们可以改写为Lambda表达式
+3. 我们发现在sort方法的第二个参数是一个Comparator接口的匿名内部类，且执行的方法有参数和返回值，那么我们可以改写为Lambda表达式
 
 ```java
 public class Test03 {
@@ -288,8 +286,6 @@ public class Test01 {
 
 ![image-20220529152702374](Java8新特性.assets/image-20220529152702374.png)
 
-
-
 还可以通过反编译工具来查看生成的代码 XJad 工具来查看
 
 ```java
@@ -309,8 +305,7 @@ static class Test01$1 implements Runnable{
 
 ![image-20220529154126718](Java8新特性.assets/image-20220529154126718.png)
 
-写的有Lambda表达式的class文件，我们通过XJad查看报错。这时我们可以通过JDK自带的一个工具：
-javap 对字节码进行反汇编操作。
+写的有Lambda表达式的class文件，我们通过XJad查看报错。这时我们可以通过JDK自带的一个工具：javap对字节码进行反汇编操作。
 
 ```java
 javap -c -p 文件名.class
@@ -356,8 +351,7 @@ X:\NewCode\JDK8NewDemo\out\production\JDK8NewDemo\com\jdk8\xukang\lambda>
 
 
 
-在这个反编译的源码中我们看到了一个静态方法 lambda$main$0()，这个方法里面做了什么事情呢？我
-们通过debug的方式来查看下：
+在这个反编译的源码中我们看到了一个静态方法 lambda\$main\$0()，这个方法里面做了什么事情呢？我们通过debug的方式来查看下：
 
 ![image-20220529155216815](Java8新特性.assets/image-20220529155216815.png)
 
@@ -401,9 +395,7 @@ X:\NewCode\JDK8New\target\classes>
 ![image-20220529162113593](Java8新特性.assets/image-20220529162113593.png)
 
 可以看到这个匿名的内部类实现了UserService接口，并重写了show()方法。在show方法中调用了
-Test02.lambda$main$0(), 也就是调用了Lambda中的内容。
-
-
+Test02.lambda\$main\$0(), 也就是调用了Lambda中的内容。
 
 ```java
 public class Test02 {
@@ -494,8 +486,7 @@ public class Test04 {
 
 ### 7、Lambda表达式的使用前提
 
-Lambda表达式的语法是非常简洁的，但是Lambda表达式不是随便使用的，使用时有几个条件要特别注
-意
+Lambda表达式的语法是非常简洁的，但是Lambda表达式不是随便使用的，使用时有几个条件要特别注意
 
 1. 方法的参数或局部变量类型必须为接口才能使用Lambda
 2. 接口中有且仅有一个抽象方法(@FunctionalInterface)
@@ -506,14 +497,18 @@ Lambda表达式的语法是非常简洁的，但是Lambda表达式不是随便�
 
 Lambda和匿名内部类的对比
 1. 所需类型不一样
-  - 匿名内部类的类型可以是 类，抽象类，接口
-  - Lambda表达式需要的类型必须是接口
+
+     - 匿名内部类的类型可以是类，抽象类，接口
+     - Lambda表达式需要的类型必须是接口
 2. 抽象方法的数量不一样
-  - 匿名内部类所需的接口中的抽象方法的数量是随意的
-  - Lambda表达式所需的接口中只能有一个抽象方法
+
+     - 匿名内部类所需的接口中的抽象方法的数量是随意的
+     - Lambda表达式所需的接口中只能有一个抽象方法
 3. 实现原理不一样
-  - 匿名内部类是在编译后形成一个class
-  - Lambda表达式是在程序运行的时候动态生成class
+
+     - 匿名内部类是在编译后形成一个class
+
+     - Lambda表达式是在程序运行的时候动态生成class
 
 ------
 
@@ -729,9 +724,7 @@ class C implements A{
 
 ### 1、函数式接口的由来
 
-我们知道使用Lambda表达式的前提是需要有函数式接口，而Lambda表达式使用时不关心接口名，
-抽象方法名。只关心**抽象方法的参数列表和返回值类型**。因此为了让我们使用Lambda表达式更加的方
-法，在JDK中提供了大量常用的函数式接口。
+我们知道使用Lambda表达式的前提是需要有函数式接口，而Lambda表达式使用时不关心接口名，抽象方法名。只关心**抽象方法的参数列表和返回值类型**。因此为了让我们使用Lambda表达式更加的方便，在JDK中提供了大量常用的函数式接口。
 
 ```java
 public class Test01 {
@@ -815,8 +808,7 @@ public class SupplierTest {
 
 #### 2.2 Consumer
 
-有参无返回值得接口，前面介绍的Supplier接口是用来生产数据的，而Consumer接口是用来消费数据
-的，使用的时候需要指定一个泛型来定义参数类型
+有参无返回值的接口，前面介绍的Supplier接口是用来生产数据的，而Consumer接口是用来消费数据的，使用的时候需要指定一个泛型来定义参数类型
 
 ```java
 @FunctionalInterface
@@ -849,8 +841,7 @@ public class ConsumerTest {
 
 默认方法：andThen()
 
-如果一个方法的参数和返回值全部是Consumer类型，那么就可以实现效果，消费一个数据的时候，
-首先做一个操作，然后再做一个操作，实现组合，而这个方法就是Consumer接口中的 default 方法 
+如果一个方法的参数和返回值全部是Consumer类型，那么就可以实现效果，消费一个数据的时候，首先做一个操作，然后再做一个操作，实现组合，而这个方法就是Consumer接口中的 default 方法
 andThen 方法
 
 ```java
@@ -890,8 +881,7 @@ public class ConsumerTest {
 
 #### 2.3 Function
 
-有参有返回值的接口，Function接口是根据一个类型的数据得到另一个类型的数据，前者称为前置条
-件，后者称为后置条件。有参数有返回值。
+有参有返回值的接口，Function接口是根据一个类型的数据得到另一个类型的数据，前者称为前置条件，后者称为后置条件。有参数有返回值。
 
 ```java
 @FunctionalInterface
@@ -1059,10 +1049,7 @@ public class FunctionRefTest01 {
 
 #### 1.2 解决方案
 
-因为在Lambda表达式中要执行的代码和我们另一个方法中的代码是一样的，这时就没有必要重写一
-份逻辑了，这时我们就可以“引用”重复代码
-
-`::`： 方法引用 也是JDK8中的新的语法
+因为在Lambda表达式中要执行的代码和我们另一个方法中的代码是一样的，这时就没有必要重写一份逻辑了，这时我们就可以“引用”重复代码`::`： 方法引用也是JDK8中的新的语法
 
 ```java
 public class FunctionRefTest02 {
@@ -1095,20 +1082,17 @@ public class FunctionRefTest02 {
 
 符号说明：双冒号为方法引用运算符，而它所在的表达式被称为`方法引用`
 
-应用场景：如果Lambda表达式所要实现的方案，已经有其他方法存在相同的方案，那么则可以使用方
-法引用。
+应用场景：如果Lambda表达式所要实现的方案，已经有其他方法存在相同的方案，那么则可以使用方法引用。
 
 常见的引用方式：
 
 方法引用在JDK8中使用是相当灵活的，有以下几种形式：
 
 - instanceName::methodName：**对象::方法名**
-2. ClassName::staticMethodName：**类名::静态方法**
-
-
-* ClassName::methodName：**类名::普通方法**
-4. ClassName::new 类名::new 调用的构造器
-5. TypeName[]::new String[]::new 调用数组的构造器
+- ClassName::staticMethodName：**类名::静态方法**
+- ClassName::methodName：**类名::普通方法**
+- ClassName::new 类名::new 调用的构造器
+- TypeName[]::new String[]::new 调用数组的构造器
 
 
 
@@ -1232,8 +1216,7 @@ public class Test05 {
 }
 ```
 
-小结：方法引用是对Lambda表达式符合特定情况下的一种缩写方式，它使得我们的Lambda表达式更加
-的精简，也可以理解为lambda表达式的缩写形式，不过要注意的是方法引用只能引用已经存在的方法。
+小结：方法引用是对Lambda表达式符合特定情况下的一种缩写方式，它使得我们的Lambda表达式更加的精简，也可以理解为lambda表达式的缩写形式，不过要注意的是方法引用只能引用已经存在的方法。
 
 ------
 
@@ -1241,8 +1224,7 @@ public class Test05 {
 
 ### 1、集合处理数据的弊端
 
-当我们在需要对集合中的元素进行操作的时候，除了必需的添加，删除，获取外，最典型的操作就是
-集合遍历，
+当我们在需要对集合中的元素进行操作的时候，除了必需的添加，删除，获取外，最典型的操作就是集合遍历，
 
 ```java
 public class StreamTest01 {
@@ -1276,8 +1258,7 @@ public class StreamTest01 {
 }
 ```
 
-上面的代码针对与我们不同的需求总是一次次的循环循环循环。这时我们希望有更加高效的处理方式，这
-时我们就可以通过JDK8中提供的Stream API来解决这个问题了。
+上面的代码针对与我们不同的需求总是一次次的循环循环循环。这时我们希望有更加高效的处理方式，这时我们就可以通过JDK8中提供的Stream API来解决这个问题了。
 
 
 
@@ -1300,26 +1281,19 @@ public class StreamTest02 {
                 filter(s -> s.startsWith("张")).
                 filter(s -> s.length() == 3).
                 forEach(System.out::println); //方法引用
-
     }
 }
 ```
 
-上面的SteamAPI代码的含义：获取流，过滤张，过滤长度，逐一打印。代码相比于上面的案例更加的简
-洁直观
+上面的SteamAPI代码的含义：获取流，过滤张，过滤长度，逐一打印。代码相比于上面的案例更加的简洁直观
 
 
 
 ### 2、Steam 流式思想概述
 
-注意：Stream和IO流(InputStream/OutputStream)没有任何关系，请暂时忘记对传统IO流的固有印
-象！
+注意：Stream和IO流(InputStream/OutputStream)没有任何关系，请暂时忘记对传统IO流的固有印象！
 
-Stream流式思想类似于工厂车间的“生产流水线”，Stream流不是一种数据结构，不保存数据，而是对数
-据进行加工
-处理。Stream可以看作是流水线上的一个工序。在流水线上，通过多个工序让一个原材料加工成一个商品。
-
-
+Stream流式思想类似于工厂车间的“生产流水线”，Stream流不是一种数据结构，不保存数据，而是对数据进行加工处理。Stream可以看作是流水线上的一个工序。在流水线上，通过多个工序让一个原材料加工成一个商品。
 
 ![image-20220529192737853](Java8新特性.assets/image-20220529192737853.png)
 
@@ -1327,8 +1301,7 @@ Stream流式思想类似于工厂车间的“生产流水线”，Stream流不�
 
 ![image-20220529192755628](Java8新特性.assets/image-20220529192755628.png)
 
-Stream API能让我们快速完成许多复杂的操作，如筛选、切片、映射、查找、去除重复，统计，匹配和
-归约。
+Stream API能让我们快速完成许多复杂的操作，如筛选、切片、映射、查找、去除重复，统计，匹配和归约。
 
 
 
@@ -1336,8 +1309,7 @@ Stream API能让我们快速完成许多复杂的操作，如筛选、切片、�
 
 #### 3.1 根据Collection获取
 
-首先，java.util.Collection 接口中加入了default方法 stream，也就是说 Collection 接口下的所有的实
-现都可以通过steam方法来获取Stream流。
+首先，java.util.Collection 接口中加入了default方法 stream，也就是说 Collection 接口下的所有的实现都可以通过steam方法来获取Stream流。
 
 ```java
 public class StreamTest03 {
@@ -1354,7 +1326,7 @@ public class StreamTest03 {
 }
 ```
 
-但是Map接口别没有实现Collection接口，那这时怎么办呢？这时我们可以根据Map获取对应的key
+但是Map接口并没有实现Collection接口，那这时怎么办呢？这时我们可以根据Map获取对应的key
 value的集合。
 
 ```java
@@ -1372,8 +1344,7 @@ public class StreamTest04 {
 
 #### 3.2 通过Stream的of方法
 
-在实际开发中我们不可避免的还是会操作到数组中的数据，由于数组对象不可能添加默认方法，所
-有Stream接口中提供了静态方法of
+在实际开发中我们不可避免的还是会操作到数组中的数据，由于数组对象不可能添加默认方法，所有Stream接口中提供了静态方法of
 
 ```java
 public class StreamTest05 {
@@ -1411,12 +1382,9 @@ Stream流模型的操作很丰富，这里介绍一些常用的API。
 | map     | 映射       | Stream     | 函数拼接 |
 | concat  | 组合       | Stream     | 函数拼接 |
 
-**终结方法**：返回值类型不再是 Stream 类型的方法，不再支持链式调用。本小节中，终结方法包括 count 和 
-forEach 方法。
+**终结方法**：返回值类型不再是 Stream 类型的方法，不再支持链式调用。本小节中，终结方法包括 count 和 forEach 方法。
 
-**非终结方法**：返回值类型仍然是 Stream 类型的方法，支持链式调用。（除了终结方法外，其余方法均
-为非终结
-方法。）
+**非终结方法**：返回值类型仍然是 Stream 类型的方法，支持链式调用。（除了终结方法外，其余方法均为非终结方法。）
 
 
 
@@ -1631,8 +1599,7 @@ class Person{
 
 Stream 流中的 distinct 方法对于基本数据类型是可以直接出重的，
 
-但是对于自定义类型，我们是需要
-重写hashCode和equals方法来移除重复元素。
+但是对于自定义类型，我们是需要重写hashCode和equals方法来移除重复元素。
 
 
 
@@ -1962,8 +1929,7 @@ Student(name=张三)
 
 #### 5.2 结果收集到数组中
 
-Stream中提供了toArray方法来将结果放到一个数组中，返回值类型是Object[]，如果我们要指定返回的
-类型，那么可以使用另一个重载的 `toArray(IntFunction f)` 方法
+Stream中提供了toArray方法来将结果放到一个数组中，返回值类型是Object[]，如果我们要指定返回的类型，那么可以使用另一个重载的 `toArray(IntFunction f)` 方法
 
 ```java
 	/**
@@ -1985,8 +1951,7 @@ Stream中提供了toArray方法来将结果放到一个数组中，返回值类�
 
 #### 5.3 对流中的数据做聚合计算
 
-当我们使用Stream流处理数据后，可以像数据库的聚合函数一样对某个字段进行操作，比如获得最大
-值，最小值，求和，平均值，统计数量。
+当我们使用Stream流处理数据后，可以像数据库的聚合函数一样对某个字段进行操作，比如获得最大值，最小值，求和，平均值，统计数量。
 
 ```java
 	/**
@@ -2246,8 +2211,7 @@ Thread[main,5,main] 6
 
 #### 6.2 并行流
 
-parallelStream 其实就是一个并行执行的流，它通过默认的ForkJoinPool，可以提高多线程任务的速
-度。
+parallelStream 其实就是一个并行执行的流，它通过默认的ForkJoinPool，可以提高多线程任务的速度。
 
 ##### 6.2.1 获取并行流
 
@@ -2367,8 +2331,7 @@ public class Test03 {
 
 通过案例我们可以看到parallelStream的效率是最高的。
 
-Stream并行处理的过程会分而治之，也就是将一个大的任务切分成了多个小任务，这表示每个任务都是
-一个线程操作。
+Stream并行处理的过程会分而治之，也就是将一个大的任务切分成了多个小任务，这表示每个任务都是一个线程操作。
 
 
 
@@ -2422,7 +2385,7 @@ java.lang.ArrayIndexOutOfBoundsException: 549
 针对这个问题，我们的解决方案有哪些呢？
 1. 加同步锁
 2. 使用线程安全的容器
-3. 通过 Stream 中的 toArray/collec t操作
+3. 通过 Stream 中的 toArray/collect 操作
 
 
 
@@ -2482,7 +2445,7 @@ java.lang.ArrayIndexOutOfBoundsException: 549
 
 这个Optional类注意是解决空指针的问题
 
-### 1、以前对null 的处理
+### 1、以前对null的处理
 
 ```java
 @Test
@@ -2501,8 +2464,7 @@ public void test01(){
 
 ### 2、Optional类
 
-Optional是一个没有子类的工具类，Optional是一个可以为null的容器对象，它的主要作用就是为了避
-免Null检查，防止NullpointerException
+Optional是一个没有子类的工具类，Optional是一个可以为null的容器对象，它的主要作用就是为了避免Null检查，防止NullpointerException
 
 ![image-20220530182243954](Java8新特性.assets/image-20220530182243954.png)
 
@@ -2654,10 +2616,8 @@ Optional对象的创建方式
     }
 ```
 
-1. 设计不合理，在 java.util 和 java.sql 的包中都有日期类，java.util.Date同时包含日期和时间的，而 
-java.sql.Date 仅仅包含日期，此外用于格式化和解析的类在java.text包下。
-2. 非线程安全，java.util.Date是非线程安全的，所有的日期类都是可变的，这是java日期类最大的问
-题之一。
+1. 设计不合理，在 java.util 和 java.sql 的包中都有日期类，java.util.Date同时包含日期和时间的，而 java.sql.Date 仅仅包含日期，此外用于格式化和解析的类在java.text包下。
+2. 非线程安全，java.util.Date是非线程安全的，所有的日期类都是可变的，这是java日期类最大的问题之一。
 3. 时区处理麻烦，日期类并不提供国际化，没有时区支持。
 
 
@@ -2667,8 +2627,7 @@ java.sql.Date 仅仅包含日期，此外用于格式化和解析的类在java.t
 JDK 8中增加了一套全新的日期时间API，这套API设计合理，是线程安全的。
 
 新的日期及时间API位于
-java.time 包
-中，下面是一些关键类。
+java.time 包中，下面是一些关键类。
 
 - LocalDate ：表示日期，包含年月日，格式为 2019-10-16
 - LocalTime ：表示时间，包含时分秒，格式为 16:38:54.158549300
@@ -2681,9 +2640,7 @@ java.time 包
 
 
 
-Java中使用的历法是ISO 8601日历系统，它是世界民用历法，也就是我们所说的公历。平年有365天，
-闰年是366
-天。此外Java 8还提供了4套其他历法，分别是：
+Java中使用的历法是ISO 8601日历系统，它是世界民用历法，也就是我们所说的公历。平年有365天，闰年是366天。此外Java 8还提供了4套其他历法，分别是：
 
 - ThaiBuddhistDate：泰国佛教历
 - MinguoDate：中华民国历
@@ -2861,8 +2818,7 @@ LocalDateTime对象，所以在多线程场景下是数据安全的。
 
 #### 2.4 Instant 类
 
-在JDK8中给我们新增一个Instant类(时间戳/时间线)，内部保存了从`1970年1月1日 00:00:00`以来的秒和
-纳秒
+在JDK8中给我们新增一个Instant类(时间戳/时间线)，内部保存了从`1970年1月1日 00:00:00`以来的秒和纳秒
 
 ```java
 	/**
@@ -2923,8 +2879,7 @@ JDK8中提供了两个工具类 Duration / Period：计算日期时间差
 
 #### 2.6 时间校正器
 
-有时候我们可以需要如下调整：将日期调整到 "下个月的第一天" 等操作。这时我们通过时间校正器效果
-可能会更好。
+有时候我们可以需要如下调整：将日期调整到 "下个月的第一天" 等操作。这时我们通过时间校正器效果可能会更好。
 
 - TemporalAdjuster：时间校正器
 - TemporalAdjusters：通过该类静态方法提供了大量的常用TemporalAdjuster的实现。
@@ -2957,8 +2912,7 @@ JDK8中提供了两个工具类 Duration / Period：计算日期时间差
 
 Java8 中加入了对时区的支持，LocalDate、LocalTime、LocalDateTime是不带时区的
 
-带时区的日
-期时间类分别为：ZonedDate、ZonedTime、ZonedDateTime。
+带时区的日期时间类分别为：ZonedDate、ZonedTime、ZonedDateTime。
 
 其中每个时区都对应着 ID，ID的格式为 “区域/城市” 。例如 ：Asia/Shanghai 等。
 
@@ -2995,8 +2949,7 @@ ZoneId：该类中包含了所有的时区信息
 ### 3、新时间日期API的优势
 
 JDK新的日期和时间API的优势：
-1. 新版日期时间API中，日期和时间对象是不可变，操作日期不会影响原来的值，而是生成一个新的
-实例
+1. 新版日期时间API中，日期和时间对象是不可变，操作日期不会影响原来的值，而是生成一个新的实例
 2. 提供不同的两种方式，有效的区分了人和机器的操作
 3. TemporalAdjuster可以更精确的操作日期，还可以自定义日期调整期
 4. 线程安全
