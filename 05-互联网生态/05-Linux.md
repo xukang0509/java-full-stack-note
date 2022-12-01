@@ -638,7 +638,7 @@ Linux 系统中一切皆文件。
 | shift+g      | 移动到页尾                                  |
 | 数字+shift+g | 移动到目标行                                |
 
-![image-20221130181218921](05-Linux.assets/image-20221130181218921.png)
+![在这里插入图片描述](05-Linux.assets/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6JCn5pu1IOS4tg==,size_20,color_FFFFFF,t_70,g_se,x_16.png)
 
 ### 4 编辑模式
 
@@ -4481,7 +4481,7 @@ YUM（全称为 Yellow dog Updater, Modified）是一个在Fedora和RedHat以及
 
 
 
-### 9 正则表达式入门
+### 9 正则表达式入门
 
 正则表达式使用单个字符串来描述、匹配一系列符合某个语法规则的字符串。在很多文本编辑器里，正则表达式通常被用来检索、替换那些符合某个模式的文本。在 Linux 中，grep，sed，awk等文本处理工具都支持通过正则表达式进行模式匹配。
 
