@@ -276,6 +276,21 @@ Docker运行的基本流程为：
 
 2. 卸载旧版本
 
+   ```shell
+   yum remove docker \
+              docker-client \
+              docker-client-latest \
+              docker-common \
+              docker-latest \
+              docker-latest-logrotate \
+              docker-logrotate \
+              docker-engine
+   ```
+
+   旧版本的Docker引擎包可能叫做：`docker`、`docker-engine`。
+
+   新版本的Docker引擎包叫做：`docker-ce`
+
    ![image-20221203204008457](07-docker.assets/image-20221203204008457.png)
 
 3. yum安装gcc相关
@@ -1367,7 +1382,6 @@ Docker容器产生的数据，如果不备份，那么当容器实例删除后�
 
    ```
    docker run -d -p 3306:3306 --privileged=true -v /zzyyuse/mysql/log:/var/log/mysql -v /zzyyuse/mysql/data:/var/lib/mysql -v /zzyyuse/mysql/conf:/etc/mysql/conf.d -e MYSQL_ROOT_PASSWORD=123456  --name mysql mysql:5.7
-   
    
    docker run -d -p 3306:3306 --privileged=true 
    -v /zzyyuse/mysql/log:/var/log/mysql 
@@ -2606,7 +2620,7 @@ Dockerfile写一个：
 
 #### 4.2 常用基本命令
 
-1. All命令：`docker network --help`
+1. All命令：`docker network --help`
 
    ![image-20221208075239300](07-docker.assets/image-20221208075239300.png)
 
@@ -2908,13 +2922,17 @@ Compose 是 Docker 公司推出的一个工具软件，可以管理多个 Docker
 
 安装步骤：
 
-- `curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose`
-- `chmod +x /usr/local/bin/docker-compose`
-- `docker-compose --version`
+```bash
+curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+
+chmod +x /usr/local/bin/docker-compose
+
+docker-compose --version
+```
 
 ![image-20221209000838545](07-docker.assets/image-20221209000838545.png)
 
-卸载：`rm /usr/local/bin/docker-compose`
+卸载：`rm /usr/local/bin/docker-compose`
 
 ![image-20221208234808548](07-docker.assets/image-20221208234808548.png)
 
@@ -2968,43 +2986,1406 @@ Compose 是 Docker 公司推出的一个工具软件，可以管理多个 Docker
 
 ##### 5.4.1 改造升级微服务工程docker-boot
 
-1. 
+###### 5.4.1.1 SQL建表建库
+
+```mysql
+CREATE DATABASE db2022;
+USE db2022;
+CREATE TABLE `t_user` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `username` varchar(50) NOT NULL DEFAULT '' COMMENT '用户名',
+  `password` varchar(50) NOT NULL DEFAULT '' COMMENT '密码',
+  `sex` tinyint(4) NOT NULL DEFAULT '0' COMMENT '性别 0=女 1=男 ',
+  `deleted` tinyint(4) unsigned NOT NULL DEFAULT '0' COMMENT '删除标志，默认0不删除，1删除',
+  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='用户表';
+```
 
 
 
+###### 5.4.1.2 改POM
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.5.13</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <groupId>com.shanhai</groupId>
+    <artifactId>docker-boot</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <junit.version>4.12</junit.version>
+        <log4j.version>1.2.17</log4j.version>
+        <lombok.version>1.16.18</lombok.version>
+        <mysql.version>5.1.47</mysql.version>
+        <druid.version>1.1.16</druid.version>
+        <mapper.version>4.1.5</mapper.version>
+        <mybatis.spring.boot.version>1.3.0</mybatis.spring.boot.version>
+    </properties>
+
+    <dependencies>
+        <!--guava Google 开源的 Guava 中自带的布隆过滤器-->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>23.0</version>
+        </dependency>
+        <!-- redisson -->
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>3.13.4</version>
+        </dependency>
+        <!--SpringBoot通用依赖模块-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <!--swagger2-->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>2.9.2</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>2.9.2</version>
+        </dependency>
+        <!--SpringBoot与Redis整合依赖-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <!--springCache-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-cache</artifactId>
+        </dependency>
+        <!--springCache连接池依赖包-->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+        </dependency>
+        <!-- jedis -->
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+        <!--Mysql数据库驱动-->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.47</version>
+        </dependency>
+        <!--SpringBoot集成druid连接池-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+            <version>1.1.10</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>${druid.version}</version>
+        </dependency>
+        <!--mybatis和springboot整合-->
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+            <version>${mybatis.spring.boot.version}</version>
+        </dependency>
+        <!--通用基础配置junit/devtools/test/log4j/lombok/hutool-->
+        <!--hutool-->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <optional>true</optional>
+        </dependency>
+        <!--persistence-->
+        <dependency>
+            <groupId>javax.persistence</groupId>
+            <artifactId>persistence-api</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+        <!--通用Mapper-->
+        <dependency>
+            <groupId>tk.mybatis</groupId>
+            <artifactId>mapper</artifactId>
+            <version>${mapper.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.1.0</version>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+```
 
 
 
+###### 5.4.1.3 写YML
+
+```yaml
+server:
+  port: 6001
+# ========================alibaba.druid相关配置=====================
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://192.168.88.110:3306/db2022?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    username: root
+    password: 123456
+    druid:
+      test-while-idle: false
+# ========================redis相关配置=====================
+  redis:
+    database: 0
+    host: 192.168.88.110
+    port: 6379
+    password:
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: -1ms
+        max-idle: 8
+        min-idle: 0
+# ========================swagger=====================
+  swagger2:
+    enabled: true
+# ========================mybatis相关配置===================
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.shanhai.entities
+```
 
 
 
+###### 5.4.1.4 主启动
+
+```java
+package com.shanhai;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import tk.mybatis.spring.annotation.MapperScan;
+
+@SpringBootApplication
+@MapperScan("com.shanhai.mapper")
+public class DockerBootApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(DockerBootApplication.class, args);
+    }
+
+}
+```
 
 
 
+###### 5.4.1.5 业务类
+
+1. config配置类
+
+   -  RedisConfig
+
+     ```java
+     package com.shanhai.config;
+     
+     import lombok.extern.slf4j.Slf4j;
+     import org.springframework.context.annotation.Bean;
+     import org.springframework.context.annotation.Configuration;
+     import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+     import org.springframework.data.redis.core.RedisTemplate;
+     import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+     import org.springframework.data.redis.serializer.StringRedisSerializer;
+     
+     import java.io.Serializable;
+     
+     @Configuration
+     @Slf4j
+     public class RedisConfig {
+         /**
+          * @param lettuceConnectionFactory
+          * @return
+          *
+          * redis序列化的工具配置类，下面这个请一定开启配置
+          * 127.0.0.1:6379> keys *
+          * 1) "ord:102"  序列化过
+          * 2) "\xac\xed\x00\x05t\x00\aord:102"   野生，没有序列化过
+          */
+         @Bean
+         public RedisTemplate<String, Serializable> redisTemplate(LettuceConnectionFactory lettuceConnectionFactory) {
+             RedisTemplate<String,Serializable> redisTemplate = new RedisTemplate<>();
+     
+             redisTemplate.setConnectionFactory(lettuceConnectionFactory);
+             //设置key序列化方式string
+             redisTemplate.setKeySerializer(new StringRedisSerializer());
+             //设置value的序列化方式json
+             redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+     
+             redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+             redisTemplate.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+     
+             redisTemplate.afterPropertiesSet();
+     
+             return redisTemplate;
+         }
+     
+     }
+     ```
+
+   - SwaggerConfig
+
+     ```java
+     package com.shanhai.config;
+     
+     import org.springframework.beans.factory.annotation.Value;
+     import org.springframework.context.annotation.Bean;
+     import org.springframework.context.annotation.Configuration;
+     import springfox.documentation.builders.ApiInfoBuilder;
+     import springfox.documentation.builders.PathSelectors;
+     import springfox.documentation.builders.RequestHandlerSelectors;
+     import springfox.documentation.service.ApiInfo;
+     import springfox.documentation.spi.DocumentationType;
+     import springfox.documentation.spring.web.plugins.Docket;
+     import springfox.documentation.swagger2.annotations.EnableSwagger2;
+     
+     import java.text.SimpleDateFormat;
+     import java.util.Date;
+     
+     @Configuration
+     @EnableSwagger2
+     public class SwaggerConfig {
+         @Value("${spring.swagger2.enabled}")
+         private Boolean enabled;
+     
+         @Bean
+         public Docket createRestApi() {
+             return new Docket(DocumentationType.SWAGGER_2)
+                     .apiInfo(apiInfo())
+                     .enable(enabled)
+                     .select()
+                     .apis(RequestHandlerSelectors.basePackage("com.atguigu.docker")) //你自己的package
+                     .paths(PathSelectors.any())
+                     .build();
+         }
+     
+         public ApiInfo apiInfo() {
+             return new ApiInfoBuilder()
+                     .title("山海Java学习"+"\t"+new SimpleDateFormat("yyyy-MM-dd").format(new Date()))
+                     .description("docker-compose")
+                     .version("1.0")
+                     .termsOfServiceUrl("https://www.atguigu.com/")
+                     .build();
+         }
+     }
+     ```
+
+2. 新建entity
+
+   - User
+
+     ```java
+     package com.shanhai.entities;
+     
+     import javax.persistence.Column;
+     import javax.persistence.GeneratedValue;
+     import javax.persistence.Id;
+     import javax.persistence.Table;
+     import java.util.Date;
+     
+     @Table(name = "t_user")
+     public class User {
+         @Id
+         @GeneratedValue(generator = "JDBC")
+         private Integer id;
+     
+         /**
+          * 用户名
+          */
+         private String username;
+     
+         /**
+          * 密码
+          */
+         private String password;
+     
+         /**
+          * 性别 0=女 1=男 
+          */
+         private Byte sex;
+     
+         /**
+          * 删除标志，默认0不删除，1删除
+          */
+         private Byte deleted;
+     
+         /**
+          * 更新时间
+          */
+         @Column(name = "update_time")
+         private Date updateTime;
+     
+         /**
+          * 创建时间
+          */
+         @Column(name = "create_time")
+         private Date createTime;
+     
+         /**
+          * @return id
+          */
+         public Integer getId() {
+             return id;
+         }
+     
+         /**
+          * @param id
+          */
+         public void setId(Integer id) {
+             this.id = id;
+         }
+     
+         /**
+          * 获取用户名
+          *
+          * @return username - 用户名
+          */
+         public String getUsername() {
+             return username;
+         }
+     
+         /**
+          * 设置用户名
+          *
+          * @param username 用户名
+          */
+         public void setUsername(String username) {
+             this.username = username;
+         }
+     
+         /**
+          * 获取密码
+          *
+          * @return password - 密码
+          */
+         public String getPassword() {
+             return password;
+         }
+     
+         /**
+          * 设置密码
+          *
+          * @param password 密码
+          */
+         public void setPassword(String password) {
+             this.password = password;
+         }
+     
+         /**
+          * 获取性别 0=女 1=男 
+          *
+          * @return sex - 性别 0=女 1=男 
+          */
+         public Byte getSex() {
+             return sex;
+         }
+     
+         /**
+          * 设置性别 0=女 1=男 
+          *
+          * @param sex 性别 0=女 1=男 
+          */
+         public void setSex(Byte sex) {
+             this.sex = sex;
+         }
+     
+         /**
+          * 获取删除标志，默认0不删除，1删除
+          *
+          * @return deleted - 删除标志，默认0不删除，1删除
+          */
+         public Byte getDeleted() {
+             return deleted;
+         }
+     
+         /**
+          * 设置删除标志，默认0不删除，1删除
+          *
+          * @param deleted 删除标志，默认0不删除，1删除
+          */
+         public void setDeleted(Byte deleted) {
+             this.deleted = deleted;
+         }
+     
+         /**
+          * 获取更新时间
+          *
+          * @return update_time - 更新时间
+          */
+         public Date getUpdateTime() {
+             return updateTime;
+         }
+     
+         /**
+          * 设置更新时间
+          *
+          * @param updateTime 更新时间
+          */
+         public void setUpdateTime(Date updateTime) {
+             this.updateTime = updateTime;
+         }
+     
+         /**
+          * 获取创建时间
+          *
+          * @return create_time - 创建时间
+          */
+         public Date getCreateTime() {
+             return createTime;
+         }
+     
+         /**
+          * 设置创建时间
+          *
+          * @param createTime 创建时间
+          */
+         public void setCreateTime(Date createTime) {
+             this.createTime = createTime;
+         }
+     }
+     ```
+
+   - UserDTO
+
+     ```java
+     package com.shanhai.entities;
+     
+     import io.swagger.annotations.ApiModel;
+     import io.swagger.annotations.ApiModelProperty;
+     import lombok.AllArgsConstructor;
+     import lombok.Data;
+     import lombok.NoArgsConstructor;
+     
+     import java.io.Serializable;
+     import java.util.Date;
+     
+     @NoArgsConstructor
+     @AllArgsConstructor
+     @Data
+     @ApiModel(value = "用户信息")
+     public class UserDTO implements Serializable {
+         @ApiModelProperty(value = "用户ID")
+         private Integer id;
+     
+         @ApiModelProperty(value = "用户名")
+         private String username;
+     
+         @ApiModelProperty(value = "密码")
+         private String password;
+     
+         @ApiModelProperty(value = "性别 0=女 1=男 ")
+         private Byte sex;
+     
+         @ApiModelProperty(value = "删除标志，默认0不删除，1删除")
+         private Byte deleted;
+     
+         @ApiModelProperty(value = "更新时间")
+         private Date updateTime;
+     
+         @ApiModelProperty(value = "创建时间")
+         private Date createTime;
+     
+         /**
+          * @return id
+          */
+         public Integer getId() {
+             return id;
+         }
+     
+         /**
+          * @param id
+          */
+         public void setId(Integer id) {
+             this.id = id;
+         }
+     
+         /**
+          * 获取用户名
+          *
+          * @return username - 用户名
+          */
+         public String getUsername() {
+             return username;
+         }
+     
+         /**
+          * 设置用户名
+          *
+          * @param username 用户名
+          */
+         public void setUsername(String username) {
+             this.username = username;
+         }
+     
+         /**
+          * 获取密码
+          *
+          * @return password - 密码
+          */
+         public String getPassword() {
+             return password;
+         }
+     
+         /**
+          * 设置密码
+          *
+          * @param password 密码
+          */
+         public void setPassword(String password) {
+             this.password = password;
+         }
+     
+         /**
+          * 获取性别 0=女 1=男 
+          *
+          * @return sex - 性别 0=女 1=男 
+          */
+         public Byte getSex() {
+             return sex;
+         }
+     
+         /**
+          * 设置性别 0=女 1=男 
+          *
+          * @param sex 性别 0=女 1=男 
+          */
+         public void setSex(Byte sex) {
+             this.sex = sex;
+         }
+     
+         /**
+          * 获取删除标志，默认0不删除，1删除
+          *
+          * @return deleted - 删除标志，默认0不删除，1删除
+          */
+         public Byte getDeleted() {
+             return deleted;
+         }
+     
+         /**
+          * 设置删除标志，默认0不删除，1删除
+          *
+          * @param deleted 删除标志，默认0不删除，1删除
+          */
+         public void setDeleted(Byte deleted) {
+             this.deleted = deleted;
+         }
+     
+         /**
+          * 获取更新时间
+          *
+          * @return update_time - 更新时间
+          */
+         public Date getUpdateTime() {
+             return updateTime;
+         }
+     
+         /**
+          * 设置更新时间
+          *
+          * @param updateTime 更新时间
+          */
+         public void setUpdateTime(Date updateTime) {
+             this.updateTime = updateTime;
+         }
+     
+         /**
+          * 获取创建时间
+          *
+          * @return create_time - 创建时间
+          */
+         public Date getCreateTime() {
+             return createTime;
+         }
+     
+         /**
+          * 设置创建时间
+          *
+          * @param createTime 创建时间
+          */
+         public void setCreateTime(Date createTime) {
+             this.createTime = createTime;
+         }
+     
+         @Override
+         public String toString() {
+             return "User{" +
+                     "id=" + id +
+                     ", username='" + username + '\'' +
+                     ", password='" + password + '\'' +
+                     ", sex=" + sex +
+                     '}';
+         }
+     }
+     ```
+
+3. 新建mapper
+
+   - 新建接口UserMapper 
+
+     ```java
+     package com.shanhai.mapper;
+     
+     import com.shanhai.entities.User;
+     import tk.mybatis.mapper.common.Mapper;
+     
+     public interface UserMapper extends Mapper<User> {
+     }
+     ```
+
+   - src\main\resources路径下新建mapper文件夹并新增UserMapper.xml
+
+     ```xml
+     <?xml version="1.0" encoding="UTF-8"?>
+     <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+     <mapper namespace="com.shanhai.mapper.UserMapper">
+         <resultMap id="BaseResultMap" type="com.shanhai.entities.User">
+             <!--
+               WARNING - @mbg.generated
+             -->
+             <id column="id" jdbcType="INTEGER" property="id" />
+             <result column="username" jdbcType="VARCHAR" property="username" />
+             <result column="password" jdbcType="VARCHAR" property="password" />
+             <result column="sex" jdbcType="TINYINT" property="sex" />
+             <result column="deleted" jdbcType="TINYINT" property="deleted" />
+             <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+             <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+         </resultMap>
+     </mapper>
+     ```
+
+4. 新建service
+
+   ```java
+   package com.shanhai.service;
+   
+   import com.shanhai.entities.User;
+   import com.shanhai.mapper.UserMapper;
+   import lombok.extern.slf4j.Slf4j;
+   import org.springframework.data.redis.core.RedisTemplate;
+   import org.springframework.stereotype.Service;
+   
+   import javax.annotation.Resource;
+   
+   @Service
+   @Slf4j
+   public class UserService {
+   
+       public static final String CACHE_KEY_USER = "user:";
+   
+       @Resource
+       private UserMapper userMapper;
+       @Resource
+       private RedisTemplate redisTemplate;
+   
+       /**
+        * addUser
+        * @param user
+        */
+       public void addUser(User user) {
+           //1 先插入mysql并成功
+           int i = userMapper.insertSelective(user);
+   
+           if(i > 0)
+           {
+               //2 需要再次查询一下mysql将数据捞回来并ok
+               user = userMapper.selectByPrimaryKey(user.getId());
+               //3 将捞出来的user存进redis，完成新增功能的数据一致性。
+               String key = CACHE_KEY_USER+user.getId();
+               redisTemplate.opsForValue().set(key,user);
+           }
+       }
+   
+       /**
+        * findUserById
+        * @param id
+        * @return
+        */
+       public User findUserById(Integer id) {
+           User user = null;
+           String key = CACHE_KEY_USER+id;
+   
+           //1 先从redis里面查询，如果有直接返回结果，如果没有再去查询mysql
+           user = (User) redisTemplate.opsForValue().get(key);
+   
+           if(user == null)
+           {
+               //2 redis里面无，继续查询mysql
+               user = userMapper.selectByPrimaryKey(id);
+               if(user == null)
+               {
+                   //3.1 redis+mysql 都无数据
+                   //你具体细化，防止多次穿透，我们规定，记录下导致穿透的这个key回写redis
+                   return user;
+               }else{
+                   //3.2 mysql有，需要将数据写回redis，保证下一次的缓存命中率
+                   redisTemplate.opsForValue().set(key,user);
+               }
+           }
+           return user;
+       }
+   }
+   ```
+
+5. 新建controller
+
+   ```java
+   package com.shanhai.controller;
+   
+   import cn.hutool.core.util.IdUtil;
+   import com.shanhai.entities.User;
+   import com.shanhai.service.UserService;
+   import io.swagger.annotations.Api;
+   import io.swagger.annotations.ApiOperation;
+   import lombok.extern.slf4j.Slf4j;
+   import org.springframework.web.bind.annotation.PathVariable;
+   import org.springframework.web.bind.annotation.RequestMapping;
+   import org.springframework.web.bind.annotation.RequestMethod;
+   import org.springframework.web.bind.annotation.RestController;
+   
+   import javax.annotation.Resource;
+   import java.util.Random;
+   
+   @Api(description = "用户User接口")
+   @RestController
+   @Slf4j
+   public class UserController {
+       @Resource
+       private UserService userService;
+   
+       @ApiOperation("数据库新增3条记录")
+       @RequestMapping(value = "/user/add",method = RequestMethod.POST)
+       public void addUser() {
+           for (int i = 1; i <=3; i++) {
+               User user = new User();
+   
+               user.setUsername("zzyy"+i);
+               user.setPassword(IdUtil.simpleUUID().substring(0,6));
+               user.setSex((byte) new Random().nextInt(2));
+   
+               userService.addUser(user);
+           }
+       }
+   
+       @ApiOperation("查询1条记录")
+       @RequestMapping(value = "/user/find/{id}",method = RequestMethod.GET)
+       public User findUserById(@PathVariable Integer id) {
+           return userService.findUserById(id);
+       }
+   }
+   ```
 
 
 
+###### 5.4.1.6 打包-Dockerfile
+
+> `mvn package`命令将微服务形成新的jar包，并上传到Linux服务器/mydocker目录下
+
+![image-20221209144409014](07-docker.assets/image-20221209144409014.png)
+
+> 编写Dockerfile
+
+```dockerfile
+# 基础镜像使用java
+FROM java:8
+# 作者
+MAINTAINER shanhai
+# VOLUME 指定临时文件目录为/tmp，在主机/var/lib/docker目录下创建了一个临时文件并链接到容器的/tmp
+VOLUME /tmp
+# 将jar包添加到容器中并更名为zzyy_docker.jar
+ADD docker-boot-0.0.1-SNAPSHOT.jar sh_docker.jar
+# 运行jar包
+RUN bash -c 'touch /sh_docker.jar'
+ENTRYPOINT ["java","-jar","/sh_docker.jar"]
+# 暴露6001端口作为微服务
+EXPOSE 6001
+```
+
+![image-20221209144659240](07-docker.assets/image-20221209144659240.png)
+
+> 构建镜像：`docker build -t sh_docker1:1.8 .`
+
+![image-20221209145104092](07-docker.assets/image-20221209145104092.png)
+
+![image-20221209145201273](07-docker.assets/image-20221209145201273.png)
 
 
 
+##### 5.4.2 不用Compose
+
+1. 单独的mysql容器实例
+
+   **新建mysql容器实例**：
+
+   ```bash
+   docker run -d -p 3306:3306 --privileged=true \ 
+   -v /shanhai/mysql/log:/var/log/mysql \
+   -v /shanhai/mysql/data:/var/lib/mysql \
+   -v /shanhai/mysql/conf:/etc/mysql/conf.d \
+   -e MYSQL_ROOT_PASSWORD=123456 \
+   --name mysql mysql:5.7
+   ```
+
+   进入mysql容器实例并新建库db2022+新建表t_user
+
+   `docker exec -it mysql /bin/bash`
+
+   `mysql -uroot -p123456`
+
+   ```mysql
+   create database db2022;
+   use db2022;
+   
+   CREATE TABLE `t_user` (
+     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+     `username` varchar(50) NOT NULL DEFAULT '' COMMENT '用户名',
+     `password` varchar(50) NOT NULL DEFAULT '' COMMENT '密码',
+     `sex` tinyint(4) NOT NULL DEFAULT '0' COMMENT '性别 0=女 1=男 ',
+     `deleted` tinyint(4) unsigned NOT NULL DEFAULT '0' COMMENT '删除标志，默认0不删除，1删除',
+     `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+     `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+     PRIMARY KEY (`id`)
+   ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='用户表';
+   ```
+
+2. 单独的redis容器实例
+
+   ```bash
+   docker run -p 6379:6379 --name myr3 \
+   --privileged=true \
+   -v /app/redis/redis.conf:/etc/redis/redis.conf \
+   -v /app/redis/data:/data \
+   -d redis:6.0.8 redis-server /etc/redis/redis.conf
+   ```
+
+3. 启动微服务工程
+
+   ```bash
+   docker run -d -p 6001:6001 sh_docker1:1.8
+   ```
+
+4. 上面三个容器实例依次顺序启动成功
+
+   ![image-20221209150306852](07-docker.assets/image-20221209150306852.png)
+
+5. swagger测试
+
+   `http://192.168.88.110:6001//swagger-ui.html#`
+
+   `http://linux-docker:6001//swagger-ui.html#`
+
+   ![image-20221209152931541](07-docker.assets/image-20221209152931541.png)
+
+6. 上面成功了，有哪些问题？
+
+   - 先后顺序要求固定，先mysql+redis才能微服务访问成功
+   - 需要执行多个run命令......
+   - 容器间的启停或宕机，有可能导致IP地址对应的容器实例变化，映射出错，要么生产IP写死(可以但是不推荐)，要么通过服务调用
 
 
 
+##### 5.4.3 使用Compose
+
+服务编排，一套带走，安排。
+
+1. 在Linux服务器/mydocker目录下编写`docker-compose.yml`文件
+
+   ```yaml
+   version: "3"
+   
+   services:
+     microService:
+       image: sh_docker1:1.8
+       container_name: sh01
+       ports:
+         - "6001:6001"
+       volumes:
+         - /app/microService:/data
+       networks: 
+         - sh_net
+       depends_on: 
+         - redis
+         - mysql
+    
+     redis:
+       image: redis:6.0.8
+       ports:
+         - "6379:6379"
+       volumes:
+         - /app/redis/redis.conf:/etc/redis/redis.conf
+         - /app/redis/data:/data
+       networks: 
+         - sh_net
+       command: redis-server /etc/redis/redis.conf
+    
+     mysql:
+       image: mysql:5.7
+       environment:
+         MYSQL_ROOT_PASSWORD: '123456'
+         MYSQL_ALLOW_EMPTY_PASSWORD: 'no'
+         MYSQL_DATABASE: 'db2022'
+         MYSQL_USER: 'shanhai'
+         MYSQL_PASSWORD: '123123'
+       ports:
+          - "3306:3306"
+       volumes:
+          - /app/mysql/db:/var/lib/mysql
+          - /app/mysql/conf/my.cnf:/etc/my.cnf
+          - /app/mysql/init:/docker-entrypoint-initdb.d
+       networks:
+         - sh_net
+       command: --default-authentication-plugin=mysql_native_password #解决外部无法访问
+   
+   networks: 
+      sh_net: 
+   ```
+
+2. 第二次修改微服务工程docker-boot
+
+   - 写YML：通过服务名访问，IP无关
+
+     ```yaml
+     server:
+       port: 6001
+     # ========================alibaba.druid相关配置=====================
+     spring:
+       datasource:
+         type: com.alibaba.druid.pool.DruidDataSource
+         driver-class-name: com.mysql.jdbc.Driver
+         # url: jdbc:mysql://192.168.88.110:3306/db2022?useUnicode=true&characterEncoding=utf-8&useSSL=false
+         url: jdbc:mysql://mysql:3306/db2022?useUnicode=true&characterEncoding=utf-8&useSSL=false
+         username: root
+         password: 123456
+         druid:
+           test-while-idle: false
+     # ========================redis相关配置=====================
+       redis:
+         database: 0
+         # host: 192.168.88.110
+         host: redis
+         port: 6379
+         password:
+         lettuce:
+           pool:
+             max-active: 8
+             max-wait: -1ms
+             max-idle: 8
+             min-idle: 0
+     # ========================swagger=====================
+       swagger2:
+         enabled: true
+     # ========================mybatis相关配置===================
+     mybatis:
+       mapper-locations: classpath:mapper/*.xml
+       type-aliases-package: com.shanhai.entities
+     ```
+
+   - `mvn package`命令将微服务形成新的jar包，并上传到Linux服务器/mydocker目录下
+
+   - 编写Dockerfile
+
+     ```dockerfile
+     # 基础镜像使用java
+     FROM java:8
+     # 作者
+     MAINTAINER shanhai
+     # VOLUME 指定临时文件目录为/tmp，在主机/var/lib/docker目录下创建了一个临时文件并链接到容器的/tmp
+     VOLUME /tmp
+     # 将jar包添加到容器中并更名为zzyy_docker.jar
+     ADD docker-boot-0.0.1-SNAPSHOT.jar sh_docker.jar
+     # 运行jar包
+     RUN bash -c 'touch /sh_docker.jar'
+     ENTRYPOINT ["java","-jar","/sh_docker.jar"]
+     # 暴露6001端口作为微服务
+     EXPOSE 6001
+     ```
+
+   - 构建镜像
+
+     ```bash
+     docker build -t sh_docker1:1.8 .
+     ```
+
+     ![image-20221209214953199](07-docker.assets/image-20221209214953199.png)
+
+     ![image-20221209215046260](07-docker.assets/image-20221209215046260.png)
+
+3. 执行`docker-compose up`或者执行`docker-compose up -d`
+
+   ![image-20221209215348888](07-docker.assets/image-20221209215348888.png)
+
+4. 进入mysql容器实例并新建库db2022+新建表t_user
+
+   `docker exec -it mysql /bin/bash`
+
+   `mysql -uroot -p123456`
+
+   ```sql
+   use db2022;
+   
+   CREATE TABLE `t_user` (
+     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+     `username` varchar(50) NOT NULL DEFAULT '' COMMENT '用户名',
+     `password` varchar(50) NOT NULL DEFAULT '' COMMENT '密码',
+     `sex` tinyint(4) NOT NULL DEFAULT '0' COMMENT '性别 0=女 1=男 ',
+     `deleted` tinyint(4) unsigned NOT NULL DEFAULT '0' COMMENT '删除标志，默认0不删除，1删除',
+     `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+     `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+     PRIMARY KEY (`id`)
+   ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='用户表';
+   ```
+
+5. 测试通过
+
+6. 关停：`docker-compose stop`
+
+   ![image-20221209220335178](07-docker.assets/image-20221209220335178.png)
 
 
 
+### 6 Docker轻量级可视化工具Portainer
+
+> 简介
+
+Portainer是一款轻量级的应用，它提供了图形化界面，用于方便地管理Docker环境，包括单机环境和集群环境。
+
+Portainer分为开源社区版（CE版）和商用版（BE版/EE版）。
+
+> 安装Portainer
+
+官网：
+
+- https://www.portainer.io/
+- https://docs.portainer.io/start/install/server/docker/linux
+
+步骤：
+
+1. 创建数据卷
+
+   ```bash
+   docker volume create portainer_data
+   
+   docker volume ls
+    
+   docker volume inspect portainer_data
+   ```
+
+   ![image-20221209230816199](07-docker.assets/image-20221209230816199.png)
+
+2. docker命令安装
+
+   ```bash
+   # 拉取镜像
+   docker pull portainer/portainer-ce
+   
+   # 运行容器
+   # --restart=always 如果Docker引擎重启了，那么这个容器实例也会在Docker引擎重启后重启，类似开机自启
+   docker run -d -p 8000:8000 -p 9000:9000 \
+   --name portainer --restart always --privileged=true \
+   -v /var/run/docker.sock:/var/run/docker.sock \
+   -v portainer_data:/data \
+   portainer/portainer-ce
+   ```
+
+   ![image-20221209235321532](07-docker.assets/image-20221209235321532.png)
+
+3. 第一次登录需创建admin，访问地址：`LinuxIP地址:9000`
+
+   ![image-20221209223007682](07-docker.assets/image-20221209223007682.png)
+
+4. 设置admin用户和密码后首次登陆
+
+   用户名默认admin，密码8位：12345678
+
+   ![image-20221209224150017](07-docker.assets/image-20221209224150017.png)
+
+5. 选择local选项卡后本地docker详细信息展示
+
+   ![image-20221210012459358](07-docker.assets/image-20221210012459358.png)
+
+6. 上一步的图形展示，能想得起对应命令吗？
+
+   `docker system df`
+
+   ![image-20221209225042179](07-docker.assets/image-20221209225042179.png)
+
+7. 安装Nginx
+
+   添加新的容器
+
+   ![image-20221210012741986](07-docker.assets/image-20221210012741986.png)
+
+   设置容器：名字，映射端口，镜像
+
+   ![image-20221210013037627](07-docker.assets/image-20221210013037627.png)
+
+   ![image-20221210013253090](07-docker.assets/image-20221210013253090.png)
+
+   ![image-20221210013419524](07-docker.assets/image-20221210013419524.png)
+
+   ![image-20221210013517509](07-docker.assets/image-20221210013517509.png)
 
 
 
+### 7 Docker容器监控之CAdvisor+InfluxDB+Granfana
+
+#### 7.1 Before
+
+原生命令
+
+- 操作
+
+  ```bash
+  docker stats
+  ```
+
+  ![image-20221210014929944](07-docker.assets/image-20221210014929944.png)
+
+- 问题
+
+  通过`docker stats`命令可以很方便的看到当前宿主机上所有容器的CPU，内存以及网络流量等数据，一般小公司够用了。。。。
+
+  但是，`docker stats`统计结果只能是当前宿主机的全部容器，数据资料是实时的，没有地方存储、没有健康指标过线预警等功能。
 
 
 
+#### 7.2 容器监控3剑客简介
+
+*CAdvisor*监控收集 + *InfluxDB*存储数据 + *Granfana*展示图表
+
+1. CAdvisor
+
+   CAdvisor是一个容器资源监控工具，包括容器的内存、CPU、网络IO、磁盘IO等监控，同时提供了一个Web页面用于查看容器的实时运行状态。
+
+   CAdvisor默认存储2分钟的数据，而且只是针对单物理机。不过CAdvisor提供了很多数据集成接口，支持InfluxDB、Redis、Kafka、Elasticsearch等集成，可以加上对应配置将监控数据发往这些数据库存储起来。
+
+   CAdvisor主要功能：
+
+   - 展示Host和容器两个层次的监控数据
+   - 展示历史变化数据
+
+2. InfluxDB
+
+   InfluxDB是用Go语言编写的一个开源分布式时序、事件和指标数据库，无需外部依赖。
+
+   CAdvisor默认只在本机保存2分钟的数据，为了持久化存储数据和统一收集展示监控数据，需要将数据存储到InfluxDB中。InfluxDB是一个时序数据库，专门用于存储时序相关数据，很适合存储CAdvisor的数据。而且CAdvisor本身已经提供了InfluxDB的集成方法，在启动容器时指定配置即可。
+
+   InfluxDB主要功能：
+
+   - 基于时间序列，支持与时间有关的相关函数（如最大、最小、求和等）
+   - 可度量性：可以实时对大量数据进行计算
+   - 基于事件：支持任意的事件数据
+
+3. Granfana
+
+   Grafana是一个开源的数据监控分析可视化平台，支持多种数据源配置（支持的数据源包括InfluxDB、MySQL、Elasticsearch、OpenTSDB、Graphite等）和丰富的插件及模板功能，支持图表权限控制和报警。
+
+   Granfana主要功能：
+
+   - 灵活丰富的图形化选项
+   - 可以混合多种风格
+   - 支持白天和夜间模式
+   - 多个数据源
+
+![image-20221210015600643](07-docker.assets/image-20221210015600643.png)
 
 
 
+#### 7.3 CIG安装部署
+
+compose容器编排，一套带走
+
+1. 新建目录：`mkdir /mydocker/cig`
+
+   ![image-20221210015831051](07-docker.assets/image-20221210015831051.png)
+
+2. 新建3件套组合的`docker-compose.yml`文件
+
+   ```yaml
+   version: '3.1'
+    
+   volumes:
+     grafana_data: {}
+    
+   services:
+    influxdb:
+     image: tutum/influxdb:0.9
+     restart: always
+     environment:
+       - PRE_CREATE_DB=cadvisor
+     ports:
+       - "8083:8083"
+       - "8086:8086"
+     volumes:
+       - ./data/influxdb:/data
+    
+    cadvisor:
+     image: google/cadvisor
+     links:
+       - influxdb:influxsrv
+     command: -storage_driver=influxdb -storage_driver_db=cadvisor -storage_driver_host=influxsrv:8086
+     restart: always
+     ports:
+       - "8080:8080"
+     volumes:
+       - /:/rootfs:ro
+       - /var/run:/var/run:rw
+       - /sys:/sys:ro
+       - /var/lib/docker/:/var/lib/docker:ro
+    
+    grafana:
+     user: "104"
+     image: grafana/grafana
+     user: "104"
+     restart: always
+     links:
+       - influxdb:influxsrv
+     ports:
+       - "3000:3000"
+     volumes:
+       - grafana_data:/var/lib/grafana
+     environment:
+       - HTTP_USER=admin
+       - HTTP_PASS=admin
+       - INFLUXDB_HOST=influxsrv
+       - INFLUXDB_PORT=8086
+       - INFLUXDB_NAME=cadvisor
+       - INFLUXDB_USER=root
+       - INFLUXDB_PASS=root
+   ```
+
+3. 启动docker-compose文件
+
+   ```bash
+   docker-compose up -d
+   ```
+
+   ![image-20221210020804409](07-docker.assets/image-20221210020804409.png)
+
+4. 查看三个服务容器是否启动
+
+   ![image-20221210020836499](07-docker.assets/image-20221210020836499.png)
 
 
 
+#### 7.4 测试
 
+1. 浏览cAdvisor*收集*服务，http://ip:8080/
 
+   第一次访问慢，请稍等。
 
+   cadvisor也有基础的图形展现功能，这里主要用它来作数据采集
+
+   ![image-20221210021344852](07-docker.assets/image-20221210021344852.png)
+
+2. 浏览influxdb*存储*服务，http://ip:8083/
+
+   ![image-20221210021451904](07-docker.assets/image-20221210021451904.png)
+
+3. 浏览grafana*展现*服务，http://ip:3000
+
+   ip+3000端口的方式访问,默认帐户密码（admin/admin）(新密码：12345678)
+
+   ![image-20221210021647339](07-docker.assets/image-20221210021647339.png)
+
+   > 配置步骤
+
+   - 配置数据源
+
+     ![image-20221210023704781](07-docker.assets/image-20221210023704781.png)
+
+   - 选择influxdb数据源
+
+     ![image-20221210023712768](07-docker.assets/image-20221210023712768.png)
+
+   - 配置细节
+
+     ![image-20221210023749609](07-docker.assets/image-20221210023749609.png)
+
+     ![image-20221210023802513](07-docker.assets/image-20221210023802513.png)
+
+     ![image-20221210023808442](07-docker.assets/image-20221210023808442.png)
+
+   - 配置面板panel
+
+     ![image-20221210023835546](07-docker.assets/image-20221210023835546.png)
+
+     ![image-20221210023844186](07-docker.assets/image-20221210023844186.png)
+
+     ![image-20221210023850277](07-docker.assets/image-20221210023850277.png)
+
+     ![image-20221210023859897](07-docker.assets/image-20221210023859897.png)
+
+     ![image-20221210023910584](07-docker.assets/image-20221210023910584.png)
+
+     ![image-20221210023919511](07-docker.assets/image-20221210023919511.png)
+
+4. 到这里cAdvisor+InfluxDB+Grafana容器监控系统就部署完成了
