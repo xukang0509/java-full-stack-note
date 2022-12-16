@@ -4436,7 +4436,7 @@ ES 默认安装后设置的内存是 1GB，对于任何一个现实业务来说�
 
 +++
 
-## 七、Elasticsearch 面试题
+## 七、Elasticsearch面试题
 
 ### 1 为什么要使用Elasticsearch?
 
@@ -4479,7 +4479,1973 @@ ES 默认安装后设置的内存是 1GB，对于任何一个现实业务来说�
 
 ### 4 Elasticsearch索引文档的流程？
 
-![img](08-Elasticsearch.assets/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBATG9nYW5Y,size_20,color_FFFFFF,t_70,g_se,x_16.png)
+![image-20221215110105350](08-Elasticsearch.assets/image-20221215110105350.png)
+
+- 协调节点默认使用文档 ID 参与计算（也支持通过 routing），以便为路由提供合适的分片：
+
+  `shard = hash(document_id) % (num_of_primary_shards)`
+
+- 当分片所在的节点接收到来自协调节点的请求后，会将请求写入到 Memory Buffer，然后定时（默认是每隔1秒）写入到 Filesystem Cache，这个从 Memory Buffer 到 Filesystem Cache 的过程就叫做 refresh；
+
+- 当然在某些情况下，存在 Momery Buffer 和 Filesystem Cache 的数据可能会丢失，ES 是通过 translog 的机制来保证数据的可靠性的。其实现机制是接收到请求后，同时也会写入到 translog 中，当 Filesystem cache 中的数据写入到磁盘中时，才会清除掉，这个过程叫做 flush；
+
+- 在 flush 过程中，内存中的缓冲将被清除，内容被写入一个新段，段的 fsync 将创建一个新的提交点，并将内容刷新到磁盘，旧的 translog 将被删除并开始一个新的 translog。
+
+- flush 触发的时机是定时触发（默认 30 分钟）或者 translog 变得太大（默认为 512M）时；
+
+
+
+### 5 Elasticsearch更新和删除文档的流程？
+
+- 删除和更新也都是写操作，但是 Elasticsearch 中的文档是不可变的，因此不能被删除或者改动以展示其变更；
+- 磁盘上的每个段都有一个相应的 .del 文件。当删除请求发送后，文档并没有真的被删除，而是在 .del 文件中被标记为删除。该文档依然能匹配查询，但是会在结果中被过滤掉。当段合并时，在 .del 文件中被标记为删除的文档将不会被写入新段。
+- 在新的文档被创建时，Elasticsearch 会为该文档指定一个版本号，当执行更新时，旧版本的文档在 .del 文件中被标记为删除，新版本的文档被索引到一个新段。旧版本的文档依然能匹配查询，但是会在结果中被过滤掉。
+
+
+
+### 6 Elasticsearch搜索的流程？
+
+![img](08-Elasticsearch.assets/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3NpeXVhbndhaQ==,size_16,color_FFFFFF,t_70.png)
+
+- 搜索被执行成一个两阶段过程，我们称之为 Query Then Fetch；
+- 在初始查询阶段时，查询会广播到索引中每一个分片拷贝（主分片或者副本分片）。每个分片在本地执行搜索并构建一个匹配文档的大小为 from + size 的优先队列。PS：在搜索的时候是会查询 Filesystem Cache 的，但是有部分数据还在 Memory Buffer，所以搜索是近实时的。
+- 每个分片返回各自优先队列中 所有文档的ID 和 排序值 给协调节点，它合并这些值到自己的优先队列中来产生一个全局排序后的结果列表。
+- 接下来就是取回阶段，协调节点辨别出哪些文档需要被取回并向相关的分片提交多个 GET 请求。每个分片加载并丰富文档，如果有需要的话，接着返回文档给协调节点。一旦所有的文档都被取回了，协调节点返回结果给客户端。
+- Query Then Fetch 的搜索类型在文档相关性打分的时候参考的是本分片的数据，这样在文档数量较少的时候可能不够准确，DFS Query Then Fetch 增加了一个预查询的处理，询问 Term 和 Document frequency，这个评分更准确，但是性能会变差。
+
+
+
+### 7 Elasticsearch在部署时，对Linux的设置有哪些优化方法？
+
+- 64GB 内存的机器是非常理想的，但是 32 GB 和 16 GB 机器也是很常见的。少于 8GB 会适得其反。
+- 如果你要在更快的 CPUs 和更多的核心之间选择，选择更多的核心更好。多个内核提供的额外并发远胜过稍微快一点点的时钟频率。
+- 如果你负担得起 SSD，它将远远超出任何旋转介质。基于 SSD 的节点，查询和索引性能都有提升。如果你负担得起，SSD 是一个好的选择。
+- 即使数据中心们近在咫尺，也要避免集群跨越多个数据中心。绝对要避免集群跨越大的地理距离。
+- 请确保运行你应用程序的 JVM 和服务器的 JVM 是完全一样的。在 Elasticsearch 的几个地方，使用 Java 的本地序列化。
+- 通过设置`gateway.recover_after_nodes`、`gateway.expected_nodes`、`gateway.recover_after_time`可以在集群重启的时候避免过多的分片交换，这可能会让数据恢复从数个小时缩短为几秒钟。
+- Elasticsearch 默认被配置为使用单播发现，以防止节点无意中加入集群。只有在同一台机器上运行的节点才会自动组成集群。最好使用单播代替组播。
+- 不要随意修改垃圾回收器（CMS）和各个线程池的大小。
+- 把你的内存的（少于）一半给 Lucene（但不要超过32GB！），通过`ES_HEAP_SIZE`环境变量设置。
+- 内存交换到磁盘对服务器性能来说是致命的。如果内存交换到磁盘上，一个 100 微秒的操作可能变成 10 毫秒。再想想那么多 10 微秒的操作时延累加起来。不难看出 swapping 对于性能是多么可怕。
+- Lucene 使用了大量的文件。同时，Elasticsearch 在节点和 HTTP 客户端之间进行通信也使用了大量的套接字。所有这一切都需要足够的文件描述符。你应该增加你的文件描述符，设置一个很大的值，如 64,000。
+
+补充：索引阶段性能提升方法
+
+- 使用批量请求并调整其大小：每次批量数据 5–15MB 大小是个不错的起始点。
+- 存储：使用 SSD
+- 段和合并：Elasticsearch 默认值是 20MB/s，对机械磁盘应该是个不错的设置。如果你用的是 SSD，可以考虑提高到 100–200MB/s。如果你在做批量导入，完全不在意搜索，你可以彻底关掉合并限流。另外还可以增加`index.translog.flush_threshold_size`设置，从默认的 512MB 到更大一些的值，比如 1GB，这可以在一次清空触发的时候在事务日志里积累出更大的段。
+- 如果你的搜索结果不需要近实时的准确度，考虑把每个索引的`index.refresh_interval`改到 30s。
+- 如果你在做大批量导入，考虑通过设置`index.number_of_replicas:0`关闭副本。
+
+
+
+### 8 GC方面，在使用Elasticsearch时要注意什么？
+
+- 倒排词典的索引需要常驻内存，无法 GC，需要监控 data node 上 segment memory 增长趋势。
+- 各类缓存，field cache, filter cache, indexing cache, bulk queue等等，要设置合理的大小，并且要应该根据最坏的情况来看 heap 是否够用，也就是各类缓存全部占满的时候，还有 heap 空间可以分配给其他任务吗？避免采用 clear cache 等“自欺欺人”的方式来释放内存。
+- 避免返回大量结果集的搜索与聚合。确实需要大量拉取数据的场景，可以采用 scan & scroll api 来实现。
+- cluster stats 驻留内存并无法水平扩展，超大规模集群可以考虑分拆成多个集群通过 tribe node 连接。
+- 想知道 heap 够不够，必须结合实际应用场景，并对集群的 heap 使用情况做持续的监控。
+
+
+
+### 9 Elasticsearch对于大数据量（上亿量级）的聚合如何实现？
+
+Elasticsearch 提供的首个近似聚合是 cardinality 度量。它提供一个字段的基数，即该字段的 distinct 或者 unique 值的数目。它是基于 HLL 算法的。HLL 会先对我们的输入作哈希运算，然后根据哈希运算的结果中的 bits 做概率估算从而得到基数。其特点是：可配置的精度，用来控制内存的使用（更精确 ＝ 更多内存）；小的数据集精度是非常高的；我们可以通过配置参数，来设置去重需要的固定内存使用量。无论数千还是数十亿的唯一值，内存使用量只与你配置的精确度相关。
+
+
+
+### 10 在并发情况下，Elasticsearch如果保证读写一致？
+
+- 可以通过版本号使用乐观并发控制，以确保新版本不会被旧版本覆盖，由应用层来处理具体的冲突；
+- 另外对于写操作，一致性级别支持 quorum/one/all，默认为 quorum，即只有当大多数分片可用时才允许写操作。但即使大多数可用，也可能存在因为网络等原因导致写入副本失败，这样该副本被认为故障，分片将会在一个不同的节点上重建。
+- 对于读操作，可以设置 replication 为 sync(默认)，这使得操作在主分片和副本分片都完成后才会返回；如果设置 replication 为 async 时，也可以通过设置搜索请求参数\_preference 为 primary 来查询主分片，确保文档是最新版本。
+
+
+
+### 11 如何监控Elasticsearch集群状态？
+
+- `elasticsearch-head`插件
+- 通过`Kibana`监控 Elasticsearch。你可以实时查看你的集群健康状态和性能，也可以分析过去的集群、索引和节点指标。
+
+
+
+### 12 是否了解字典树？
+
+- 常用字典数据结构如下所示：
+
+  | **数据结构**                  | **优缺点**                                                   |
+  | ----------------------------- | ------------------------------------------------------------ |
+  | 排序列表Array/List            | 使用二分法查找，不平衡                                       |
+  | HashMap/TreeMap               | 性能高，内存消耗大，几乎是原始数据的三倍                     |
+  | SkipList                      | 跳跃表，可快速查找词语，在Lucene、Redis、Hbase等均有实现，<br />相对于TreeMap等结构，特别适合高并发场景 |
+  | Trie                          | 适合英语词典，如果系统中存在大量字符串且这些字符串基本没有公共前缀，<br />则相对应的trie树将非常消耗内存 |
+  | Double Array Trie             | 适合做中文词典，内存占用小，很多分词工具均采用此种解法       |
+  | Ternary Search Tree           | 三叉树，每一个node有三个节点，兼具省空间和查询快的优点       |
+  | Finite State Transducers(FST) | 一种有限状态转移机，Lucene 4有开源实现，并大量使用           |
+
+  字典树又称单词查找树，Trie 树，是一种树形结构，是一种哈希树的变种。典型应用是用于统计，排序和保存大量的字符串（但不仅限于字符串），所以经常被搜索引擎系统用于文本词频统计。它的优点是：利用字符串的公共前缀来减少查询时间，最大限度地减少无谓的字符串比较，查询效率比哈希树高。
+
+- Trie 的核心思想是空间换时间，利用字符串的公共前缀来降低查询时间的开销以达到提高效率的目的。
+
+  它有 3 个基本性质：
+
+  1. 根节点不包含字符，除根节点外每一个节点都只包含一个字符。
+  2. 从根节点到某一节点，路径上经过的字符连接起来，为该节点对应的字符串。
+  3. 每个节点的所有子节点包含的字符都不相同。
+
+对于中文的字典树，每个节点的子节点用一个哈希表存储，这样就不用浪费太大的空间，而且查询速度上可以保留哈希的复杂度 O(1)。
+
+
+
+### 13 Elasticsearch中的集群、节点、索引、文档、类型是什么？
+
+- 集群是一个或多个节点（服务器）的集合，它们共同保存您的整个数据，并提供跨所有节点的联合索引和搜索功能。群集由唯一名称标识，默认情况下为“elasticsearch”。此名称很重要，因为如果节点设置为按名称加入群集，则该节点只能是群集的一部分。
+
+- 节点是属于集群一部分的单个服务器。它存储数据并参与群集索引和搜索功能。
+
+- 索引就像关系数据库中的“数据库”。它有一个定义多种类型的映射。索引是逻辑名称空间，映射到一个或多个主分片，并且可以有零个或多个副本分片。
+
+  MySQL => 数据库 
+
+  Elasticsearch => 索引
+
+- 文档类似于关系数据库中的一行。不同之处在于索引中的每个文档可以具有不同的结构（字段），但是对于通用字段应该具有相同的数据类型。 
+
+  MySQL => Databases => Tables => Columns / Rows 
+
+  Elasticsearch => Indices => Types =>具有属性的文档
+
+- 类型是索引的逻辑类别/分区，其语义完全取决于用户。
+
+
+
+### 14 Elasticsearch中的倒排索引是什么？
+
+倒排索引是搜索引擎的核心。搜索引擎的主要目标是在查找发生搜索条件的文档时提供快速搜索。ES 中的倒排索引其实就是 lucene 的倒排索引，区别于传统的正向索引，倒排索引会再存储数据时将关键词和数据进行关联，保存到倒排表中，然后查询时，将查询内容进行分词后在倒排表中进行查询，最后匹配数据即可。
+
++++
+
++++
+
+# Elasticsearch-8.x
+
++++
+
+## 一、Elasticsearch 8.X概述
+
+### 1 Elasticsearch 8.X来了
+
+距2019年 Elasticsearch 上一大版本 7.0 发布至今已经过去了 3 年。这 3 年中，由于疫情等众所周知的原因，程序员对很多软件技术的更新和迭代其实并不会抱有太多的期待和幻想。不过，2022年2月11日，Elasticsearch 发布了全新的 8.0 正式版本，这着实给了我们不小的惊喜！新版本中通过改进 Elasticsearch 的矢量搜索功能、对现代自然语言处理模型的原生支持、不断简化的数据上线过程，以及精简的安全防护体验，在速度、扩展幅度、相关性和简便性方面，让搜索引擎技术迎来了一个全新的时代。
+
+
+
+### 2 Elasticsearch 8.x新特性
+
+从2019年4月10日 Elasticsearch7.0 版本的发布，到2022年2月11日 Elasticsearch8.0
+版本的发布的近3年间，基于不断优化的开发设计理念，Elasticsearch 发布了一系列的小版本。这些小版本在以下方面取得了长足的进步并同时引入一些全新的功能：
+
+- 减少内存堆使用，完全支持 ARM 架构，引入全新的方式以使用更少的存储空间，从而让每个节点托管更多的数据
+- 降低查询开销，在大规模部署中成效尤为明显
+- 提高日期直方图和搜索聚合的速度，增强了页面缓存的性能，并创建了一个新的“pre-filter”搜索短语
+- 在 Elasticsearch 7.3 和 Elasticsearch 7.4 版中，引入了对矢量相似函数的支持，在最新发布的 8.0 版本中，也同样增加和完善了很多新的功能
+- 增加对自然语言处理 (NLP) 模型的原生支持，让矢量搜索功能更容易实现，让客户和员工能够使用他们自己的文字和语言来搜索并收到高度相关的结果。
+- 直接在 Elasticsearch 中执行命名实体识别、情感分析、文本分类等，而无需使用额外的组件或进行编码。
+- Elasticsearch 8.0 基于 Lucene 9.0 开发的，那些利用现代 NLP 的搜索体验，都可以借助（新增的）对近似最近邻搜索的原生支持，快速且大规模地实现。通过 ANN，可以快速并高效地将基于矢量的查询与基于矢量的文档语料库（无论是小语料库、大语料库还是巨型语料库）进行比较。
+- 可以直接在 Elasticsearch 中使用 PyTorch Machine Learning 模型（如 BERT），并在 Elasticsearch 中原生使用这些模型执行推理。
+
+
+
+### 3 Elasticsearch课程升级
+
+之前课程中的 Elasticsearch 软件是基于 7.8 版本进行讲解的，既然 Elasticsearch 升级到了 8.X 版本，我们也要与时俱进，不断更新课件，拥抱最新版本。
+
+虽然之前的课程内容是基于 7.8 版本，但其实讲解时主要还是侧重于入门级基础内容，这一次我们不仅仅要将 8.X 新版本的特性介绍给大家，同时课程中还会融合一些新的 7.X 版本特性的内容。
+
++++
+
+## 二、Elasticsearch安装&使用
+
+### 1 Java17安装
+
+![image-20221215125243596](08-Elasticsearch.assets/image-20221215125243596.png)
+
+从官网截图上可以看到，Elasticsearch最新版本也终于开始拥抱号称史上最快的JDK了。所以在安装 ES 软件前，需要下载使用Java JDK17。
+
+
+
+#### 1.1 下载软件
+
+Java 的官方地址：https://www.oracle.com/java
+
+Java 最新的版本是 18.0.1.1（截止 2022.6.15），我们选择 17.0.5 版本
+
+下载地址：https://www.oracle.com/java/technologies/downloads
+
+![image-20221215125437622](08-Elasticsearch.assets/image-20221215125437622.png)
+
+
+
+#### 1.2 软件升级
+
+对于 Java 开发人员来讲，更熟悉的开发版本应该是 JDK1.8，突然需要升级到 JDK17，其实本身会感觉有点不适应，甚至会有点排斥。担心升级后会对现有的程序代码造成影响。其实，对于 JDK1.8，最新版本的 JDK17 增加了很多的语法特性。
+
+对于大多数项目而言，想要利用这些新的特性，是需要修改代码的，但性能除外。也就是说，升级 JDK 版本，现有代码即使不进行修改，也不会出现兼容问题，但性能会得到极大的提升，并且高吞吐量垃圾回收器比低延迟垃圾回收器更快，更重要的是它可以免费商用。
+
+对于升级版本而言，如果你依然有顾虑，一个好的消息就是我们可以下载含有适配 JDK
+的 ES 版本，上面提到的内容基本上就不用考虑，一切就是这么顺滑，对吗？
+
+
+
+### 2 Elasticsearch安装&使用
+
+#### 2.1 下载软件
+
+Elasticsearch 的官方地址：https://www.elastic.co/cn/
+
+Elasticsearch 最新的版本是 8.5.3（截止 2022.12.15），我们选择略早的 8.1.0 版本
+
+下载地址：https://www.elastic.co/cn/downloads/past-releases#elasticsearch
+
+![image-20221215125922307](08-Elasticsearch.assets/image-20221215125922307.png)
+
+
+
+#### 2.2 安装软件
+
+本课程着重讲解新版 ES 软件的特性及应用，所以采用 linux 集群配置。
+
+1. 集群规划
+
+   为了演示软件的使用，我们这里准备三台 linux 虚拟机，用于配置 Elasticsearch 集群。
+
+   启动集群后，每台虚拟机的进程如下：
+
+   | 主机名 | linux-copy1                | linux-copy2                | linux-copy3                |
+   | ------ | -------------------------- | -------------------------- | -------------------------- |
+   | 进程名 | Elasticsearch(*es-node-1*) | Elasticsearch(*es-node-2*) | Elasticsearch(*es-node-3*) |
+
+   Linux系统环境配置请参考之前课程内容。这里我们给三台虚拟机搭建 ES 集群，集群中 —— 节点名称依次为：
+
+   *es-node-1*，*es-node-2*，*es-node-3*
+
+2. 将压缩包`elasticsearch-8.1.0-linux-x86_64.tar.gz`上传到虚拟机中
+
+   ![image-20221215130849265](08-Elasticsearch.assets/image-20221215130849265.png)
+
+   解压缩文件到自定义路径，解压路径为：/opt/module，解压后，软件路径为：
+
+   /opt/module/elasticsearch-8.1.0
+
+   ```bash
+   # 切换目录
+   cd /opt/software/
+   # 解压缩
+   tar -zxvf elasticsearch-8.1.0-linux-x86_64.tar.gz -C /opt/module
+   ```
+
+   解压后的 Elasticsearch 的目录结构如下
+
+   ![image-20221215131107039](08-Elasticsearch.assets/image-20221215131107039.png)
+
+   | **目录** | **含义**       |
+   | -------- | -------------- |
+   | bin      | 可执行脚本目录 |
+   | config   | 配置目录       |
+   | jdk      | 内置 JDK 目录  |
+   | lib      | 类库           |
+   | logs     | 日志目录       |
+   | modules  | 模块目录       |
+   | plugins  | 插件目录       |
+
+3. 当前安装 ES 版本为 8.1.0，自带 JDK，所以当前 Linux 虚拟机节点无需配置 Java 环境
+
+4. **创建linux新用户es**、**数据文件**、**证书目录**, 并**修改 Elasticsearch 文件拥有者**。
+
+   ```bash
+   # 新增 es 用户
+   useradd es
+   # 为 es 用户设置密码
+   passwd es
+   
+   # 创建数据文件目录
+   mkdir /opt/module/elasticsearch-8.1.0/data
+   # 创建证书目录
+   mkdir /opt/module/elasticsearch-8.1.0/config/certs
+   #切换目录
+   cd /opt/module/elasticsearch-8.1.0
+   
+   # 修改文件拥有者
+   chown -R es:es /opt/module/elasticsearch-8.1.0
+   ```
+
+5. 在第一台服务器节点 es-node-1 设置集群多节点通信密钥
+
+   ```bash
+   # 切换用户
+   su es
+   
+   # 签发 ca 证书，过程中需按两次回车键
+   bin/elasticsearch-certutil ca
+   
+   # 用 ca 证书签发节点证书，过程中需按三次回车键
+   bin/elasticsearch-certutil cert --ca elastic-stack-ca.p12
+   
+   # 将生成的证书文件移动到 config/certs 目录中
+   mv elastic-stack-ca.p12 elastic-certificates.p12 config/certs
+   ```
+
+6. 在第一台服务器节点 es-node-1 设置集群多节点 HTTP 证书
+
+   ```bash
+   # 签发 Https 证书
+   bin/elasticsearch-certutil http
+   
+   # 以下是每次要求输入时，需要输入的内容
+   ```
+
+   ![image-20221215132023458](08-Elasticsearch.assets/image-20221215132023458.png)
+
+   ![image-20221215132025534](08-Elasticsearch.assets/image-20221215132025534.png)
+
+   指定证书路径
+
+   ![image-20221215132232866](08-Elasticsearch.assets/image-20221215132232866.png)
+
+   无需输入密码
+
+   ![image-20221215132256940](08-Elasticsearch.assets/image-20221215132256940.png)
+
+   设置证书失效时间
+
+   ![image-20221215132327348](08-Elasticsearch.assets/image-20221215132327348.png)
+   
+
+   无需每个节点配置证书
+
+   ![image-20221215132354098](08-Elasticsearch.assets/image-20221215132354098.png)
+
+   输出连接到第一个节点的所有主机名称
+
+   ![image-20221215132456148](08-Elasticsearch.assets/image-20221215132456148.png)
+
+   输出连接到第一个节点的所有主机 IP 地址
+
+   ![image-20221215132633626](08-Elasticsearch.assets/image-20221215132633626.png)
+
+   不改变证书选项配置
+
+   ![image-20221215132712286](08-Elasticsearch.assets/image-20221215132712286.png)
+
+   不给证书加密，按键输入两次回车
+
+   
+
+   解压刚刚生成的 zip 包
+
+   ```bash
+   # 解压文件
+   unzip elasticsearch-ssl-http.zip
+   ```
+
+   将解压后的证书文件移动到 config/certs 目录中
+
+   ```bash
+   # 移动文件
+   mv elasticsearch/http.p12 kibana/elasticsearch-ca.pem config/certs
+   ```
+
+   ![image-20221215133145028](08-Elasticsearch.assets/image-20221215133145028.png)
+
+7. 修改主配置文件：config/elasticsearch.yml
+
+   ```yaml
+   # 设置 ES 集群名称
+   cluster.name: es-cluster 
+   # 设置集群中当前节点名称
+   node.name: es-node-1
+   # 设置数据，日志文件路径
+   path.data: /opt/module/elasticsearch-8.1.0/data
+   path.logs: /opt/module/elasticsearch-8.1.0/logs
+   # 设置网络访问节点
+   network.host: linux-copy1
+   # 设置网络访问端口
+   http.port: 9201
+   # 初始节点
+   discovery.seed_hosts: ["linux-copy1"]
+   # 安全认证
+   xpack.security.enabled: true
+   xpack.security.enrollment.enabled: true
+   xpack.security.http.ssl:
+    enabled: true
+    keystore.path: /opt/module/elasticsearch-8.1.0/config/certs/http.p12
+    truststore.path: /opt/module/elasticsearch-8.1.0/config/certs/http.p12
+   xpack.security.transport.ssl:
+    enabled: true
+    verification_mode: certificate
+    keystore.path: /opt/module/elasticsearch-8.1.0/config/certs/elastic-certificates.p12
+    truststore.path: /opt/module/elasticsearch-8.1.0/config/certs/elastic-certificates.p12
+   # 此处需注意，es-node-1 为上面配置的节点名称
+   cluster.initial_master_nodes: ["es-node-1"]
+   http.host: [_local_, _site_]
+   ingest.geoip.downloader.enabled: false
+   xpack.security.http.ssl.client_authentication: none
+   ```
+
+8. 启动 ES 软件
+
+   ```bash
+   # 启动 ES 软件
+   bin/elasticsearch
+   ```
+
+   第一次成功启动后，会显示密码，请记住，访问时需要。只有第一次才有哟！
+
+    ```
+    ✅ Elasticsearch security features have been automatically configured!
+    ✅ Authentication is enabled and cluster connections are encrypted.
+    
+    ℹ️  Password for the elastic user (reset with `bin/elasticsearch-reset-password -u elastic`):
+      L*xoT_4L9mJrOmc*Zhp=
+    
+    
+    
+    ❌ Unable to generate an enrollment token for Kibana instances, try invoking `bin/elasticsearch-create-enrollment-token -s kibana`.
+    
+    ❌ An enrollment token to enroll new nodes wasn't generated. To add nodes and enroll them into this cluster:
+    • On this node:
+      ⁃ Create an enrollment token with `bin/elasticsearch-create-enrollment-token -s node`.
+      ⁃ Restart Elasticsearch.
+    • On other nodes:
+      ⁃ Start Elasticsearch with `bin/elasticsearch --enrollment-token <token>`, using the enrollment token that you generated.
+    ```
+
+   上面图形内容因为涉及到多节点集群配置以及 kibana 配置，所以极其重要！！！
+
+   注意：9300 端口为 Elasticsearch 集群间组件的通信端口，9200 端口为浏览器访问的 http 协议 RESTful 端口。
+
+9. 访问服务器节点 https://虚拟机地址:9200
+
+   https://linux-copy1:9201
+
+   因为配置了安全协议，所以使用 https 协议进行访问，但由于证书是自己生成的，并不可靠，所以会有安全提示
+
+   ![image-20221215134411605](08-Elasticsearch.assets/image-20221215134411605.png)
+
+   选择继续即可
+
+   ![image-20221215134459589](08-Elasticsearch.assets/image-20221215134459589.png)
+
+   输入账号，密码登录即可
+
+   ![image-20221215134525019](08-Elasticsearch.assets/image-20221215134525019.png)
+
+10. 修改集群中其他节点的配置文件：config/elasticsearch.yml
+
+    linux-copy2: 证书直接拷贝，其他步骤完全相同，配置文件中修改如下内容即可
+
+    ```yaml
+    # 设置节点名称
+    node.name: es-node-2
+    # 设置网络访问主机
+    network.host: linux-copy2
+    ```
+
+    linux-copy3：证书直接拷贝，其他步骤完全相同，配置文件中修改如下内容即可
+
+    ```yaml
+    # 设置节点名称
+    node.name: es-node-3
+    # 设置网络访问主机
+    network.host: linux-copy3
+    ```
+
+11. 依次启动集群的三台服务器节点，不要忘记切换用户后再启动
+
+    linux-copy1：`bin/elasticsearch -d`
+
+    linux-copy2：`bin/elasticsearch -d`
+
+    linux-copy2：`bin/elasticsearch -d`
+
+    ![image-20221215140218288](08-Elasticsearch.assets/image-20221215140218288.png)
+
+
+
+#### 2.3 问题解决
+
+- Elasticsearch 是使用 java 开发的，8.1 版本的 ES 需要 JDK17 及以上版本。默认安装包中带有 JDK 环境，如果**系统配置 ES_JAVA_HOME 环境变量，那么会采用系统配置的 JDK**。如果没有配置该环境变量，ES 会使用自带捆绑的 JDK。虽然自带的 JDK 是 ES 软件推荐的 Java 版本，但一般建议使用系统配置的 JDK。
+
+- Windows 环境中出现下面的错误信息，是因为开启了 SSL 认证：
+
+  ![image-20221215140415592](08-Elasticsearch.assets/image-20221215140415592.png)
+
+  修改 config/elasticsearch.yml 文件，将 enabled 的值修改为 false
+
+  ```yaml
+  # Enable encryption for HTTP API client connections, such as Kibana, Logstash, and Agents
+  xpack.security.http.ssl: 
+  	enabled: false
+  	keystore.path: certs/http.p12
+  ```
+
+- 启动成功后，如果访问 localhost:9200 地址后，弹出登录窗口
+
+  第一次启动时，因为开启了密码验证模式，在启动窗口中会显示输入账号和密码。
+
+  如果没有注意到或没有找到账号密码，可以设置免密登录：
+
+  ```yaml
+  # Enable security features
+  xpack.security.enabled: false
+  ```
+
+- 双击启动窗口闪退，通过路径访问追踪错误，如果是“空间不足”，请修改 config/jvm.options 配置文件
+
+  ```bash
+  # 设置 JVM 初始内存为 1G。此值可以设置与-Xmx 相同，以避免每次垃圾回收完成后 JVM 重新分配内存
+  # Xms represents the initial size of total heap space
+  # 设置 JVM 最大可用内存为 1G
+  # Xmx represents the maximum size of total heap space
+  -Xms4g
+  -Xmx4g
+  ```
+
+- 启动后，如果密码忘记了，怎么办？可以采用指令重置密码
+
+  ```bash
+  # 使用 es 用户，执行指令，重置 elastic 用户密码
+  bin/elasticsearch-reset-password -u elastic
+  ```
+
+  ![image-20221215140658908](08-Elasticsearch.assets/image-20221215140658908.png)
+
+
+
+### 3 Kibana安装&使用
+
+Elasticsearch 的开源分析可视化工具，与存储在 Elasticsearch 中的数据进行交互
+
+![image-20221215141751536](08-Elasticsearch.assets/image-20221215141751536.png)
+
+#### 3.1 下载软件
+
+Elasticsearch 下载的版本是 8.1.0，这里我们选择同样的 8.1.0 版本
+
+下载地址：https://www.elastic.co/cn/downloads/past-releases#kibana
+
+![image-20221215141912531](08-Elasticsearch.assets/image-20221215141912531.png)
+
+
+
+#### 3.2 安装软件
+
+本课程着重讲解新版 ES 软件的特性及应用，所以对应的 Kibana 也采用 linux 集群配置。
+
+1. 将压缩包 kibana-8.1.0-linux-x86_64.tar.gz 上传到虚拟机中
+
+   ![image-20221215142113827](08-Elasticsearch.assets/image-20221215142113827.png)
+
+   解压缩文件到自定义路径，解压路径为：/opt/module，解压后，软件路径为：
+
+   /opt/module/kibana-8.1.0
+
+   ```bash
+   # 切换目录
+   cd /opt/software/
+   # 解压缩
+   tar -zxvf kibana-8.1.0-linux-x86_64.tar.gz -C /opt/module/
+   ```
+
+   解压后的 kibana 的目录结构如下：
+
+   ![image-20221215142521655](08-Elasticsearch.assets/image-20221215142521655.png)
+
+2. 给 Kibana 生成证书文件
+
+   ```bash
+   # 在 ES 服务器中生成证书，输入回车即可
+   cd /opt/module/elasticsearch-8.1.0
+   bin/elasticsearch-certutil csr -name kibana -dns linux-copy1
+   
+   # 解压文件
+   unzip csr-bundle.zip
+   
+   # 将解压后的文件移动到 kibana 的 config 目录中
+   cd /opt/module/elasticsearch-8.1.0/kibanavim
+   mv kibana.csr kibana.key /opt/module/kibana-8.1.0/config/
+   
+   # 生成 crt 文件
+   cd /opt/module/kibana-8.1.0/config
+   openssl x509 -req -in kibana.csr -signkey kibana.key -out kibana.crt
+   ```
+
+3. 修改配置文件：kibana.yml
+
+   ```yaml
+   # 服务端口
+   server.port: 5601
+   # 服务主机名
+   server.host: "linux-copy1"
+   # 国际化 - 中文
+   i18n.locale: "zh-CN"
+   
+   # ES 服务主机地址
+   elasticsearch.hosts: ["https://linux-copy1:9201"]
+   # 访问 ES 服务的账号密码
+   elasticsearch.username: "kibana"
+   elasticsearch.password: "L*xoT_4L9mJrOmc*Zhp="
+   
+   elasticsearch.ssl.verificationMode: none
+   elasticsearch.ssl.certificateAuthorities: [ "/opt/module/elasticsearch-8.1.0/config/certs/elasticsearch-ca.pem" ]
+   
+   server.ssl.enabled: true
+   server.ssl.certificate: /opt/module/kibana-8.1.0/config/kibana.crt
+   server.ssl.key: /opt/module/kibana-8.1.0/config/kibana.key
+   ```
+
+   > 注：如果忘记了 kibana 用户的密码，可采用指令重排密码：
+   >
+   > `bin/elasticsearch-reset-password -u kibana`
+
+4. 修改软件目录拥有者
+
+   ```bash
+   # 修改软件目录拥有者
+   chown -R es:es /opt/module/kibana-8.1.0/
+   ```
+
+5. 切换用户，启动软件
+
+   ```bash
+   # 切换用户
+   su es
+   
+   # 启动软件
+   bin/kibana
+   
+   # 也可以后台启动
+   nohup /opt/module/kibana-8.1.0/bin/kibana >kibana.log 2>&1 &
+   ```
+
+6. 打开浏览器，输入访问地址：https://linux-copy1:5601
+
+   ![image-20221215145005151](08-Elasticsearch.assets/image-20221215145005151.png)
+
+   ![image-20221215151738973](08-Elasticsearch.assets/image-20221215151738973.png)
+
+   输入 elastic 账号和密码即可访问
+
+   ![image-20221215151823468](08-Elasticsearch.assets/image-20221215151823468.png)
+
+   ![image-20221215151923799](08-Elasticsearch.assets/image-20221215151923799.png)
+
+   ![image-20221215152039117](08-Elasticsearch.assets/image-20221215152039117.png)
+
+   ![image-20221215152236911](08-Elasticsearch.assets/image-20221215152236911.png)
+
++++
+
+## 三、Elasticsearch基础功能
+
+在之前7.X的课程视频中，已经给大家讲解了 Elasticsearch 软件的基础功能，这里咱们以 8.X 版本为基础通过 Kibana 软件给大家演示基本操作。
+
+
+
+### 1 索引操作
+
+#### 1.1 创建索引
+
+ES 软件的索引可以类比为 MySQL 中表的概念，创建一个索引，类似于创建一个表。查询完成后，Kibana 右侧会返回响应结果及请求状态
+
+![image-20221215172726229](08-Elasticsearch.assets/image-20221215172726229.png)
+
+重复创建索引时，Kibana 右侧会返回响应结果，其中包含错误信息。
+
+![image-20221215172814277](08-Elasticsearch.assets/image-20221215172814277.png)
+
+
+
+#### 1.2 查询指定索引
+
+根据索引名称查询指定索引，如果查询到，会返回索引的详细信息
+
+![image-20221215172947290](08-Elasticsearch.assets/image-20221215172947290.png)
+
+如果查询的索引未存在，会返回错误信息
+
+![image-20221215173108572](08-Elasticsearch.assets/image-20221215173108572.png)
+
+
+
+#### 1.3 查询所有索引
+
+为了方便，可以查询当前所有索引数据。这里请求路径中的 `_cat` 表示查看的意思，`indices` 表示索引，所以整体含义就是查看当前 ES 服务器中的所有索引，就好像 MySQL 中的 `show tables` 的感觉
+
+![image-20221215173400126](08-Elasticsearch.assets/image-20221215173400126.png)
+
+这里的查询结果表示索引的状态信息，按顺序数据表示结果如下：
+
+| **表头**       | **含义**                                                     |
+| -------------- | ------------------------------------------------------------ |
+| health         | 当前服务器健康状态：<br /><font color='gree'>green</font>(集群完整) <font color="yellow">yellow</font>(单点正常、集群不完整) <font color="red">red</font>(单点不正常) |
+| status         | 索引打开、关闭状态                                           |
+| index          | 索引名                                                       |
+| uuid           | 索引统一编号                                                 |
+| pri            | 主分片数量                                                   |
+| rep            | 副本数量                                                     |
+| docs.count     | 可用文档数量                                                 |
+| docs.deleted   | 文档删除状态（逻辑删除）                                     |
+| store.size     | 主分片和副分片整体占空间大小                                 |
+| pri.store.size | 主分片占空间大小                                             |
+
+
+
+#### 1.4 删除索引
+
+删除指定已存在的索引
+
+![image-20221215173731406](08-Elasticsearch.assets/image-20221215173731406.png)
+
+如果删除一个不存在的索引，那么会返回错误信息
+
+![image-20221215173851505](08-Elasticsearch.assets/image-20221215173851505.png)
+
+
+
+### 2 文档操作
+
+文档是 ES 软件搜索数据的最小单位, 不依赖预先定义的模式，所以可以将文档类比为表的一行JSON类型的数据。我们知道关系型数据库中，要提前定义字段才能使用，在Elasticsearch中，对于字段是非常灵活的，有时候，我们可以忽略该字段，或者动态的添加一个新的字段。
+
+
+
+#### 2.1 创建文档
+
+索引已经创建好了，接下来我们来创建文档，并添加数据。这里的文档可以类比为关系型数据库中的表数据，添加的数据格式为 JSON 格式。
+
+![image-20221215174342095](08-Elasticsearch.assets/image-20221215174342095.png)
+
+此处因为没有指定数据唯一性标识，所以无法使用 PUT 请求，只能使用 POST 请求，且对数据会生成随机的唯一性标识。否则会返回错误信息
+
+![image-20221215174457018](08-Elasticsearch.assets/image-20221215174457018.png)
+
+如果在创建数据时，指定唯一性标识，那么请求范式 POST，PUT 都可以
+
+![image-20221215174617126](08-Elasticsearch.assets/image-20221215174617126.png)
+
+![image-20221215174706026](08-Elasticsearch.assets/image-20221215174706026.png)
+
+
+
+#### 2.2 查询文档
+
+根据唯一性标识可以查询对应的文档
+
+![image-20221215174900854](08-Elasticsearch.assets/image-20221215174900854.png)
+
+
+
+#### 2.3 修改文档
+
+修改文档本质上和新增文档是一样的，如果存在就修改，如果不存在就新增
+
+![image-20221215175150498](08-Elasticsearch.assets/image-20221215175150498.png)
+
+
+
+#### 2.4 删除文档
+
+删除一个文档不会立即从磁盘上移除，它只是被标记成已删除（逻辑删除）。
+
+![image-20221215175307216](08-Elasticsearch.assets/image-20221215175307216.png)
+
+
+
+#### 2.5 查询所有文档
+
+![image-20221215175458100](08-Elasticsearch.assets/image-20221215175458100.png)
+
+
+
+### 3 数据搜索
+
+为了方便演示，事先准备多条数据
+
+![image-20221215181115094](08-Elasticsearch.assets/image-20221215181115094.png)
+
+
+
+#### 3.1 查询所有文档
+
+![image-20221215181252624](08-Elasticsearch.assets/image-20221215181252624.png)
+
+
+
+#### 3.2 匹配查询文档
+
+这里的查询表示文档数据中 JSON 对象数据中的 name 属性是 zhangsan。
+
+![image-20221215181513544](08-Elasticsearch.assets/image-20221215181513544.png)
+
+
+
+#### 3.3 匹配查询字段
+
+默认情况下，Elasticsearch 在搜索的结果中，会把文档中保存在 \_source 的所有字段都返回。
+
+如果我们只想获取其中的部分字段，我们可以添加 \_source 的过滤
+
+![image-20221215181816370](08-Elasticsearch.assets/image-20221215181816370.png)
+
+
+
+### 4 聚合搜索
+
+聚合允许使用者对 es 文档进行统计分析，类似与关系型数据库中的 group by，当然还有很多其他的聚合，例如取最大值、平均值等等。
+
+
+
+#### 4.1 平均值
+
+![image-20221215182627892](08-Elasticsearch.assets/image-20221215182627892.png)
+
+
+
+#### 4.2 求和
+
+![image-20221215182757372](08-Elasticsearch.assets/image-20221215182757372.png)
+
+
+
+#### 4.3 最大值
+
+![image-20221215182904575](08-Elasticsearch.assets/image-20221215182904575.png)
+
+
+
+#### 4.4 TopN
+
+![image-20221215183505672](08-Elasticsearch.assets/image-20221215183505672.png)
+
+
+
+### 5 索引模板
+
+我们之前对索引进行一些配置信息设置，但是都是在单个索引上进行设置。在实际开发中，我们可能需要创建不止一个索引，但是每个索引或多或少都有一些共性。比如我们在设计关系型数据库时，一般都会为每个表结构设计一些常用的字段，比如：创建时间，更新时间，备注信息等。elasticsearch 在创建索引的时候，就引入了模板的概念，你可以先设置一些通用的模板，在创建索引的时候，elasticsearch 会先根据你创建的模板对索引进行设置。elasticsearch 中提供了很多的默认设置模板，这就是为什么我们在新建文档的时候，可以为你自动设置一些信息，做一些字段转换等。
+
+索引可使用预定义的模板进行创建，这个模板称作 Index templates。模板设置包括 settings
+和 mappings
+
+
+
+#### 5.1 创建模板
+
+```json
+# 模板名称小写
+PUT _template/mytemplate
+{
+    "index_patterns" : ["my*"],
+    "settings" : {
+        "index" : {
+            "number_of_shards" : "1"
+        }
+    },
+    "mappings" : {
+        "properties" : {
+            "now": {
+                "type" : "date",
+                "format" : "yyyy/MM/dd"
+            }
+        }
+    }
+}
+```
+
+![image-20221215184009270](08-Elasticsearch.assets/image-20221215184009270.png)
+
+
+
+#### 5.2 查看模板
+
+```
+GET /_template/mytemplate
+```
+
+![image-20221215184136215](08-Elasticsearch.assets/image-20221215184136215.png)
+
+
+
+#### 5.3 验证模板是否存在
+
+```
+HEAD /_template/mytemplate
+```
+
+![image-20221215184256542](08-Elasticsearch.assets/image-20221215184256542.png)
+
+
+
+#### 5.4 创建索引
+
+```bash
+#
+PUT testindex
+
+# 
+PUT mytest
+```
+
+![image-20221215184531088](08-Elasticsearch.assets/image-20221215184531088.png)
+
+![image-20221215184630461](08-Elasticsearch.assets/image-20221215184630461.png)
+
+
+
+#### 5.5 删除模板
+
+```
+DELETE /_template/mytemplate
+```
+
+![image-20221215184736125](08-Elasticsearch.assets/image-20221215184736125.png)
+
+
+
+### 6 中文分词
+
+我们在使用 Elasticsearch 官方默认的分词插件时会发现，其对中文的分词效果不佳，经常分词后得效果不是我们想要的。
+
+![image-20221215184953311](08-Elasticsearch.assets/image-20221215184953311.png)
+
+```json
+{
+  "tokens" : [
+    {
+      "token" : "我",
+      "start_offset" : 0,
+      "end_offset" : 1,
+      "type" : "<IDEOGRAPHIC>",
+      "position" : 0
+    },
+    {
+      "token" : "是",
+      "start_offset" : 1,
+      "end_offset" : 2,
+      "type" : "<IDEOGRAPHIC>",
+      "position" : 1
+    },
+    {
+      "token" : "一",
+      "start_offset" : 2,
+      "end_offset" : 3,
+      "type" : "<IDEOGRAPHIC>",
+      "position" : 2
+    },
+    {
+      "token" : "个",
+      "start_offset" : 3,
+      "end_offset" : 4,
+      "type" : "<IDEOGRAPHIC>",
+      "position" : 3
+    },
+    {
+      "token" : "三",
+      "start_offset" : 4,
+      "end_offset" : 5,
+      "type" : "<IDEOGRAPHIC>",
+      "position" : 4
+    },
+    {
+      "token" : "好",
+      "start_offset" : 5,
+      "end_offset" : 6,
+      "type" : "<IDEOGRAPHIC>",
+      "position" : 5
+    },
+    {
+      "token" : "学",
+      "start_offset" : 6,
+      "end_offset" : 7,
+      "type" : "<IDEOGRAPHIC>",
+      "position" : 6
+    },
+    {
+      "token" : "生",
+      "start_offset" : 7,
+      "end_offset" : 8,
+      "type" : "<IDEOGRAPHIC>",
+      "position" : 7
+    }
+  ]
+}
+```
+
+为了能够更好地对中文进行搜索和查询，就需要在Elasticsearch中集成好的分词器插件，而 IK 分词器就是用于对中文提供支持得插件。
+
+
+
+#### 6.1 集成IK分词器
+
+##### 6.1.1 下载
+
+下载地址：https://github.com/medcl/elasticsearch-analysis-ik/releases
+
+注意：选择下载的版本要与 Elasticsearch 版本对应。我们这里选择 8.1.0
+
+![image-20221215185228393](08-Elasticsearch.assets/image-20221215185228393.png)
+
+
+
+##### 6.1.2 安装
+
+在安装目录得 plugins 目中，将下载得压缩包直接解压缩得里面即可
+
+![image-20221215185721994](08-Elasticsearch.assets/image-20221215185721994.png)
+
+重启 Elasticsearch 服务
+
+> 注：记得修改文件拥有者
+
+
+
+#### 6.2 使用IK分词器
+
+IK 分词器提供了两个分词算法：
+
+1. ik_smart：最少切分
+2. ik_max_word：最细粒度划分
+
+接下来咱们使用 ik_smart 算法对之前得中文内容进行分词，明显会发现和默认分词器得区别。
+
+```json
+GET _analyze
+{
+    "analyzer": "ik_smart",
+    "text": ["我是一个三好学生"]
+}
+```
+
+![image-20221215190101841](08-Elasticsearch.assets/image-20221215190101841.png)
+
+
+
+接下来，再对比 ik_max_word 算法分词后的效果
+
+```json
+GET _analyze
+{
+    "analyzer": "ik_max_word",
+    "text": ["我是一个三好学生"]
+}
+```
+
+```json
+{
+  "tokens" : [
+    {
+      "token" : "我",
+      "start_offset" : 0,
+      "end_offset" : 1,
+      "type" : "CN_CHAR",
+      "position" : 0
+    },
+    {
+      "token" : "是",
+      "start_offset" : 1,
+      "end_offset" : 2,
+      "type" : "CN_CHAR",
+      "position" : 1
+    },
+    {
+      "token" : "一个",
+      "start_offset" : 2,
+      "end_offset" : 4,
+      "type" : "CN_WORD",
+      "position" : 2
+    },
+    {
+      "token" : "一",
+      "start_offset" : 2,
+      "end_offset" : 3,
+      "type" : "TYPE_CNUM",
+      "position" : 3
+    },
+    {
+      "token" : "个",
+      "start_offset" : 3,
+      "end_offset" : 4,
+      "type" : "COUNT",
+      "position" : 4
+    },
+    {
+      "token" : "三好学生",
+      "start_offset" : 4,
+      "end_offset" : 8,
+      "type" : "CN_WORD",
+      "position" : 5
+    },
+    {
+      "token" : "三好",
+      "start_offset" : 4,
+      "end_offset" : 6,
+      "type" : "CN_WORD",
+      "position" : 6
+    },
+    {
+      "token" : "三",
+      "start_offset" : 4,
+      "end_offset" : 5,
+      "type" : "TYPE_CNUM",
+      "position" : 7
+    },
+    {
+      "token" : "好学生",
+      "start_offset" : 5,
+      "end_offset" : 8,
+      "type" : "CN_WORD",
+      "position" : 8
+    },
+    {
+      "token" : "好学",
+      "start_offset" : 5,
+      "end_offset" : 7,
+      "type" : "CN_WORD",
+      "position" : 9
+    },
+    {
+      "token" : "学生",
+      "start_offset" : 6,
+      "end_offset" : 8,
+      "type" : "CN_WORD",
+      "position" : 10
+    }
+  ]
+}
+```
+
+
+
+#### 6.3 自定义分词效果
+
+我们在使用 IK 分词器时会发现其实有时候分词的效果也并不是我们所期待的，有时一些特殊得术语会被拆开，比如上面得中文“一个三好学生”希望不要拆开，怎么做呢？其实 IK 插件给我们提供了自定义分词字典，我们就可以添加自己想要保留得字了。
+
+![image-20221215190546680](08-Elasticsearch.assets/image-20221215190546680.png)
+
+![image-20221215190634544](08-Elasticsearch.assets/image-20221215190634544.png)
+
+接下来我们修改配置文件：IKAnalyzer.cfg.xml
+
+![image-20221215190742470](08-Elasticsearch.assets/image-20221215190742470.png)
+
+重启 Elasticsearch 服务器查看效果
+
+![image-20221215191253500](08-Elasticsearch.assets/image-20221215191253500.png)
+
+> 注：记得修改文件拥有者
+
+
+
+### 7 文档得分
+
+Lucene 和 ES 的得分机制是一个基于词频和逆文档词频的公式，简称为 TF-IDF 公式
+
+![image-20221215191504608](08-Elasticsearch.assets/image-20221215191504608.png)
+
+公式中将查询作为输入，使用不同的手段来确定每一篇文档的得分，将每一个因素最后通过公式综合起来，返回该文档的最终得分。这个综合考量的过程，就是我们希望相关的文档被优先返回的考量过程。在 Lucene 和 ES 中这种相关性称为得分。
+
+考虑到查询内容和文档得关系比较复杂，所以公式中需要输入得参数和条件非常得多。但是其中比较重要得其实是两个算法机制：
+
+- TF(词频)
+
+  Term Frequency：搜索文本中的各个词条（term）在查询文本中出现了多少次，出现次数越多，就越相关，得分会比较高。
+
+- IDF(逆文档频率)
+
+  Inverse Document Frequency：搜索文本中的各个词条（term）在整个索引的所有文档中出现了多少次，出现的次数越多，说明越不重要，也就越不相关，得分就比较低。
+
+
+
+#### 7.1 打分机制
+
+接下来咱们用一个例子简单分析一下文档的打分机制：
+
+1. 首先，咱们先准备一个基础数据
+
+   ```json
+   # 创建索引
+   PUT shanhai
+   
+   # 增加文档数据
+   # 此时索引中只有这一条数据
+   PUT shanhai/_doc/1
+   {
+       "text":"hello"
+   }
+   ```
+
+2. 查询匹配条件的文档数据
+
+   ```json
+   GET shanhai/_search
+   {
+       "query": {
+           "match": {
+               "text": "hello"
+           }
+       }
+   }
+   ```
+
+   ![image-20221215221033512](08-Elasticsearch.assets/image-20221215221033512.png)
+
+   这里文档的得分为：0.2876821，很奇怪，此时索引中只有一个文档数据，且文档数据中可以直接匹配查询条件，为什么分值这么低？这就是公式的计算结果，咱们一起来看看
+
+3. 分析文档数据打分过程
+
+   ```json
+   # 增加分析参数
+   GET shanhai/_search?explain=true
+   {
+   	"query": {
+           "match": {
+               "text": "hello"
+           }
+       }
+   }
+   ```
+
+   执行后，会发现打分机制中有 2 个重要阶段：计算 TF 值和 IDF 值
+
+   ```json
+   {
+     "took" : 3,
+     "timed_out" : false,
+     "_shards" : {
+       "total" : 1,
+       "successful" : 1,
+       "skipped" : 0,
+       "failed" : 0
+     },
+     "hits" : {
+       "total" : {
+         "value" : 1,
+         "relation" : "eq"
+       },
+       "max_score" : 0.2876821,
+       "hits" : [
+         {
+           "_shard" : "[shanhai][0]",
+           "_node" : "V8dvsOckTM69ux_riftIpg",
+           "_index" : "shanhai",
+           "_id" : "1",
+           "_score" : 0.2876821,
+           "_source" : {
+             "text" : "hello"
+           },
+           "_explanation" : {
+             "value" : 0.2876821,
+             "description" : "weight(text:hello in 0) [PerFieldSimilarity], result of:",
+             "details" : [
+               {
+                 "value" : 0.2876821,
+                 "description" : "score(freq=1.0), computed as boost * idf * tf from:",
+                 "details" : [
+                   {
+                     "value" : 2.2,
+                     "description" : "boost",
+                     "details" : [ ]
+                   },
+                   {
+                     "value" : 0.2876821,
+                     "description" : "idf, computed as log(1 + (N - n + 0.5) / (n + 0.5)) from:",
+                     "details" : [
+                       {
+                         "value" : 1,
+                         "description" : "n, number of documents containing term",
+                         "details" : [ ]
+                       },
+                       {
+                         "value" : 1,
+                         "description" : "N, total number of documents with field",
+                         "details" : [ ]
+                       }
+                     ]
+                   },
+                   {
+                     "value" : 0.45454544,
+                     "description" : "tf, computed as freq / (freq + k1 * (1 - b + b * dl / avgdl)) from:",
+                     "details" : [
+                       {
+                         "value" : 1.0,
+                         "description" : "freq, occurrences of term within document",
+                         "details" : [ ]
+                       },
+                       {
+                         "value" : 1.2,
+                         "description" : "k1, term saturation parameter",
+                         "details" : [ ]
+                       },
+                       {
+                         "value" : 0.75,
+                         "description" : "b, length normalization parameter",
+                         "details" : [ ]
+                       },
+                       {
+                         "value" : 1.0,
+                         "description" : "dl, length of field",
+                         "details" : [ ]
+                       },
+                       {
+                         "value" : 1.0,
+                         "description" : "avgdl, average length of field",
+                         "details" : [ ]
+                       }
+                     ]
+                   }
+                 ]
+               }
+             ]
+           }
+         }
+       ]
+     }
+   }
+   ```
+
+4. 计算 TF 值
+
+   `freq / (freq + k1 * (1 - b + b * dl / avgdl))`
+
+   | **参数**  | **含义**                                         | **取值**      |
+   | --------- | ------------------------------------------------ | ------------- |
+   | freq      | 文档中出现词条的次数                             | 1.0           |
+   | k1        | 术语饱和参数                                     | 1.2 (默认值)  |
+   | b         | 长度规格化参数（单词长度对于整个文档的影响程度） | 0.75 (默认值) |
+   | dl        | 当前文中分解的字段长度                           | 1.0           |
+   | avgdl     | 查询文档中分解字段数量/查询文档数量              | 1.0           |
+   | TF (词频) | 1.0 / (1 + 1.2 * (1 - 0.75 + 0.75 * 1.0 / 1.0))  | 0.454544      |
+
+5. 计算 IDF 值
+
+   `log(1 + (N - n + 0.5) / (n + 0.5))`
+
+   | **参数**         | **含义**                                     | **取值**  |
+   | ---------------- | -------------------------------------------- | --------- |
+   | N                | 包含查询字段的文档总数（不一定包含查询词条） | 1         |
+   | n                | 包含查询词条的文档数                         | 1         |
+   | IDF (逆文档频率) | log(1 + (1 - 1 + 0.5) / (1 + 0.5))           | 0.2876821 |
+
+   > 注：这里的 log 是底数为 e 的对数
+
+6. 计算文档得分
+
+   `boost * idf * tf`
+
+   | **参数**     | **含义**                   | **取值**                   |
+   | :----------- | :------------------------- | :------------------------- |
+   | boost        | 词条权重                   | 2.2 (基础值) * 查询权重(1) |
+   | idf          | 逆文档频率                 | 0.2876821                  |
+   | tf           | 词频                       | 0.454544                   |
+   | Score (得分) | 2.2 * 0.2876821 * 0.454544 | 0.2876821                  |
+
+7. 增加新的文档，测试得分
+
+   - 增加一个毫无关系的文档
+
+     ```json
+     # 增加文档
+     PUT shanhai/_doc/2
+     {
+         "text" : "spark"
+     }
+     
+     # 因为新文档无词条相关信息，所以匹配的文档数据得分就应该较高：
+     # 0.6931741
+     GET shanhai/_search
+     {
+         "query": {
+             "match": {
+                 "text": "hello"
+             }
+         }
+     }
+     ```
+
+     ![image-20221215222814715](08-Elasticsearch.assets/image-20221215222814715.png)
+
+   - 增加一个一模一样的文档
+
+     ```json
+     # 增加文档
+     PUT shanhai/_doc/2
+     {
+         "text" : "hello"
+     }
+     
+     # 因为新文档含词条相关信息，且多个文件含有词条，所以显得不是很重要，得分会变低
+     # 0.4700036
+     GET shanhai/_search
+     {
+         "query": {
+             "match": {
+                 "text": "hello"
+             }
+         }
+     }
+     ```
+
+     ![image-20221215223542093](08-Elasticsearch.assets/image-20221215223542093.png)
+
+   - 增加一个含有词条，但是内容较多的文档
+
+     ```json
+     # 增加文档
+     PUT shanhai/_doc/2
+     {
+         "text" : "hello elasticsearch"
+     }
+     
+     # 因为新文档含词条相关信息，但只是其中一部分，所以查询文档的分数会变得更低一些。
+     # 0.38845783
+     GET /atguigu/_search
+     {
+         "query": {
+             "match": {
+                 "text": "hello"
+             }
+         }
+     }
+     ```
+
+     ![image-20221215223744999](08-Elasticsearch.assets/image-20221215223744999.png)
+
+
+
+#### 7.2 案例
+
+查询文档标题中含有“Hadoop”、“Elasticsearch”、“Spark”的内容。
+
+优先选择“Spark”的内容
+
+1. 准备数据
+
+   ```json
+   PUT testscore
+   
+   # 准备数据
+   PUT testscore/_doc/1001
+   {
+    "title" : "Hadoop is a Framework",
+    "content" : "Hadoop 是一个大数据基础框架"
+   }
+   PUT testscore/_doc/1002
+   {
+    "title" : "Hive is a SQL Tools",
+    "content" : "Hive 是一个 SQL 工具"
+   }
+   PUT testscore/_doc/1003
+   {
+    "title" : "Spark is a Framework",
+    "content" : "Spark 是一个分布式计算引擎"
+   }
+   ```
+
+2. 查询数据
+
+   ```json
+   # 查询文档标题中含有“Hadoop”,“Elasticsearch”,“Spark”的内容
+   GET testscore/_search?explain=true
+   {
+   	"query": {
+           "bool": {
+               "should": [{
+                   "match": {
+                       "title": {"query": "Hadoop", "boost": 1}
+                   }
+               },
+               {
+    				"match": {
+                       "title": {"query": "Hive", "boost": 1}
+                   }
+               },
+               {
+    				"match": {
+                       "title": {"query": "Spark", "boost": 1}
+                   }
+               }]
+           }
+       }
+   }
+   ```
+
+   此时，你会发现，Spark 的结果并不会放置在最前面
+
+   ![image-20221215224919863](08-Elasticsearch.assets/image-20221215224919863.png)
+
+   此时，咱们可以更改 Spark 查询的权重参数 boost 看看查询的结果有什么不同
+
+   ```json
+   # 查询文档标题中含有“Hadoop”,“Elasticsearch”,“Spark”的内容
+   GET /testscore/_search?explain=true
+   {
+   	"query": {
+           "bool": {
+               "should": [{
+                   "match": {
+                       "title": {"query": "Hadoop", "boost": 1}
+                   }
+               },
+               {
+    				"match": {
+                       "title": {"query": "Hive", "boost": 1}
+                   }
+               },
+               {
+    				"match": {
+                       "title": {"query": "Spark", "boost": 2}
+                   }
+               }]
+           }
+       }
+   }
+   ```
+
+   ![image-20221215225140888](08-Elasticsearch.assets/image-20221215225140888.png)
+
++++
+
+## 四、Elasticsearch进阶功能
+
+### 1 JavaAPI操作
+
+随着 Elasticsearch 8.x 新版本的到来，Type 的概念被废除，为了适应这种数据结构的改变，Elasticsearch 官方从 7.15 版本开始建议使用新的Elasticsearch Java Client。
+
+
+
+#### 1.1 增加依赖关系
+
+- 新建maven项目
+
+- pom文件新增依赖关系
+
+  ```xml
+  <properties>
+    <maven.compiler.source>8</maven.compiler.source>
+    <maven.compiler.target>8</maven.compiler.target>
+    <elastic.version>8.1.0</elastic.version>
+  </properties>
+  
+  <dependencies>
+    <dependency>
+      <groupId>org.elasticsearch.plugin</groupId>
+      <artifactId>x-pack-sql-jdbc</artifactId>
+      <version>${elastic.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>co.elastic.clients</groupId>
+      <artifactId>elasticsearch-java</artifactId>
+      <version>${elastic.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.12.3</version>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.json</groupId>
+      <artifactId>jakarta.json-api</artifactId>
+      <version>2.0.1</version>
+    </dependency>
+  </dependencies>
+  ```
+
+
+
+#### 1.2 获取客户端对象
+
+就像连接 MySQL 数据库一样，Java 通过客户端操作 Elasticsearch 也要获取到连接后才可以。咱们现在使用的基于 https 安全的Elasticsearch服务，所以首先我们需要将之前的证书进行一个转换
+
+```bash
+openssl pkcs12 -in elastic-stack-ca.p12 -clcerts -nokeys -out es-javaapi-ca.crt
+```
+
+![image-20221216160645140](08-Elasticsearch.assets/image-20221216160645140.png)
+
+配置证书后，将证书放在maven项目的文件目录下，我们就可以采用 https 方式获取连接对象了。
+
+```java
+import co.elastic.clients.elasticsearch.*;
+import co.elastic.clients.json.jackson.JacksonJsonpMapper;
+import co.elastic.clients.transport.ElasticsearchTransport;
+import co.elastic.clients.transport.rest_client.RestClientTransport;
+import org.apache.http.HttpHost;
+import org.apache.http.auth.*;
+import org.apache.http.client.*;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.impl.client.*;
+import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
+import org.apache.http.ssl.*;
+import org.elasticsearch.client.*;
+
+import javax.net.ssl.SSLContext;
+import java.io.InputStream;
+import java.nio.file.*;
+import java.security.KeyStore;
+import java.security.cert.*;
+
+public class ESClient {
+    public static void main(String[] args) throws Exception {
+        // 初始化ES服务器的连接
+        initEsConnection();
+    }
+
+    private static void initEsConnection() throws Exception {
+        //获取客户端对象
+        final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+        credentialsProvider.setCredentials(AuthScope.ANY,
+                new UsernamePasswordCredentials("elastic", "GbWUgcPLJoeDlA_LIsmY"));
+        Path caCertificatePath = Paths.get("certs/es-javaapi-ca.crt");
+        CertificateFactory factory = CertificateFactory.getInstance("X.509");
+        Certificate trustedCa;
+        try (InputStream is = Files.newInputStream(caCertificatePath)) {
+            trustedCa = factory.generateCertificate(is);
+        }
+        KeyStore trustStore = KeyStore.getInstance("pkcs12");
+        trustStore.load(null, null);
+        trustStore.setCertificateEntry("ca", trustedCa);
+        SSLContextBuilder sslContextBuilder = SSLContexts.custom().loadTrustMaterial(trustStore, null);
+        final SSLContext sslContext = sslContextBuilder.build();
+        RestClientBuilder builder = RestClient.builder(
+                        new HttpHost("linux-copy1", 9201, "https"))
+                .setHttpClientConfigCallback(
+                        new RestClientBuilder.HttpClientConfigCallback() {
+                            @Override
+                            public HttpAsyncClientBuilder customizeHttpClient(
+                                    HttpAsyncClientBuilder httpClientBuilder) {
+                                return httpClientBuilder.setSSLContext(sslContext)
+                                        .setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE)
+                                        .setDefaultCredentialsProvider(credentialsProvider);
+                            }
+                        });
+        RestClient restClient = builder.build();
+        ElasticsearchTransport transport = new RestClientTransport(
+                restClient, new JacksonJsonpMapper());
+        // 同步客户端对象
+        ElasticsearchClient client = new ElasticsearchClient(transport);
+        // 异步客户端对象
+        // ElasticsearchAsyncClient asyncClient = new ElasticsearchAsyncClient(transport);
+
+        transport.close();
+    }
+}
+```
+
+
+
+#### 1.3 操作数据
+
+##### 1.3.1 索引操作
+
+普通操作：
+
+```java
+public class ESClient {
+    // 同步客户端对象
+    private static ElasticsearchClient client;
+    // 异步客户端对象
+    private static ElasticsearchAsyncClient asyncClient;
+    
+    private static ElasticsearchTransport transport;
+    private static final String INDEX_API_TEST = "es-api-test";
+
+    public static void main(String[] args) throws Exception {
+        // 初始化ES服务器的连接
+        initEsConnection();
+        // 操作索引
+        operationIndex();
+    }
+
+    private static void operationIndex() throws Exception {
+        // 获取索引客户端对象
+        final ElasticsearchIndicesClient indices = client.indices();
+
+        // 判断索引是否存在
+        ExistsRequest existsRequest = new ExistsRequest.Builder().index(INDEX_API_TEST).build();
+        boolean flag = indices.exists(existsRequest).value();
+        if (flag){
+            System.out.println("索引" + INDEX_API_TEST + "已经存在");
+        } else {
+            // 创建索引
+            // 需要采用构建器方式来创建对象，ESAPI的对象基本上都是采用这种方式
+            CreateIndexRequest request = new CreateIndexRequest.Builder()
+                    .index(INDEX_API_TEST).build();
+            CreateIndexResponse createIndexResponse = indices.create(request);
+            System.out.println("创建索引的响应对象 = " + createIndexResponse);
+        }
+
+        //查询索引
+        GetIndexRequest getIndexRequest = new GetIndexRequest.Builder().index(INDEX_API_TEST).build();
+        GetIndexResponse getIndexResponse = indices.get(getIndexRequest);
+        System.out.println("索引查询成功：" + getIndexResponse.result());
+
+        // 删除索引
+        DeleteIndexRequest deleteIndexRequest = new DeleteIndexRequest.Builder()
+            		.index(INDEX_API_TEST).build();
+        DeleteIndexResponse deleteIndexResponse = indices.delete(deleteIndexRequest);
+        System.out.println("索引删除成功：" + deleteIndexResponse.acknowledged());
+
+        transport.close();
+    }
+
+    private static void initEsConnection() throws Exception {
+        //获取客户端对象
+        final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+        credentialsProvider.setCredentials(AuthScope.ANY,
+                new UsernamePasswordCredentials("elastic", "GbWUgcPLJoeDlA_LIsmY"));
+        Path caCertificatePath = Paths.get("certs/es-javaapi-ca.crt");
+        CertificateFactory factory = CertificateFactory.getInstance("X.509");
+        Certificate trustedCa;
+        try (InputStream is = Files.newInputStream(caCertificatePath)) {
+            trustedCa = factory.generateCertificate(is);
+        }
+        KeyStore trustStore = KeyStore.getInstance("pkcs12");
+        trustStore.load(null, null);
+        trustStore.setCertificateEntry("ca", trustedCa);
+        SSLContextBuilder sslContextBuilder = SSLContexts.custom()
+                .loadTrustMaterial(trustStore, null);
+        final SSLContext sslContext = sslContextBuilder.build();
+        RestClientBuilder builder = RestClient.builder(
+                        new HttpHost("linux-copy1", 9201, "https"))
+                .setHttpClientConfigCallback(
+                        new RestClientBuilder.HttpClientConfigCallback() {
+                            @Override
+                            public HttpAsyncClientBuilder customizeHttpClient(
+                                    HttpAsyncClientBuilder httpClientBuilder) {
+                                return httpClientBuilder.setSSLContext(sslContext)
+                                        .setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE)
+                                        .setDefaultCredentialsProvider(credentialsProvider);
+                            }
+                        });
+        RestClient restClient = builder.build();
+        transport = new RestClientTransport(
+                restClient, new JacksonJsonpMapper());
+        // 同步客户端对象
+        client = new ElasticsearchClient(transport);
+        // 异步客户端对象
+        asyncClient = new ElasticsearchAsyncClient(transport);
+    }
+}
+```
+
+Lamdba表达式：
+
+```java
+private static void operationIndexLambda() throws Exception {
+    // 获取索引客户端对象
+    final ElasticsearchIndicesClient indices = client.indices();
+
+    // 判断索引是否存在
+    boolean flag = indices.exists(req -> req.index(INDEX_API_TEST)).value();
+    if (flag){
+        System.out.println("索引" + INDEX_API_TEST + "已经存在");
+    } else {
+        // 创建索引
+        CreateIndexResponse createIndexResponse =
+                indices.create(req -> req.index(INDEX_API_TEST));
+        System.out.println("创建索引的响应对象 = " + createIndexResponse);
+    }
+
+    //查询索引
+    GetIndexResponse getIndexResponse =
+            indices.get(req -> req.index(INDEX_API_TEST));
+    System.out.println("索引查询成功：" + getIndexResponse.result());
+
+    // 删除索引
+    DeleteIndexResponse deleteIndexResponse =
+            indices.delete(req -> req.index(INDEX_API_TEST));
+    System.out.println("索引删除成功：" + deleteIndexResponse.acknowledged());
+
+    transport.close();
+}
+```
+
+
+
+##### 1.3.2 文档操作
+
+普通操作：
+
+```java
+private static void operationDocument() throws Exception {
+    // 增加文档
+    User user = new User(1001, "zhangsan", 22);
+    CreateRequest<User> createRequest = new CreateRequest.Builder<User>()
+            .index(INDEX_API_TEST)
+            .id("1001")
+            .document(user)
+            .build();
+    CreateResponse createResponse = client.create(createRequest);
+    System.out.println("文档创建的响应对象：" + createResponse);
+
+    //批量添加数据
+    List<BulkOperation> opts = new ArrayList<>();
+    for (int i = 1; i <= 10; i++) {
+        CreateOperation<User> optObj = new CreateOperation.Builder<User>()
+                .index(INDEX_API_TEST)
+                .id("200" + i)
+                .document(new User(2000 + i, "zhangsan" + i, 22 + i))
+                .build();
+        BulkOperation opt = new BulkOperation.Builder()
+                .create(optObj).build();
+        opts.add(opt);
+    }
+    BulkRequest bulkRequest = new BulkRequest.Builder()
+            .operations(opts)
+            .build();
+    BulkResponse bulkResponse = client.bulk(bulkRequest);
+    System.out.println("批量添加数据的响应：" + bulkResponse);
+
+    // 文档的删除
+    DeleteRequest deleteRequest = new DeleteRequest.Builder()
+            .index(INDEX_API_TEST)
+            .id("2001")
+            .build();
+    DeleteResponse deleteResponse = client.delete(deleteRequest);
+    System.out.println("删除文档的响应：" + deleteResponse);
+
+    transport.close();
+}
+```
+
+Lamdba表达式：
+
+```java
+private static void operationDocumentLambda() throws Exception {
+    // 增加文档
+    User user = new User(1002, "lisi", 32);
+    CreateResponse createResponse = client.create(
+            req -> req.index(INDEX_API_TEST).id("1002").document(user));
+    System.out.println("文档创建的响应对象：" + createResponse.result());
+
+    //批量添加数据
+    List<User> users = new ArrayList<>();
+    for (int i = 1; i <= 10; i++) {
+        users.add(new User(3000 + i, "lisi" + i, 20 + i));
+    }
+    BulkResponse bulkResponse = client.bulk(req -> {
+        users.forEach(u -> req.operations(b -> b.create(d ->
+                d.index(INDEX_API_TEST).id(u.getId().toString()).document(u)
+        )));
+        return req;
+    });
+    System.out.println("批量添加数据的响应：" + bulkResponse);
+
+    // 删除文档数据
+    DeleteResponse deleteResponse = client.delete(req -> req.index(INDEX_API_TEST).id("3001"));
+    System.out.println("删除文档的响应：" + deleteResponse);
+
+    transport.close();
+}
+```
+
+
+
+##### 1.3.3 文档查询
+
+普通操作：
+
+```java
+private static void queryDocument() throws Exception {
+    MatchQuery matchQuery = new MatchQuery.Builder()
+            .field("age").query(30)
+            .build();
+    Query query = new Query.Builder()
+            .match(matchQuery)
+            .build();
+    SearchRequest searchRequest = new SearchRequest.Builder()
+            .query(query)
+            .build();
+    SearchResponse<Object> searchResponse = client.search(searchRequest, Object.class);
+    System.out.println("searchResponse = " + searchResponse);
+    for (Hit<Object> hit : searchResponse.hits().hits()) {
+        System.out.println(hit.source());
+    }
+    transport.close();
+}
+```
+
+Lamdba表达式：
+
+```java
+private static void queryDocumentLambda() throws Exception {
+    SearchResponse<Object> searchResponse = client.search(req -> {
+        req.query(q -> q.match(m -> m.field("name").query("lisi")));
+        return req;
+    }, Object.class);
+
+    System.out.println("searchResponse = " + searchResponse);
+    for (Hit<Object> hit : searchResponse.hits().hits()) {
+        System.out.println(hit.source());
+    }
+
+    transport.close();
+}
+```
+
+
+
+#### 1.4 客户端异步操作
+
+ES Java API 提供了同步和异步的两种客户端处理。之前演示的都是同步处理，异步客户端的处理和同步客户端处理的 API 基本原理相同，不同的是需要异步对返回结果进行相应的处理。
+
+```java
+private static void asyncClientOperation() throws Exception {
+    asyncClient.indices()
+            .create(req -> req.index("new-index"))
+            .whenComplete((resp, error) -> {
+                System.out.println("回调方法");
+                if (resp != null) {
+                    System.out.println(resp.acknowledged());
+                } else {
+                    error.printStackTrace();
+                }
+            });
+    System.out.println("主线程代码");
+}
+```
+
+```java
+private static void asyncClientOperation() throws Exception {
+    asyncClient.indices()
+            .create(req -> req.index("new-index"))
+            .thenApply(resp -> resp.acknowledged())
+            .whenComplete((resp, error) -> {
+                System.out.println("回调方法");
+                if (resp != null) {
+                    System.out.println(resp);
+                } else {
+                    error.printStackTrace();
+                }
+            });
+    System.out.println("主线程代码");
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
