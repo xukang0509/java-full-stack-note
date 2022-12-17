@@ -6433,9 +6433,274 @@ private static void asyncClientOperation() throws Exception {
 
 
 
+### 2 EQL操作
+
+EQL 的全名是 Event Query Language (EQL)。事件查询语言（EQL）是一种用于基于事件的时间序列数据（例如日志，指标和跟踪）的查询语言。在 Elastic Security 平台上，当输入有效的 EQL 时，查询会在数据节点上编译，执行查询并返回结果。这一切都快速、并行地发生，让用户立即看到结果。
+
+*EQL的优点*：
+
+- EQL 使你可以表达事件之间的关系
+
+  许多查询语言允许您匹配单个事件。EQL 使你可以匹配不同事件类别和时间跨度的一系列事件。
+
+- EQL 的学习曲线很低
+
+  EQL 语法看起来像其他常见查询语言，例如 SQL。EQL 使你可以直观地编写和读取查询，从而可以进行快速，迭代的搜索。
+
+- EQL 设计用于安全用例
+
+  尽管你可以将其用于任何基于事件的数据，但我们创建了 EQL 来进行威胁搜寻。EQL不仅支持危害指标（IOC）搜索，而且可以描述超出 IOC 范围的活动。
 
 
 
+#### 2.1 基础语法
+
+##### 2.1.1 数据准备
+
+要运行 EQL 搜索，搜索到的数据流或索引必须包含时间戳和事件类别字段。默认情况下，EQL 使用Elastic通用模式（ECS）中的 `@timestamp` 和 `event.category` 字段。
+
+`@timestamp` 表示时间戳，`event.category` 表示事件分类。
+
+咱们准备一些简单的数据,用于表示电商网站页面跳转
+
+```json
+# 创建索引
+PUT /gmall
+
+# 批量增加数据
+PUT _bulk
+{"index":{"_index":"gmall"}}
+{"@timestamp":"2022-06-01T12:00:00.00+08:00", "event":{"category":"page"}, "page" : {"session_id" : "42FC7E13-CB3E-5C05-0000-0010A0125101","last_page_id" : "","page_id" : "login","user_id" : ""}}
+{"index":{"_index":"gmall"}}
+{"@timestamp":"2022-06-01T12:01:00.00+08:00", "event":{"category":"page"},"page" : {"session_id" : "42FC7E13-CB3E-5C05-0000-0010A0125101","last_page_id" : "login","page_id" : "good_list","user_id" : "1"}}
+{"index":{"_index":"gmall"}}
+{"@timestamp":"2022-06-01T12:05:00.00+08:00", "event":{"category":"page"},"page" : {"session_id" : "42FC7E13-CB3E-5C05-0000-0010A0125101","last_page_id" : "good_list","page_id" : "good_detail","user_id" : "1"}}
+{"index":{"_index":"gmall"}}
+{"@timestamp":"2022-06-01T12:07:00.00+08:00", "event":{"category":"page"},"page" : {"session_id" : "42FC7E13-CB3E-5C05-0000-0010A0125101","last_page_id" : "good_detail","page_id" : "order","user_id" : "1"}}
+{"index":{"_index":"gmall"}}
+{"@timestamp":"2022-06-01T12:08:00.00+08:00", "event":{"category":"page"},"page" : {"session_id" : "42FC7E13-CB3E-5C05-0000-0010A0125101","last_page_id" : "order","page_id" : "payment","user_id" : "1"}}
+{"index":{"_index":"gmall"}}
+{"@timestamp":"2022-06-01T12:08:00.00+08:00", "event":{"category":"page"},"page" : {"session_id" : "42FC7E13-CB3E-5C05-0000-0010A0125102","last_page_id" : "","page_id" : "login","user_id" : "2"}}
+{"index":{"_index":"gmall"}}
+{"@timestamp":"2022-06-01T12:08:00.00+08:00", "event":{"category":"page"},"page" : {"session_id" : "42FC7E13-CB3E-5C05-0000-0010A0125102","last_page_id" : "login","page_id" : "payment","user_id" : "2"}}
+```
+
+
+
+##### 2.1.2 数据窗口搜索
+
+在事件响应过程中，有很多时候，了解特定时间发生的所有事件是很有用的。使用一种名为`any`的特殊事件类型，针对所有事件进行匹配，如果想要匹配特定事件，就需要指明事件分类名称
+
+```json
+GET /gmall/_eql/search
+{
+    "query" : """
+    	any where page.user_id == "1"
+    """
+}
+```
+
+![image-20221216200107208](08-Elasticsearch.assets/image-20221216200107208.png)
+
+
+
+##### 2.1.3 统计符合条件的事件
+
+```json
+GET /gmall/_eql/search
+{
+    "query" : """
+    	any where true
+    """,
+    "filter": {
+    	"range": {
+    		"@timestamp": {
+    			"gte": "1654056000000",
+ 				"lt": "1654056005000"
+ 			}
+ 		}
+ 	}
+}
+```
+
+![image-20221216200327615](08-Elasticsearch.assets/image-20221216200327615.png)
+
+
+
+##### 2.1.4 事件序列
+
+```json
+# 页面先访问 login,后面又访问了 good_detail 的页面
+
+GET /gmall/_eql/search
+{
+ "query" : """
+ 	sequence by page.session_id
+ 	[page where page.page_id=="login"]
+ 	[page where page.page_id=="good_detail"]
+ """
+}
+```
+
+![image-20221216200644713](08-Elasticsearch.assets/image-20221216200644713.png)
+
+
+
+#### 2.2 安全检测
+
+EQL 在 Elastic Securit 中被广泛使用。实际应用时，我们可以使用 EQL 语言来进行检测安全威胁和其他可疑行为。
+
+
+
+##### 2.2.1 数据准备
+
+regsvr32.exe 是一个内置的命令行实用程序，用于在 Windows 中注册.dll 库。作为本机工具，regsvr32.exe 具有受信任的状态，从而使它可以绕过大多数允许列表软件和脚本阻止程序。 有权访问用户命令行的攻击者可以使用 regsvr32.exe 通过.dll 库运行恶意脚本，即使在其他情况下也不允许这些脚本运行。
+
+regsvr32 滥用的一种常见变体是 Squfullydoo 攻击。在 Squfullydoo 攻击中，regsvr32.exe 命令使用 scrobj.dll 库注册并运行远程脚本。
+
+测试数据来自 Atomic Red Team 的测试数据集，其中包括模仿 Squibledoo 攻击的事件。数据已映射到 Elastic 通用架构（ECS）字段：normalized-T1117-AtomicRed-regsvr32.json
+将文件内容导入到 ES 软件中：
+
+```json
+# 创建索引
+PUT my-eql-index
+
+# 导入数据
+POST my-eql-index/_bulk?pretty&refresh
+```
+
+![image-20221216201504273](08-Elasticsearch.assets/image-20221216201504273.png)
+
+查看数据导入情况
+
+```json
+# 查看数据导入的情况
+GET /_cat/indices/my-eql-index?v=true&h=health,status,index,docs.count
+```
+
+![image-20221216201539823](08-Elasticsearch.assets/image-20221216201539823.png)
+
+
+
+##### 2.2.2 获取 regsvr32 事件的计数
+
+获取与 regsvr32.exe 进程关联的事件数
+
+```json
+# 查询数据
+# ?filter_path=-hits.events 从响应中排除 hits.events 属性。 此搜索仅用于获取事件计数，而不是匹配事件的列表
+# query : 匹配任何进程名称为 regsvr32.exe 的事件
+# size : 最多返回 200 个匹配事件的匹配, 实际查询结果为 143 个
+
+GET my-eql-index/_eql/search?filter_path=-hits.events
+{
+  "query": """
+  	any where process.name == "regsvr32.exe"
+  """,
+  "size": 200 
+}
+```
+
+![image-20221216201730570](08-Elasticsearch.assets/image-20221216201730570.png)
+
+
+
+##### 2.2.3 检查命令行参数
+
+regsvr32.exe 进程与 143 个事件相关联。但是如何首先调用 regsvr32.exe？谁调用的？regsvr32.exe 是一个命令行实用程序。将结果缩小到使用命令行的进程
+
+```json
+# 增加过滤条件查询数据
+GET my-eql-index/_eql/search
+{
+ "query": """
+    process where process.name == "regsvr32.exe" and process.command_line.keyword != null 
+ """
+}
+```
+
+![image-20221216202008566](08-Elasticsearch.assets/image-20221216202008566.png)
+
+该查询将一个事件与创建的 event.type 相匹配，指示 regsvr32.exe 进程的开始。根据事件的 process.command_line 值，regsvr32.exe 使用 scrobj.dll 注册了脚本 RegSvr32.sct. 这符合 Squibledoo 攻击的行为
+
+
+
+##### 2.2.4 检查恶意脚本加载
+
+检查 regsvr32.exe 以后是否加载 scrobj.dll 库
+
+```json
+# 增加过滤条件查询数据
+GET my-eql-index/_eql/search
+{
+    "query": """
+    	library where process.name == "regsvr32.exe" and dll.name == "scrobj.dll"
+    """
+}
+```
+
+![image-20221216202219128](08-Elasticsearch.assets/image-20221216202219128.png)
+
+
+
+##### 2.2.5 检查攻击成功可能性
+
+在许多情况下，攻击者使用恶意脚本连接到远程服务器或下载其他文件。使用 EQL 序列查询来检查以下一系列事件：
+
+- regsvr32.exe 进程
+- 通过相同的进程加载 scrobj.dll 库
+- 同一过程中的任何网络事件
+
+根据上一个响应中看到的命令行值，你可以期望找到一个匹配项。但是，此查询并非针对该特定命令而设计。取而代之的是，它寻找一种可疑行为的模式，这种模式足以检测出相似的威胁
+
+```json
+# 增加过滤条件查询数据
+GET my-eql-index/_eql/search
+{
+    "query": """
+    	sequence by process.pid
+    	[process where process.name == "regsvr32.exe"]
+		[library where dll.name == "scrobj.dll"]
+		[network where true] 
+ 	""" 
+}
+```
+
+
+
+### 3 SQL操作
+
+![image-20221216202614234](08-Elasticsearch.assets/image-20221216202614234.png)
+
+一般使用 Elasticsearch 的时候，会使用 Query DSL 来查询数据，从 Elasticsearch6.3 版本以后，Elasticsearch 已经支持 SQL 查询了。
+
+Elasticsearch SQL 是一个 X-Pack 组件，它允许针对 Elasticsearch 实时执行类似 SQL 的查询。无论使用 REST 接口，命令行还是 JDBC，任何客户端都可以使用 SQL 对 Elasticsearch 中的数据进行原生搜索和聚合数据。可以将 Elasticsearch SQL 看作是一种翻译器，它可以将 SQL 翻译成Query DSL。
+
+Elasticsearch SQL 具有如下特性：
+
+- 原生支持：Elasticsearch SQL 是专门为 Elasticsearch 打造的。
+- 没有额外的零件：无需其他硬件，处理器，运行环境或依赖库即可查询 Elasticsearch，Elasticsearch SQL 直接在 Elasticsearch 内部运行。
+- 轻巧高效：Elasticsearch SQL 并未抽象化其搜索功能，相反的它拥抱并接受了 SQL 来实现全文搜索，以简洁的方式实时运行全文搜索。
+
+
+
+#### 3.1 SQL和Elasticsearch的对应关系
+
+虽然 SQL 和 Elasticsearch 对数据的组织方式（以及不同的语义）有不同的术语，但它们的目的本质上是相同的。
+
+| **SQL**  | **Elasticsearch** | **描述**                                                     |
+| -------- | ----------------- | ------------------------------------------------------------ |
+| Column   | field             | 对比两个，数据都存储在命名条目中，具有多种数据类型，包含一<br/>个值。SQL 将此类条目称为列，而 Elasticsearch 称为字段。请注意，<br/>在 Elasticsearch 中，一个字段可以包含多个相同类型的值（本质上<br/>是一个列表），而在 SQL 中，一个列可以只包含一个所述类型的<br/>值。Elasticsearch SQL 将尽最大努力保留 SQL 语义，并根据查询拒<br/>绝那些返回具有多个值的字段的查询 |
+| Row      | document          | Columns 和 fields 本身不存在；它们是 row 或 a 的一部分 document。<br/>两者的语义略有不同：row 趋于严格（并且有更多的强制执行），而<br/>document 趋于更加灵活或松散（同时仍然具有结构）。 |
+| Table    | Index             | 执行查询的目标                                               |
+| Schema   | Mapping           | 在 RDBMS 中，schem 主要是表的命名空间，通常用作安全边界。<br/>Elasticsearch 没有为它提供等效的概念。但是，当启用安全性时，<br/>Elasticsearch 会自动应用安全性强制，以便角色只能看到它被允许访<br/>问的数据 |
+| Database | Cluster实例       | 在 SQL 中，catalog 或者 database 从概念上可以互换使用，表示一组<br/>模式，即多个表。在 Elasticsearch 中，可用的索引集被分组在一个<br/>cluster，语义也有所不同。database 本质上是另一个命名空间（可能<br/>对数据的存储方式有一些影响），而 Elasticsearch cluster 是一个运<br/>行时实例，或者更确切地说是一组至少一个 Elasticsearch 实例（通<br/>常是分布式运行）。在实践中，这意味着虽然在 SQL 中，一个实<br/>例中可能有多个目录，但在 Elasticsearch 中，一个目录仅限于一个 |
+
+虽然概念之间的映射并不完全是一对一的，语义也有所不同，但共同点多于差异。事实上，SQL 的许多概念可以在 Elasticsearch 中找到对应关系，并且这两者的术语也很类似
+
+
+
+#### 3.2 数据准备
 
 
 
